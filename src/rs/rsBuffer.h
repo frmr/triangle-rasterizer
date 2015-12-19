@@ -14,25 +14,41 @@ namespace rs
         T*              data;
 
     public:
-        T* GetData() const
-        {
-            return data;
-        }
 
-        T& Sample(const size_t x, const size_t y)
+        T& At(const size_t x, const size_t y)
         {
             return data[y*width+x];
         }
 
-        T& Sample(const double x, const double y, const bool filter)
+        T& At(const double x, const double y, const bool filter)
         {
             //interpolate
             return data[0];
         }
 
-        T& Sample(const size_t index)
+        T& At(const size_t index)
         {
             return data[index];
+        }
+
+        T GetAt(const size_t x, const size_t y) const
+        {
+            return data[y*width+x];
+        }
+
+        T GetAt(const double x, const double y, const bool filter) const
+        {
+            return data[0];
+        }
+
+        T GetAt(const size_t index) const
+        {
+            return data[index];
+        }
+
+        T* GetData() const
+        {
+            return data;
         }
 
     public:

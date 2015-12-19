@@ -77,6 +77,11 @@
 			<Add option="-lSDL2main" />
 			<Add option="-lSDL2" />
 		</Linker>
+		<Unit filename="src/EasyBMP/EasyBMP.cpp" />
+		<Unit filename="src/EasyBMP/EasyBMP.h" />
+		<Unit filename="src/EasyBMP/EasyBMP_BMP.h" />
+		<Unit filename="src/EasyBMP/EasyBMP_DataStructures.h" />
+		<Unit filename="src/EasyBMP/EasyBMP_VariousBMPutilities.h" />
 		<Unit filename="src/example.cpp" />
 		<Unit filename="src/matrix/Matrices.cpp" />
 		<Unit filename="src/matrix/Matrices.h" />

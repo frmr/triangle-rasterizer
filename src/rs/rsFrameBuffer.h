@@ -24,17 +24,17 @@ namespace rs
 
         rs::Color& ColorAt(const size_t x, const size_t y)
         {
-            return colorBuffer.Sample(x, y);
+            return colorBuffer.At(x, y);
         }
 
         rs::Color& ColorAt(const size_t index)
         {
-            return colorBuffer.Sample(index);
+            return colorBuffer.At(index);
         }
 
         double& DepthAt(const size_t x, const size_t y)
         {
-            return depthBuffer.Sample(x, y);
+            return depthBuffer.At(x, y);
         }
 
     public:

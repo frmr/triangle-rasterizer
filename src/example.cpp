@@ -17,14 +17,14 @@ void CopyFrameBufferToSurface(rs::FrameBuffer& fb, SDL_Surface* sdlSurface)
     Uint32* pixels = (Uint32*)(sdlSurface->pixels);
     rs::Color* colorData = fb.GetColorData();
 
-    for (unsigned int x = 0; x < fb.width; ++x)
+    for (size_t x = 0; x < fb.width; ++x)
     {
-        for (unsigned int y = 0; y < fb.height; ++y)
+        for (size_t y = 0; y < fb.height; ++y)
         {
             const size_t index = y * fb.width + x;
-            pixels[index] = (Uint32) ( colorData[index].r * 255.0 ) << 16;
-            pixels[index] += (Uint32) ( colorData[index].g * 255.0 ) << 8;
-            pixels[index] += (Uint32) ( colorData[index].b * 255.0 ) << 0;
+            pixels[index] = ((Uint32) colorData[index].r) << 16;
+            pixels[index] += ((Uint32) colorData[index].g) << 8;
+            pixels[index] += ((Uint32) colorData[index].b) << 0;
         }
     }
 }
@@ -39,10 +39,9 @@ bool InitSdl()
     return true;
 }
 
-bool InitWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWidth, const int screenHeight)
+bool InitWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWidth, const int screenHeight, const bool fullscreen)
 {
-    *window = SDL_CreateWindow("Space Raster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
-    //*window = SDL_CreateWindow( "gs", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN );
+    *window = SDL_CreateWindow("Space Raster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
 
     if (window == NULL)
     {
@@ -70,13 +69,13 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    const int screenWidth = 1024;
-    const int screenHeight = 768;
+    const size_t screenWidth = 800;
+    const size_t screenHeight = 600;
 
     SDL_Window* window = NULL;
     SDL_Renderer* renderer = NULL;
 
-    if (!InitWindow(&window, &renderer, screenWidth, screenHeight))
+    if (!InitWindow(&window, &renderer, screenWidth, screenHeight, false))
     {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
@@ -86,9 +85,9 @@ int main(int argc, char* argv[])
 
     vector<rs::Vec3d> vertices;
     vector<size_t> indices;
-    rs::Texture tex("");
+    rs::Texture tex("data/blackfriars.bmp");
     double* matrix;
-    rs::FrameBuffer fb( 1024, 768 );
+    rs::FrameBuffer fb(screenWidth, screenHeight);
 
 
     SDL_Surface* sdlSurface = SDL_CreateRGBSurface(0, screenWidth, screenHeight, 32, 0, 0, 0, 0);

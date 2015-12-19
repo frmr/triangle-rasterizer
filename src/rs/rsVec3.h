@@ -150,9 +150,10 @@ namespace rs
         }
     };
 
-    typedef	Vec3<float>     Vec3f;
-    typedef	Vec3<double>    Vec3d;
-    typedef Vec3<int>       Vec3i;
+    typedef	Vec3<float>         Vec3f;
+    typedef	Vec3<double>        Vec3d;
+    typedef Vec3<int>           Vec3i;
+    typedef Vec3<unsigned char> Vec3B;
 }
 
 #endif // RS_VEC3_H
