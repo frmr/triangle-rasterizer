@@ -22,23 +22,23 @@ namespace rs
             return colorBuffer.GetData();
         }
 
-        rs::Color& ColorAt(const size_t x, const size_t y)
+        rs::Color& ColorAt(const size_t& x, const size_t& y)
         {
             return colorBuffer.At(x, y);
         }
 
-        rs::Color& ColorAt(const size_t index)
+        rs::Color& ColorAt(const size_t& index)
         {
             return colorBuffer.At(index);
         }
 
-        double& DepthAt(const size_t x, const size_t y)
+        double& DepthAt(const size_t& x, const size_t& y)
         {
             return depthBuffer.At(x, y);
         }
 
     public:
-        FrameBuffer(const size_t width, const size_t height)
+        FrameBuffer(const size_t& width, const size_t& height)
             :   width(width),
                 height(height),
                 colorBuffer(width, height),

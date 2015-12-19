@@ -31,17 +31,17 @@ namespace rs
             return data[index];
         }
 
-        T GetAt(const size_t x, const size_t y) const
+        T GetAt(const size_t& x, const size_t& y) const
         {
             return data[y*width+x];
         }
 
-        T GetAt(const double x, const double y, const bool filter) const
+        T GetAt(const double& x, const double& y, const bool filter) const
         {
             return data[0];
         }
 
-        T GetAt(const size_t index) const
+        T GetAt(const size_t& index) const
         {
             return data[index];
         }
@@ -52,7 +52,7 @@ namespace rs
         }
 
     public:
-        Buffer(const size_t width, const size_t height)
+        Buffer(const size_t& width, const size_t& height)
             :   height(height),
                 width(width)
         {

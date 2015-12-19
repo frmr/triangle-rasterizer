@@ -34,24 +34,29 @@ namespace rs
         }
 
     public:
-        rs::Color& At(const size_t x, const size_t y)
+        rs::Color& At(const size_t& x, const size_t& y)
         {
             return colorBuffer.At(x, y);
         }
 
-        rs::Color& At(const double x, const double y, const bool filter)
+        rs::Color& At(const double& x, const double& y, const bool filter)
         {
             return colorBuffer.At(x, y, filter);
         }
 
-        rs::Color GetAt(const size_t x, const size_t y) const
+        rs::Color GetAt(const size_t& x, const size_t& y) const
         {
             return colorBuffer.GetAt(x, y);
         }
 
-        rs::Color GetAt(const double x, const double y, const bool filter) const
+        rs::Color GetAt(const double& x, const double& y, const bool filter) const
         {
             return colorBuffer.GetAt(x, y, filter);
+        }
+
+        rs::Color GetAt(const size_t& index) const
+        {
+            return colorBuffer.GetAt(index);
         }
 
     public:

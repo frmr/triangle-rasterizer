@@ -25,11 +25,13 @@
 				<Option type="1" />
 				<Option compiler="mingw" />
 				<Compiler>
+					<Add option="-pg" />
 					<Add option="-g" />
 					<Add option="-m64" />
 					<Add directory="include/SDL2/x86_64-w64-mingw32" />
 				</Compiler>
 				<Linker>
+					<Add option="-pg -lgmon" />
 					<Add directory="lib/SDL2/x86_64-w64-mingw32" />
 				</Linker>
 			</Target>
@@ -59,7 +61,6 @@
 					<Add directory="include/SDL2/x86_64-w64-mingw32" />
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
 					<Add directory="lib/SDL2/x86_64-w64-mingw32" />
 				</Linker>
 			</Target>

@@ -1,5 +1,6 @@
 #include <chrono>
 #include <iostream>
+#include <thread>
 #include <vector>
 
 #include "rs/rsRasterizer.h"
@@ -12,21 +13,33 @@ using std::cerr;
 using std::endl;
 using std::vector;
 
-void CopyFrameBufferToSurface(rs::FrameBuffer& fb, SDL_Surface* sdlSurface)
+void CopyFrameBufferSectionToSurface(const rs::FrameBuffer& fb, Uint32* pixels, const size_t iStart, const size_t iEnd)
+{
+    rs::Color* colorData = fb.GetColorData();
+    for (size_t i = iStart; i < iEnd; ++i)
+    {
+        pixels[i] = ((Uint32) colorData[i].r) << 16;
+        pixels[i] += ((Uint32) colorData[i].g) << 8;
+        pixels[i] += ((Uint32) colorData[i].b) << 0;
+    }
+}
+
+void CopyFrameBufferToSurface(const rs::FrameBuffer& fb, SDL_Surface* sdlSurface, const unsigned int numThreads)
 {
     Uint32* pixels = (Uint32*)(sdlSurface->pixels);
-    rs::Color* colorData = fb.GetColorData();
+    const size_t numPixels = fb.width * fb.height;
 
-    for (size_t x = 0; x < fb.width; ++x)
-    {
-        for (size_t y = 0; y < fb.height; ++y)
-        {
-            const size_t index = y * fb.width + x;
-            pixels[index] = ((Uint32) colorData[index].r) << 16;
-            pixels[index] += ((Uint32) colorData[index].g) << 8;
-            pixels[index] += ((Uint32) colorData[index].b) << 0;
-        }
-    }
+    vector<std::thread> threads;
+    threads.reserve(numThreads);
+    for (unsigned int t = 0; t < numThreads; ++t)
+	{
+		threads.push_back(std::thread(CopyFrameBufferSectionToSurface, std::cref(fb), pixels, t*numPixels/numThreads, (t+1)*numPixels/numThreads));
+	}
+
+	for (auto it = threads.begin(); it != threads.end(); ++it)
+	{
+		it->join();
+	}
 }
 
 bool InitSdl()
@@ -43,7 +56,7 @@ bool InitWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWi
 {
     *window = SDL_CreateWindow("Space Raster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
 
-    if (window == NULL)
+    if (!window)
     {
         cerr << "InitWindow() in src/main.cpp: Failed to initialise SDL window." << endl;
         return false;
@@ -51,7 +64,7 @@ bool InitWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWi
 
     *renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED);
 
-    if ( renderer == NULL )
+    if (!renderer)
     {
         cerr << "InitWindow() in src/main.cpp: Failed to initialise SDL renderer." << endl;
     }
@@ -61,6 +74,7 @@ bool InitWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWi
 
 int main(int argc, char* argv[])
 {
+
     bool running = true;
 
     if (!InitSdl())
@@ -85,22 +99,19 @@ int main(int argc, char* argv[])
 
     vector<rs::Vec3d> vertices;
     vector<size_t> indices;
-    rs::Texture tex("data/blackfriars.bmp");
+    rs::Texture tex("data/udon.bmp");
     double* matrix;
     rs::FrameBuffer fb(screenWidth, screenHeight);
-
 
     SDL_Surface* sdlSurface = SDL_CreateRGBSurface(0, screenWidth, screenHeight, 32, 0, 0, 0, 0);
 
     while (running)
     {
-        std::chrono::time_point<std::chrono::system_clock> start;
-        start = std::chrono::system_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
 
         SDL_Event e;
-        while( SDL_PollEvent(&e) != 0 )
+        while(SDL_PollEvent(&e))
         {
-            //User requests quit
             if(e.type == SDL_QUIT)
             {
                 running = false;
@@ -108,18 +119,16 @@ int main(int argc, char* argv[])
         }
 
         rs::Draw(rs::DrawMode::POINTS, vertices, indices, tex, matrix, matrix, fb);
-        CopyFrameBufferToSurface(fb, sdlSurface);
+        CopyFrameBufferToSurface(fb, sdlSurface, 4);
 
         SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
         SDL_RenderCopy(renderer, sdlTexture, NULL, NULL);
         SDL_RenderPresent(renderer);
         SDL_DestroyTexture(sdlTexture);
 
-
-        std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
-        std::chrono::duration<double> elapsed_seconds = end - start;
-
-        cout << elapsed_seconds.count() * 1000 << "ms" << endl;
+        auto end = std::chrono::high_resolution_clock::now();
+        auto diff = end - start;
+        cout << std::chrono::duration<double, std::milli>(diff).count() << " ms" << endl;
     }
 
     SDL_DestroyRenderer(renderer);
