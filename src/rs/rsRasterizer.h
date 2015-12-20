@@ -24,18 +24,10 @@ namespace rs
 
     void Draw(const rs::DrawMode mode, const vector<rs::Vec3d>& vertices, const vector<size_t>& indices, const rs::Texture& texture, const double* const modelViewMatrix, const double* const projectionMatrix, rs::FrameBuffer& fb)
     {
-//        for (size_t x = 0; x < fb.width; ++x)
-//        {
-//            for (size_t y = 0; y < fb.height; ++y)
-//            {
-//                const size_t index = y * fb.width + x;
-//                fb.ColorAt(index) = texture.GetAt(index);
-//            }
-//        }
-        size_t target = fb.width * fb.height;
-        for (size_t index = 0; index < target; ++index)
+        const size_t totalPixels = fb.width * fb.height;
+        for (size_t index = 0; index < totalPixels; ++index)
         {
-            fb.ColorAt(index) = texture.GetAt(index);
+            fb.colorBuffer.data[index] = texture.colorBuffer.data[index];
         }
     }
 }

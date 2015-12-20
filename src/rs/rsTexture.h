@@ -17,8 +17,9 @@ namespace rs
     class Texture
     {
     private:
-        //image loaded from file in initialiser list, then deleted at the end of the constructor
         BMP* tempColorData;
+
+    public:
         rs::Buffer<rs::Color> colorBuffer;
 
     private:
@@ -56,7 +57,7 @@ namespace rs
 
         rs::Color GetAt(const size_t& index) const
         {
-            return colorBuffer.GetAt(index);
+            return colorBuffer.data[index];
         }
 
     public:
@@ -68,9 +69,9 @@ namespace rs
             {
                 for (int y = 0; y < tempColorData->TellHeight(); ++y)
                 {
-                    colorBuffer.At(x, y).r = tempColorData->GetPixel(x, y).Red;
-                    colorBuffer.At(x, y).g = tempColorData->GetPixel(x, y).Green;
-                    colorBuffer.At(x, y).b = tempColorData->GetPixel(x, y).Blue;
+                    colorBuffer.At(x, y) = ((rs::Color) tempColorData->GetPixel(x, y).Red) << 16;
+                    colorBuffer.At(x, y) += ((rs::Color) tempColorData->GetPixel(x, y).Green) << 8;
+                    colorBuffer.At(x, y) += ((rs::Color) tempColorData->GetPixel(x, y).Blue) << 0;
                 }
             }
             delete tempColorData;

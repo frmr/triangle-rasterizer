@@ -11,25 +11,13 @@ namespace rs
     public:
         const size_t            width;
         const size_t            height;
-
-    private:
         rs::Buffer<rs::Color>   colorBuffer;
         rs::Buffer<double>      depthBuffer;
 
     public:
-        rs::Color* GetColorData() const
-        {
-            return colorBuffer.GetData();
-        }
-
         rs::Color& ColorAt(const size_t& x, const size_t& y)
         {
             return colorBuffer.At(x, y);
-        }
-
-        rs::Color& ColorAt(const size_t& index)
-        {
-            return colorBuffer.At(index);
         }
 
         double& DepthAt(const size_t& x, const size_t& y)

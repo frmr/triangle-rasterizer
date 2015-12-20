@@ -9,9 +9,7 @@ namespace rs
     public:
         const size_t    height;
         const size_t    width;
-
-    private:
-        T*              data;
+        T* const        data;
 
     public:
 
@@ -26,11 +24,6 @@ namespace rs
             return data[0];
         }
 
-        T& At(const size_t index)
-        {
-            return data[index];
-        }
-
         T GetAt(const size_t& x, const size_t& y) const
         {
             return data[y*width+x];
@@ -41,22 +34,12 @@ namespace rs
             return data[0];
         }
 
-        T GetAt(const size_t& index) const
-        {
-            return data[index];
-        }
-
-        T* GetData() const
-        {
-            return data;
-        }
-
     public:
         Buffer(const size_t& width, const size_t& height)
             :   height(height),
-                width(width)
+                width(width),
+                data(new T[width*height])
         {
-            data = new T[width*height];
         }
 
         ~Buffer()

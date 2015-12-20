@@ -13,35 +13,6 @@ using std::cerr;
 using std::endl;
 using std::vector;
 
-void CopyFrameBufferSectionToSurface(const rs::FrameBuffer& fb, Uint32* pixels, const size_t iStart, const size_t iEnd)
-{
-    rs::Color* colorData = fb.GetColorData();
-    for (size_t i = iStart; i < iEnd; ++i)
-    {
-        pixels[i] = ((Uint32) colorData[i].r) << 16;
-        pixels[i] += ((Uint32) colorData[i].g) << 8;
-        pixels[i] += ((Uint32) colorData[i].b) << 0;
-    }
-}
-
-void CopyFrameBufferToSurface(const rs::FrameBuffer& fb, SDL_Surface* sdlSurface, const unsigned int numThreads)
-{
-    Uint32* pixels = (Uint32*)(sdlSurface->pixels);
-    const size_t numPixels = fb.width * fb.height;
-
-    vector<std::thread> threads;
-    threads.reserve(numThreads);
-    for (unsigned int t = 0; t < numThreads; ++t)
-	{
-		threads.push_back(std::thread(CopyFrameBufferSectionToSurface, std::cref(fb), pixels, t*numPixels/numThreads, (t+1)*numPixels/numThreads));
-	}
-
-	for (auto it = threads.begin(); it != threads.end(); ++it)
-	{
-		it->join();
-	}
-}
-
 bool InitSdl()
 {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0)
@@ -98,12 +69,13 @@ int main(int argc, char* argv[])
     }
 
     vector<rs::Vec3d> vertices;
+    vertices.emplace_back(0.0, 0.0, -10.0);
     vector<size_t> indices;
     rs::Texture tex("data/udon.bmp");
     double* matrix;
     rs::FrameBuffer fb(screenWidth, screenHeight);
 
-    SDL_Surface* sdlSurface = SDL_CreateRGBSurface(0, screenWidth, screenHeight, 32, 0, 0, 0, 0);
+    SDL_Surface* sdlSurface;
 
     while (running)
     {
@@ -119,9 +91,10 @@ int main(int argc, char* argv[])
         }
 
         rs::Draw(rs::DrawMode::POINTS, vertices, indices, tex, matrix, matrix, fb);
-        CopyFrameBufferToSurface(fb, sdlSurface, 4);
+        sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.colorBuffer.data, screenWidth, screenHeight, 32, 4*screenWidth, 0, 0, 0, 0);
 
         SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
+        SDL_FreeSurface(sdlSurface);
         SDL_RenderCopy(renderer, sdlTexture, NULL, NULL);
         SDL_RenderPresent(renderer);
         SDL_DestroyTexture(sdlTexture);
