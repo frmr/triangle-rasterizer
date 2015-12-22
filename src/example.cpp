@@ -54,8 +54,8 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    const size_t screenWidth = 800;
-    const size_t screenHeight = 600;
+    const size_t screenWidth = 1024;
+    const size_t screenHeight = 768;
 
     SDL_Window* window = NULL;
     SDL_Renderer* renderer = NULL;
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
     vector<rs::Vec3d> vertices;
     vertices.emplace_back(0.0, 0.0, -10.0);
     vector<size_t> indices;
-    rs::Texture tex("data/udon.bmp");
+    rs::Texture tex("data/udon2.bmp");
     double* matrix;
     rs::FrameBuffer fb(screenWidth, screenHeight);
 
@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 
     while (running)
     {
-        auto start = std::chrono::high_resolution_clock::now();
+        const auto start = std::chrono::high_resolution_clock::now();
 
         SDL_Event e;
         while(SDL_PollEvent(&e))
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
         }
 
         rs::Draw(rs::DrawMode::POINTS, vertices, indices, tex, matrix, matrix, fb);
-        sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.colorBuffer.data, screenWidth, screenHeight, 32, 4*screenWidth, 0, 0, 0, 0);
+        sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.colorBuffer.data, screenWidth, screenHeight, 32, sizeof(rs::Color)*screenWidth, 0, 0, 0, 0);
 
         SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
         SDL_FreeSurface(sdlSurface);
@@ -99,8 +99,8 @@ int main(int argc, char* argv[])
         SDL_RenderPresent(renderer);
         SDL_DestroyTexture(sdlTexture);
 
-        auto end = std::chrono::high_resolution_clock::now();
-        auto diff = end - start;
+        const auto end = std::chrono::high_resolution_clock::now();
+        const auto diff = end - start;
         cout << std::chrono::duration<double, std::milli>(diff).count() << " ms" << endl;
     }
 
