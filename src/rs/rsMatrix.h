@@ -34,14 +34,31 @@ namespace rs
         }
 
         template<typename U, typename V, typename W>
-        static void Multiply(const rs::Matrix<S,U>& lhs, Vector<S,V>& rhs, Vector<S,W>& result)
+        static void Multiply(const rs::Matrix<S,U>& lhs, const Vector<S,V>& rhs, Vector<S,W>& result)
         {
             for (size_t row = 0; row < S; ++row)
             {
                 for (size_t col = 0; col < S; ++col)
                 {
-                    result[row] += (W) lhs[row][col] * (W) rhs[col];
+                    result[row] += (W) lhs[row][col] * (W) rhs.GetAt(col);
                 }
+            }
+        }
+
+        void SetIdentity()
+        {
+            SetZero();
+            for (int i = 0; i < S; ++i)
+            {
+                (*this)[i][i] = (T) 1;
+            }
+        }
+
+        void SetZero()
+        {
+            for (int i = 0; i < S*S; ++i)
+            {
+                data[i] = (T) 0;
             }
         }
 
@@ -62,7 +79,7 @@ namespace rs
         }
 
         template<typename U>
-        Vector<S,T> operator*(Vector<S,U>& rhs) const
+        Vector<S,T> operator*(const Vector<S,U>& rhs) const
         {
             Vector<S,T> result;
             Multiply(*this, rhs, result);
@@ -85,10 +102,7 @@ namespace rs
         Matrix()
             :   data(new T[S*S])
         {
-            for (size_t i = 0; i < S*S; ++i)
-            {
-                data[i] = (T) 0;
-            }
+            SetZero();
         }
 
         template<typename U>
@@ -116,10 +130,6 @@ namespace rs
             delete[] data;
         }
     };
-
-    typedef rs::Matrix<4,float>     Mat4f;
-    typedef rs::Matrix<4,double>    Mat4d;
-    typedef rs::Matrix<4,int>       Mat4i;
 }
 
 #endif

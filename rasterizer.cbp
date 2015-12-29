@@ -92,6 +92,7 @@
 		<Unit filename="src/rs/rsCamera.h" />
 		<Unit filename="src/rs/rsColor.h" />
 		<Unit filename="src/rs/rsFrameBuffer.h" />
+		<Unit filename="src/rs/rsMat4.h" />
 		<Unit filename="src/rs/rsMatrix.h" />
 		<Unit filename="src/rs/rsRasterizer.h" />
 		<Unit filename="src/rs/rsTexture.h" />

@@ -87,6 +87,7 @@ namespace rs
             x *= (T) rhs;
             y *= (T) rhs;
             z *= (T) rhs;
+            w *= (T) rhs;
             return *this;
         }
 
@@ -96,6 +97,7 @@ namespace rs
             x /= (T) rhs;
             y /= (T) rhs;
             z /= (T) rhs;
+            w /= (T) rhs;
             return *this;
         }
 
@@ -110,14 +112,6 @@ namespace rs
                     z >= (T) rhs.z - epsilon &&
                     w <= (T) rhs.w + epsilon &&
                     w >= (T) rhs.w - epsilon);
-        }
-
-        T& operator[](const int i)
-        {
-            if      (i == 0)    { return x; }
-            else if (i == 1)    { return y; }
-            else if (i == 2)    { return z; }
-            else                { return w; }
         }
 
         explicit operator rs::Vec4<double>() const
@@ -138,6 +132,19 @@ namespace rs
                 z(this->data[2]),
                 w(this->data[3])
         {
+        }
+
+        Vec4<T>(const rs::Vector<4,T>& vecA)
+            :   rs::Vector<4,T>(),
+                x(this->data[0]),
+                y(this->data[1]),
+                z(this->data[2]),
+                w(this->data[3])
+        {
+            for (size_t i = 0; i < 4; ++i)
+            {
+                this->data[i] = vecA.GetAt(i);
+            }
         }
 
         Vec4<T>(const T& xInit, const T& yInit, const T& zInit, const T& wInit)

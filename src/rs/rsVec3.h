@@ -124,13 +124,6 @@ namespace rs
                     z >= (T) rhs.z - epsilon);
         }
 
-        T& operator[](const int i)
-        {
-            if      (i == 0)    { return x; }
-            else if (i == 1)    { return y; }
-            else                { return z; }
-        }
-
         explicit operator rs::Vec3<double>() const
         {
             return Vec3<double>((double) x, (double) y, (double) z);

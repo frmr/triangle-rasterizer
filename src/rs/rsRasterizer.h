@@ -1,11 +1,13 @@
 #ifndef RS_RASTERIZER_H
 #define RS_RASTERIZER_H
 
+#include <limits>
 #include <vector>
 
 #include "rsFrameBuffer.h"
+#include "rsMat4.h"
 #include "rsTexture.h"
-#include "rsVec3.h"
+#include "rsVec4.h"
 
 using std::vector;
 
@@ -22,13 +24,31 @@ namespace rs
         TRIANGLE_FAN
     };
 
-    void Draw(const rs::DrawMode mode, const vector<rs::Vec3d>& vertices, const vector<size_t>& indices, const rs::Texture& texture, const double* const modelViewMatrix, const double* const projectionMatrix, rs::FrameBuffer& fb)
+    void Draw(const rs::DrawMode mode, const vector<rs::Vec4d>& vertices, const vector<size_t>& indices, const rs::Texture& texture, const rs::Mat4d& modelViewMatrix, const rs::Mat4d& projectionMatrix, rs::FrameBuffer& fb)
     {
-        const size_t totalPixels = fb.width * fb.height;
-        for (size_t index = 0; index < totalPixels; ++index)
+        vector<rs::Vec4d> transformedVertices;
+        transformedVertices.reserve(vertices.size());
+        for (const auto& vertex : vertices)
         {
-            fb.colorBuffer.data[index] = texture.colorBuffer.data[index];
+            transformedVertices.emplace_back(modelViewMatrix * projectionMatrix * vertex);
+            transformedVertices.back() /= transformedVertices.back().w;
         }
+
+        //clip
+
+        //viewport transformation
+        for (const auto& vertex : transformedVertices)
+        {
+            const double vx = (vertex.x + 1) * (800) / 2;
+            const double vy = (vertex.y + 1) * 600 / 2;
+            fb.colorBuffer.At(floor(vx), floor(vy)) = std::numeric_limits<uint32_t>::max();
+        }
+
+//        const size_t totalPixels = fb.width * fb.height;
+//        for (size_t index = 0; index < totalPixels; ++index)
+//        {
+//            fb.colorBuffer.data[index] = texture.colorBuffer.data[index];
+//        }
     }
 }
 

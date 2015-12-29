@@ -17,11 +17,16 @@ namespace rs
             return data[i];
         }
 
-        void Print()
+        T GetAt(const size_t i) const
+        {
+            return data[i];
+        }
+
+        void Print() const
         {
             for (size_t i = 0; i < S; ++i)
             {
-                std::cout << (*this)[i] << "\t";
+                std::cout << data[i] << "\t";
             }
             std::cout << std::endl;
         }
