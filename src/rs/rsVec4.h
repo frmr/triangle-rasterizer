@@ -1,5 +1,5 @@
-#ifndef RS_VEC3_H
-#define RS_VEC3_H
+#ifndef RS_VEC4_H
+#define RS_VEC4_H
 
 #include <cmath>
 #include "rsVector.h"
@@ -7,12 +7,13 @@
 namespace rs
 {
     template<typename T>
-    class Vec3 : public rs::Vector<3,T>
+    class Vec4 : public rs::Vector<4,T>
     {
     public:
         T&  x;
         T&  y;
         T&  z;
+        T&  w;
         static constexpr T epsilon = (T) 0.000000;
 
     public:
@@ -21,7 +22,7 @@ namespace rs
             return sqrt(x*x + y*y + z*z);
         }
 
-        Vec3<T>& Reverse()
+        Vec4<T>& Reverse()
         {
             x = -x;
             y = -y;
@@ -29,7 +30,7 @@ namespace rs
             return *this;
         }
 
-        Vec3<T>& Unit()
+        Vec4<T>& Unit()
         {
             T length = Length();
             x /= length;
@@ -39,37 +40,31 @@ namespace rs
         }
 
         template<typename U>
-        Vec3<T> operator+(const Vec3<U>& rhs) const
+        Vec4<T> operator+(const Vec4<U>& rhs) const
         {
-            return rs::Vec3<T>(x + (T) rhs.x, y + (T) rhs.y, z + (T) rhs.z);
+            return rs::Vec4<T>(x + (T) rhs.x, y + (T) rhs.y, z + (T) rhs.z, w);
         }
 
         template<typename U>
-        Vec3<T> operator-(const Vec3<U>& rhs) const
+        Vec4<T> operator-(const Vec4<U>& rhs) const
         {
-            return rs::Vec3<T>(x - (T) rhs.x, y - (T) rhs.y, z - (T) rhs.z);
+            return rs::Vec4<T>(x - (T) rhs.x, y - (T) rhs.y, z - (T) rhs.z, w);
         }
 
         template<typename U>
-        Vec3<T> operator*(const U& rhs) const
+        Vec4<T> operator*(const U& rhs) const
         {
-            return rs::Vec3<T>(x * (T) rhs, y * (T) rhs, z * (T) rhs);
+            return rs::Vec4<T>(x * (T) rhs, y * (T) rhs, z * (T) rhs, w);
         }
 
         template<typename U>
-        Vec3<T> operator*(const Vec3<U>& rhs) const
+        Vec4<T> operator/(const U& rhs) const
         {
-            return rs::Vec3<T>(x * (T) rhs.x, y * (T) rhs.y, z * (T) rhs.z);
+            return rs::Vec4<T>(x / (T) rhs, y / (T) rhs, z / (T) rhs, w);
         }
 
         template<typename U>
-        Vec3<T> operator/(const U& rhs) const
-        {
-            return rs::Vec3<T>(x / (T) rhs, y / (T) rhs, z / (T) rhs);
-        }
-
-        template<typename U>
-        Vec3<T>& operator+=(const Vec3<U>& rhs)
+        Vec4<T>& operator+=(const Vec4<U>& rhs)
         {
             x += (T) rhs.x;
             y += (T) rhs.y;
@@ -78,7 +73,7 @@ namespace rs
         }
 
         template<typename U>
-        Vec3<T>& operator-=(const Vec3<U>& rhs)
+        Vec4<T>& operator-=(const Vec4<U>& rhs)
         {
             x -= (T) rhs.x;
             y -= (T) rhs.y;
@@ -87,7 +82,7 @@ namespace rs
         }
 
         template<typename U>
-        Vec3<T>& operator*=(const U& rhs)
+        Vec4<T>& operator*=(const U& rhs)
         {
             x *= (T) rhs;
             y *= (T) rhs;
@@ -96,16 +91,7 @@ namespace rs
         }
 
         template<typename U>
-        Vec3<T>& operator*=(const Vec3<U>& rhs)
-        {
-            x *= (T) rhs.x;
-            y *= (T) rhs.y;
-            z *= (T) rhs.z;
-            return *this;
-        }
-
-        template<typename U>
-        Vec3<T>& operator/=(const U& rhs)
+        Vec4<T>& operator/=(const U& rhs)
         {
             x /= (T) rhs;
             y /= (T) rhs;
@@ -121,50 +107,56 @@ namespace rs
                     y <= (T) rhs.y + epsilon &&
                     y >= (T) rhs.y - epsilon &&
                     z <= (T) rhs.z + epsilon &&
-                    z >= (T) rhs.z - epsilon);
+                    z >= (T) rhs.z - epsilon &&
+                    w <= (T) rhs.w + epsilon &&
+                    w >= (T) rhs.w - epsilon);
         }
 
         T& operator[](const int i)
         {
             if      (i == 0)    { return x; }
             else if (i == 1)    { return y; }
-            else                { return z; }
+            else if (i == 2)    { return z; }
+            else                { return w; }
         }
 
-        explicit operator rs::Vec3<double>() const
+        explicit operator rs::Vec4<double>() const
         {
-            return Vec3<double>((double) x, (double) y, (double) z);
+            return Vec4<double>((double) x, (double) y, (double) z, (double) w);
         }
 
-        explicit operator rs::Vec3<float>() const
+        explicit operator rs::Vec4<float>() const
         {
-            return Vec3<float>((float) x, (float) y, (float) z);
+            return Vec4<float>((float) x, (float) y, (float) z, (float) w);
         }
 
     public:
-        Vec3<T>()
-            :   rs::Vector<3,T>(),
+        Vec4<T>()
+            :   rs::Vector<4,T>(),
                 x(this->data[0]),
                 y(this->data[1]),
-                z(this->data[2])
+                z(this->data[2]),
+                w(this->data[3])
         {
         }
 
-        Vec3<T>(const T& xInit, const T& yInit, const T& zInit)
-            :   rs::Vector<3,T>(),
+        Vec4<T>(const T& xInit, const T& yInit, const T& zInit, const T& wInit)
+            :   rs::Vector<4,T>(),
                 x(this->data[0]),
                 y(this->data[1]),
-                z(this->data[2])
+                z(this->data[2]),
+                w(this->data[3])
         {
             x = xInit;
             y = yInit;
             z = zInit;
+            w = wInit;
         }
     };
 
-    typedef	Vec3<float>         Vec3f;
-    typedef	Vec3<double>        Vec3d;
-    typedef Vec3<int>           Vec3i;
+    typedef	Vec4<float>     Vec4f;
+    typedef	Vec4<double>    Vec4d;
+    typedef Vec4<int>       Vec4i;
 }
 
-#endif // RS_VEC3_H
+#endif

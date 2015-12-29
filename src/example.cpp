@@ -5,6 +5,8 @@
 
 #include "rs/rsRasterizer.h"
 #include "rs/rsVec3.h"
+#include "rs/rsVec4.h"
+#include "rs/rsMatrix.h"
 
 #include <SDL.h>
 
