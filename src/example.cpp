@@ -3,10 +3,9 @@
 #include <thread>
 #include <vector>
 
+#include "rs/rsMat4.h"
 #include "rs/rsRasterizer.h"
-#include "rs/rsVec3.h"
 #include "rs/rsVec4.h"
-#include "rs/rsMatrix.h"
 
 #include <SDL.h>
 
@@ -47,7 +46,6 @@ bool InitWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWi
 
 int main(int argc, char* argv[])
 {
-
     bool running = true;
 
     if (!InitSdl())
@@ -71,18 +69,22 @@ int main(int argc, char* argv[])
     }
 
     vector<rs::Vec4d> vertices;
-    vertices.emplace_back(-5.0, 5.0, -10.0, 1.0);
+    vertices.emplace_back(0.0, 0.0, -10.0, 1.0);
+
     vector<size_t> indices;
+
     rs::Texture tex("data/udon1.bmp");
 
     rs::Mat4d modelViewMatrix;
     modelViewMatrix.SetIdentity();
+    modelViewMatrix.RotateX(3.1416 / 4.0);
+    modelViewMatrix.RotateY(3.1416 / 4.0);
 
     rs::Mat4d projectionMatrix;
-    projectionMatrix.SetOrthographic(-1.0, 1.0, -1.0, 1.0, 0.0, -100.0);
+
+    //projectionMatrix.SetOrthographic(-1.0, 1.0, -1.0, 1.0, 0.0, -100.0);
     projectionMatrix.SetPerspective(-1.0, 1.0, -1.0, 1.0, -1.0, -100.0);
 
-    projectionMatrix.Print();
 
     rs::FrameBuffer fb(screenWidth, screenHeight);
 

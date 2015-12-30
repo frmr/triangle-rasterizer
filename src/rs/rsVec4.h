@@ -2,41 +2,52 @@
 #define RS_VEC4_H
 
 #include <cmath>
-#include "rsVector.h"
+#include <iostream>
 
 namespace rs
 {
     template<typename T>
-    class Vec4 : public rs::Vector<4,T>
+    class Vec4
     {
     public:
-        T&  x;
-        T&  y;
-        T&  z;
-        T&  w;
-        static constexpr T epsilon = (T) 0.000000;
+        T* const                data;
+        T&                      x;
+        T&                      y;
+        T&                      z;
+        T&                      w;
+        static constexpr T      epsilon = (T) 0.000000;
+        static constexpr size_t size = 4;
 
     public:
+        T& At(const size_t i)
+        {
+            return data[i];
+        }
+
+        T GetAt(const size_t i) const
+        {
+            return data[i];
+        }
+
         double Length() const
         {
             return sqrt(x*x + y*y + z*z);
         }
 
-        Vec4<T>& Reverse()
+        void Print() const
         {
-            x = -x;
-            y = -y;
-            z = -z;
-            return *this;
+            std::cout << x << "\t" << y << "\t" << z << "\t" << w << std::endl << std::endl;
         }
 
-        Vec4<T>& Unit()
+        void SetZero()
         {
-            T length = Length();
-            x /= length;
-            y /= length;
-            z /= length;
-            return *this;
+            x = y = z = w = (T) 0;
+        }
+
+    public:
+        T& operator[](const size_t i)
+        {
+            return data[i];
         }
 
         template<typename U>
@@ -114,50 +125,46 @@ namespace rs
                     w >= (T) rhs.w - epsilon);
         }
 
-        explicit operator rs::Vec4<double>() const
-        {
-            return Vec4<double>((double) x, (double) y, (double) z, (double) w);
-        }
-
-        explicit operator rs::Vec4<float>() const
-        {
-            return Vec4<float>((float) x, (float) y, (float) z, (float) w);
-        }
-
     public:
-        Vec4<T>()
-            :   rs::Vector<4,T>(),
-                x(this->data[0]),
-                y(this->data[1]),
-                z(this->data[2]),
-                w(this->data[3])
+        Vec4()
+            :   data(new T[size]),
+                x(data[0]),
+                y(data[1]),
+                z(data[2]),
+                w(data[3])
         {
+            SetZero();
         }
 
-        Vec4<T>(const rs::Vector<4,T>& vecA)
-            :   rs::Vector<4,T>(),
-                x(this->data[0]),
-                y(this->data[1]),
-                z(this->data[2]),
-                w(this->data[3])
+        Vec4(const rs::Vec4<T>& vecA)
+            :   data(new T[size]),
+                x(data[0]),
+                y(data[1]),
+                z(data[2]),
+                w(data[3])
         {
-            for (size_t i = 0; i < 4; ++i)
-            {
-                this->data[i] = vecA.GetAt(i);
-            }
+            x = vecA.x;
+            y = vecA.y;
+            z = vecA.z;
+            w = vecA.w;
         }
 
-        Vec4<T>(const T& xInit, const T& yInit, const T& zInit, const T& wInit)
-            :   rs::Vector<4,T>(),
-                x(this->data[0]),
-                y(this->data[1]),
-                z(this->data[2]),
-                w(this->data[3])
+        Vec4(const T& xInit, const T& yInit, const T& zInit, const T& wInit)
+            :   data(new T[size]),
+                x(data[0]),
+                y(data[1]),
+                z(data[2]),
+                w(data[3])
         {
             x = xInit;
             y = yInit;
             z = zInit;
             w = wInit;
+        }
+
+        ~Vec4()
+        {
+            delete[] data;
         }
     };
 

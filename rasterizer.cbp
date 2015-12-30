@@ -93,13 +93,9 @@
 		<Unit filename="src/rs/rsColor.h" />
 		<Unit filename="src/rs/rsFrameBuffer.h" />
 		<Unit filename="src/rs/rsMat4.h" />
-		<Unit filename="src/rs/rsMatrix.h" />
 		<Unit filename="src/rs/rsRasterizer.h" />
 		<Unit filename="src/rs/rsTexture.h" />
-		<Unit filename="src/rs/rsVec2.h" />
-		<Unit filename="src/rs/rsVec3.h" />
 		<Unit filename="src/rs/rsVec4.h" />
-		<Unit filename="src/rs/rsVector.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
