@@ -3,9 +3,9 @@
 #include <thread>
 #include <vector>
 
-#include "rs/rsMat4.h"
-#include "rs/rsRasterizer.h"
-#include "rs/rsVec4.h"
+#include "tr/trMat4.h"
+#include "tr/tr.h"
+#include "tr/trVec4.h"
 
 #include <SDL.h>
 
@@ -68,25 +68,25 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    vector<rs::Vec4d> vertices;
+    vector<tr::Vec4d> vertices;
     vertices.emplace_back(0.0, 0.0, -10.0, 1.0);
 
     vector<size_t> indices;
 
-    rs::Texture tex("data/udon1.bmp");
+    tr::Texture tex("data/udon1.bmp");
 
-    rs::Mat4d modelViewMatrix;
+    tr::Mat4d modelViewMatrix;
     modelViewMatrix.SetIdentity();
     modelViewMatrix.RotateX(3.1416 / 4.0);
     modelViewMatrix.RotateY(3.1416 / 4.0);
 
-    rs::Mat4d projectionMatrix;
+    tr::Mat4d projectionMatrix;
 
     //projectionMatrix.SetOrthographic(-1.0, 1.0, -1.0, 1.0, 0.0, -100.0);
     projectionMatrix.SetPerspective(-1.0, 1.0, -1.0, 1.0, -1.0, -100.0);
 
 
-    rs::FrameBuffer fb(screenWidth, screenHeight);
+    tr::FrameBuffer fb(screenWidth, screenHeight);
 
     SDL_Surface* sdlSurface;
 
@@ -103,12 +103,12 @@ int main(int argc, char* argv[])
             }
         }
 
-        rs::Draw(rs::DrawMode::POINTS, vertices, indices, tex, modelViewMatrix, projectionMatrix, fb);
-        sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.colorBuffer.data, screenWidth, screenHeight, 32, sizeof(rs::Color)*screenWidth, 0, 0, 0, 0);
+        tr::Draw(tr::DrawMode::POINTS, vertices, indices, tex, modelViewMatrix, projectionMatrix, fb);
+        sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.colorBuffer.data, screenWidth, screenHeight, 32, sizeof(tr::Color)*screenWidth, 0, 0, 0, 0);
 
         SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
         SDL_FreeSurface(sdlSurface);
-        SDL_RenderCopy(renderer, sdlTexture, NULL, NULL);
+        SDL_RenderCopy(renderer, sdlTexture, nullptr, nullptr);
         SDL_RenderPresent(renderer);
         SDL_DestroyTexture(sdlTexture);
 

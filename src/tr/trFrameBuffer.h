@@ -1,21 +1,21 @@
-#ifndef RS_FRAMEBUFFER_H
-#define RS_FRAMEBUFFER_H
+#ifndef TR_FRAMEBUFFER_H
+#define TR_FRAMEBUFFER_H
 
-#include "rsBuffer.h"
-#include "rsColor.h"
+#include "trBuffer.h"
+#include "trColor.h"
 
-namespace rs
+namespace tr
 {
     class FrameBuffer
     {
     public:
         const size_t            width;
         const size_t            height;
-        rs::Buffer<rs::Color>   colorBuffer;
-        rs::Buffer<double>      depthBuffer;
+        tr::Buffer<tr::Color>   colorBuffer;
+        tr::Buffer<double>      depthBuffer;
 
     public:
-        rs::Color& ColorAt(const size_t& x, const size_t& y)
+        tr::Color& ColorAt(const size_t& x, const size_t& y)
         {
             return colorBuffer.At(x, y);
         }
@@ -36,4 +36,4 @@ namespace rs
     };
 }
 
-#endif // RS_FRAMEBUFFER_H
+#endif

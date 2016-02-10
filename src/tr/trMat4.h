@@ -1,12 +1,12 @@
-#ifndef RS_MAT4_H
-#define RS_MAT4_H
+#ifndef TR_MAT4_H
+#define TR_MAT4_H
 
 #include <cmath>
 #include <iostream>
 
-#include "rsVec4.h"
+#include "trVec4.h"
 
-namespace rs
+namespace tr
 {
     template<typename T>
     class Mat4
@@ -17,7 +17,7 @@ namespace rs
 
     public:
         template<typename U, typename V, typename W>
-        static void Multiply(const rs::Mat4<U>& lhs, const rs::Mat4<V>& rhs, rs::Mat4<W>& result)
+        static void Multiply(const tr::Mat4<U>& lhs, const tr::Mat4<V>& rhs, tr::Mat4<W>& result)
         {
             for (size_t row = 0; row < size; ++row)
             {
@@ -32,7 +32,7 @@ namespace rs
         }
 
         template<typename U, typename V, typename W>
-        static void Multiply(const rs::Mat4<U>& lhs, const rs::Vec4<V>& rhs, rs::Vec4<W>& result)
+        static void Multiply(const tr::Mat4<U>& lhs, const tr::Vec4<V>& rhs, tr::Vec4<W>& result)
         {
             for (size_t row = 0; row < size; ++row)
             {
@@ -58,7 +58,7 @@ namespace rs
 
         void RotateX(const double& radians)
         {
-            rs::Mat4<double> rotationMatrix;
+            tr::Mat4<double> rotationMatrix;
             rotationMatrix[0][0] = 1.0;
             rotationMatrix[1][1] = cos(radians);
             rotationMatrix[1][2] = -sin(radians);
@@ -70,7 +70,7 @@ namespace rs
 
         void RotateY(const double& radians)
         {
-            rs::Mat4<double> rotationMatrix;
+            tr::Mat4<double> rotationMatrix;
             rotationMatrix[0][0] = cos(radians);
             rotationMatrix[0][2] = sin(radians);
             rotationMatrix[1][1] = 1.0;
@@ -83,7 +83,7 @@ namespace rs
 
         void RotateZ(const double& radians)
         {
-            rs::Mat4<double> rotationMatrix;
+            tr::Mat4<double> rotationMatrix;
             rotationMatrix[0][0] = cos(radians);
             rotationMatrix[0][1] = -sin(radians);
             rotationMatrix[1][0] = sin(radians);
@@ -149,23 +149,23 @@ namespace rs
         }
 
         template<typename U>
-        rs::Mat4<T>& operator*=(const rs::Mat4<U>& rhs)
+        tr::Mat4<T>& operator*=(const tr::Mat4<U>& rhs)
         {
-            const rs::Mat4<T> original(data);
+            const tr::Mat4<T> original(data);
             Multiply(original, rhs, *this);
             return *this;
         }
 
         template<typename U>
-        rs::Mat4<T> operator*(const rs::Mat4<U>& rhs) const
+        tr::Mat4<T> operator*(const tr::Mat4<U>& rhs) const
         {
-            rs::Mat4<T> result;
+            tr::Mat4<T> result;
             Multiply(*this, rhs, result);
             return result;
         }
 
         template<typename U>
-        rs::Vec4<T> operator*(const Vec4<U>& rhs) const
+        tr::Vec4<T> operator*(const Vec4<U>& rhs) const
         {
             Vec4<T> result;
             Multiply(*this, rhs, result);
@@ -205,4 +205,4 @@ namespace rs
     typedef Mat4<double> Mat4d;
 }
 
-#endif // RS_MAT4_H
+#endif

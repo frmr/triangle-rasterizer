@@ -1,7 +1,7 @@
-#ifndef RS_BUFFER_H
-#define RS_BUFFER_H
+#ifndef TR_BUFFER_H
+#define TR_BUFFER_H
 
-namespace rs
+namespace tr
 {
     template<typename T>
     class Buffer
@@ -50,4 +50,4 @@ namespace rs
 }
 
 
-#endif // RS_BUFFER_H
+#endif

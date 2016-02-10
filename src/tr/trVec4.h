@@ -1,10 +1,10 @@
-#ifndef RS_VEC4_H
-#define RS_VEC4_H
+#ifndef TR_VEC4_H
+#define TR_VEC4_H
 
 #include <cmath>
 #include <iostream>
 
-namespace rs
+namespace tr
 {
     template<typename T>
     class Vec4
@@ -53,25 +53,25 @@ namespace rs
         template<typename U>
         Vec4<T> operator+(const Vec4<U>& rhs) const
         {
-            return rs::Vec4<T>(x + (T) rhs.x, y + (T) rhs.y, z + (T) rhs.z, w);
+            return tr::Vec4<T>(x + (T) rhs.x, y + (T) rhs.y, z + (T) rhs.z, w);
         }
 
         template<typename U>
         Vec4<T> operator-(const Vec4<U>& rhs) const
         {
-            return rs::Vec4<T>(x - (T) rhs.x, y - (T) rhs.y, z - (T) rhs.z, w);
+            return tr::Vec4<T>(x - (T) rhs.x, y - (T) rhs.y, z - (T) rhs.z, w);
         }
 
         template<typename U>
         Vec4<T> operator*(const U& rhs) const
         {
-            return rs::Vec4<T>(x * (T) rhs, y * (T) rhs, z * (T) rhs, w);
+            return tr::Vec4<T>(x * (T) rhs, y * (T) rhs, z * (T) rhs, w);
         }
 
         template<typename U>
         Vec4<T> operator/(const U& rhs) const
         {
-            return rs::Vec4<T>(x / (T) rhs, y / (T) rhs, z / (T) rhs, w);
+            return tr::Vec4<T>(x / (T) rhs, y / (T) rhs, z / (T) rhs, w);
         }
 
         template<typename U>
@@ -136,7 +136,7 @@ namespace rs
             SetZero();
         }
 
-        Vec4(const rs::Vec4<T>& vecA)
+        Vec4(const tr::Vec4<T>& vecA)
             :   data(new T[size]),
                 x(data[0]),
                 y(data[1]),

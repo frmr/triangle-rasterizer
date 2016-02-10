@@ -1,17 +1,17 @@
-#ifndef RS_RASTERIZER_H
-#define RS_RASTERIZER_H
+#ifndef TR_H
+#define TR_H
 
 #include <limits>
 #include <vector>
 
-#include "rsFrameBuffer.h"
-#include "rsMat4.h"
-#include "rsTexture.h"
-#include "rsVec4.h"
+#include "trFrameBuffer.h"
+#include "trMat4.h"
+#include "trTexture.h"
+#include "trVec4.h"
 
 using std::vector;
 
-namespace rs
+namespace tr
 {
     enum class DrawMode
     {
@@ -24,11 +24,11 @@ namespace rs
         TRIANGLE_FAN
     };
 
-    void Draw(const rs::DrawMode mode, const vector<rs::Vec4d>& vertices, const vector<size_t>& indices, const rs::Texture& texture, const rs::Mat4d& modelViewMatrix, const rs::Mat4d& projectionMatrix, rs::FrameBuffer& fb)
+    void Draw(const tr::DrawMode mode, const vector<tr::Vec4d>& vertices, const vector<size_t>& indices, const tr::Texture& texture, const tr::Mat4d& modelViewMatrix, const tr::Mat4d& projectionMatrix, tr::FrameBuffer& fb)
     {
 //        modelViewMatrix.Print();
 //        projectionMatrix.Print();
-        vector<rs::Vec4d> transformedVertices;
+        vector<tr::Vec4d> transformedVertices;
         transformedVertices.reserve(vertices.size());
         for (const auto& vertex : vertices)
         {
@@ -57,4 +57,4 @@ namespace rs
     }
 }
 
-#endif // RS_RASTERIZER_H
+#endif

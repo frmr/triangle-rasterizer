@@ -1,12 +1,12 @@
-#ifndef RS_ARRAY_H
-#define RS_ARRAY_H
+#ifndef TR_ARRAY_H
+#define TR_ARRAY_H
 
 #include <cstddef>
 #include <vector>
 
 using std::vector;
 
-namespace rs
+namespace tr
 {
     template<typename T>
     class Array
@@ -98,4 +98,4 @@ namespace rs
     };
 }
 
-#endif // RS_ARRAY_H
+#endif
