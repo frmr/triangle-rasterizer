@@ -3,9 +3,9 @@
 #include <thread>
 #include <vector>
 
-#include "tr/trMat4.h"
-#include "tr/tr.h"
-#include "tr/trVec4.h"
+#include "tr/trMat4.hpp"
+#include "tr/tr.hpp"
+#include "tr/trVec4.hpp"
 
 #include <SDL.h>
 
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 
     tr::Mat4d modelViewMatrix;
     modelViewMatrix.SetIdentity();
-    modelViewMatrix.RotateX(3.1416 / 4.0);
+    //modelViewMatrix.RotateX(3.1416 / 4.0);
     modelViewMatrix.RotateY(3.1416 / 4.0);
 
     tr::Mat4d projectionMatrix;

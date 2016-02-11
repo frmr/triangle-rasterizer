@@ -1,8 +1,8 @@
-#ifndef TR_FRAMEBUFFER_H
-#define TR_FRAMEBUFFER_H
+#ifndef TR_FRAMEBUFFER_HPP
+#define TR_FRAMEBUFFER_HPP
 
-#include "trBuffer.h"
-#include "trColor.h"
+#include "trBuffer.hpp"
+#include "trColor.hpp"
 
 namespace tr
 {

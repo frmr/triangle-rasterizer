@@ -1,5 +1,5 @@
-#ifndef TR_VEC4_H
-#define TR_VEC4_H
+#ifndef TR_VEC4_HPP
+#define TR_VEC4_HPP
 
 #include <cmath>
 #include <iostream>

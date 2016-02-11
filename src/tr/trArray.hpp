@@ -1,5 +1,5 @@
-#ifndef TR_ARRAY_H
-#define TR_ARRAY_H
+#ifndef TR_ARRAY_HPP
+#define TR_ARRAY_HPP
 
 #include <cstddef>
 #include <vector>

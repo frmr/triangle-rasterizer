@@ -1,5 +1,5 @@
-#ifndef TR_BUFFER_H
-#define TR_BUFFER_H
+#ifndef TR_BUFFER_HPP
+#define TR_BUFFER_HPP
 
 namespace tr
 {

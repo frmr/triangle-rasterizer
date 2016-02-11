@@ -1,12 +1,12 @@
-#ifndef TR_TEXTURE_H
-#define TR_TEXTURE_H
+#ifndef TR_TEXTURE_HPP
+#define TR_TEXTURE_HPP
 
 #include <iostream>
 #include <string>
 
 #include "../EasyBMP/EasyBMP.h"
-#include "trBuffer.h"
-#include "trColor.h"
+#include "trBuffer.hpp"
+#include "trColor.hpp"
 
 using std::cerr;
 using std::endl;

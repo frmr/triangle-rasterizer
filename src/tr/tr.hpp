@@ -1,13 +1,13 @@
-#ifndef TR_H
-#define TR_H
+#ifndef TR_HPP
+#define TR_HPP
 
 #include <limits>
 #include <vector>
 
-#include "trFrameBuffer.h"
-#include "trMat4.h"
-#include "trTexture.h"
-#include "trVec4.h"
+#include "trFrameBuffer.hpp"
+#include "trMat4.hpp"
+#include "trTexture.hpp"
+#include "trVec4.hpp"
 
 using std::vector;
 
@@ -39,11 +39,20 @@ namespace tr
 
         //clip
 
+//        std::cout << "Model view" << std::endl;
+//        modelViewMatrix.Print();
+//
+//        std::cout << "Projection" << std::endl;
+//        projectionMatrix.Print();
+
+
+
         //viewport transformation
         for (const auto& vertex : transformedVertices)
         {
-            const double vx = (vertex.x + 1) * 800 / 2;
-            const double vy = (vertex.y + 1) * 600 / 2;
+            const double vx = (vertex.x+1) * 800.0 / 2.0;
+            const double vy = (vertex.y+1) * 600.0 / 2.0;
+
             //vertex.Print();
             //std::cout << vx << " " << vy << std::endl;
             fb.colorBuffer.At(floor(vx), 600-floor(vy)) = std::numeric_limits<uint32_t>::max();

@@ -1,10 +1,10 @@
-#ifndef TR_MAT4_H
-#define TR_MAT4_H
+#ifndef TR_MAT4_HPP
+#define TR_MAT4_HPP
 
 #include <cmath>
 #include <iostream>
 
-#include "trVec4.h"
+#include "trVec4.hpp"
 
 namespace tr
 {

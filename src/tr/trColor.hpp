@@ -1,5 +1,5 @@
-#ifndef TR_COLOR_H
-#define TR_COLOR_H
+#ifndef TR_COLOR_HPP
+#define TR_COLOR_HPP
 
 namespace tr
 {

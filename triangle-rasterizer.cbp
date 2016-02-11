@@ -87,15 +87,14 @@
 		<Unit filename="src/matrix/Matrices.cpp" />
 		<Unit filename="src/matrix/Matrices.h" />
 		<Unit filename="src/matrix/Vectors.h" />
-		<Unit filename="src/tr/tr.h" />
-		<Unit filename="src/tr/trArray.h" />
-		<Unit filename="src/tr/trBuffer.h" />
-		<Unit filename="src/tr/trCamera.h" />
-		<Unit filename="src/tr/trColor.h" />
-		<Unit filename="src/tr/trFrameBuffer.h" />
-		<Unit filename="src/tr/trMat4.h" />
-		<Unit filename="src/tr/trTexture.h" />
-		<Unit filename="src/tr/trVec4.h" />
+		<Unit filename="src/tr/tr.hpp" />
+		<Unit filename="src/tr/trArray.hpp" />
+		<Unit filename="src/tr/trBuffer.hpp" />
+		<Unit filename="src/tr/trColor.hpp" />
+		<Unit filename="src/tr/trFrameBuffer.hpp" />
+		<Unit filename="src/tr/trMat4.hpp" />
+		<Unit filename="src/tr/trTexture.hpp" />
+		<Unit filename="src/tr/trVec4.hpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
