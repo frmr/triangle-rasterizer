@@ -127,6 +127,11 @@ namespace tr
             (*this)[3][2] = (T) 1;
         }
 
+        void SetViewport(const T& x, const T& y, const T& width, const T& height)
+        {
+
+        }
+
         void SetZero()
         {
             for (size_t i = 0; i < size*size; ++i)
