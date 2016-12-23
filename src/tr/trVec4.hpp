@@ -1,5 +1,4 @@
-#ifndef TR_VEC4_HPP
-#define TR_VEC4_HPP
+#pragma once
 
 #include <cmath>
 #include <iostream>
@@ -172,5 +171,3 @@ namespace tr
     typedef	Vec4<double>    Vec4d;
     typedef Vec4<int>       Vec4i;
 }
-
-#endif

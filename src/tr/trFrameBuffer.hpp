@@ -1,5 +1,4 @@
-#ifndef TR_FRAMEBUFFER_HPP
-#define TR_FRAMEBUFFER_HPP
+#pragma once
 
 #include "trBuffer.hpp"
 #include "trColor.hpp"
@@ -35,5 +34,3 @@ namespace tr
         }
     };
 }
-
-#endif

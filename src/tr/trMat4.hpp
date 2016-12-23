@@ -1,5 +1,4 @@
-#ifndef TR_MAT4_HPP
-#define TR_MAT4_HPP
+#pragma once
 
 #include <cmath>
 #include <iostream>
@@ -209,5 +208,3 @@ namespace tr
 
     typedef Mat4<double> Mat4d;
 }
-
-#endif

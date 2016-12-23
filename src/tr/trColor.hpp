@@ -1,9 +1,6 @@
-#ifndef TR_COLOR_HPP
-#define TR_COLOR_HPP
+#pragma once
 
 namespace tr
 {
     typedef uint32_t Color;
 }
-
-#endif

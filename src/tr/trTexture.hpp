@@ -1,5 +1,4 @@
-#ifndef TR_TEXTURE_HPP
-#define TR_TEXTURE_HPP
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -78,5 +77,3 @@ namespace tr
         }
     };
 }
-
-#endif

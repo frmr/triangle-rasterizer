@@ -1,5 +1,4 @@
-#ifndef TR_ARRAY_HPP
-#define TR_ARRAY_HPP
+#pragma once
 
 #include <cstddef>
 #include <vector>
@@ -97,5 +96,3 @@ namespace tr
         }
     };
 }
-
-#endif

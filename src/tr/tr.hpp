@@ -1,5 +1,4 @@
-#ifndef TR_HPP
-#define TR_HPP
+#pragma once
 
 #include <cmath>
 #include <cstdlib>
@@ -146,5 +145,3 @@ namespace tr
 //        }
     }
 }
-
-#endif
