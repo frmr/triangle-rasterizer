@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="tr">
+      <UniqueIdentifier>{ae4c592b-234c-468c-afb1-9b38f9730f97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="matrix">
+      <UniqueIdentifier>{63ef8641-1f2a-457d-ad6f-2d4edfd5449b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EasyBMP">
+      <UniqueIdentifier>{2e9203f9-2c1f-4991-bfe7-a34017e30e2a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\tr\tr.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trArray.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trBuffer.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trColor.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trFrameBuffer.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trMat4.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trTexture.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trVec4.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\matrix\Matrices.h">
+      <Filter>matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="src\matrix\Vectors.h">
+      <Filter>matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EasyBMP\EasyBMP.h">
+      <Filter>EasyBMP</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EasyBMP\EasyBMP_BMP.h">
+      <Filter>EasyBMP</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EasyBMP\EasyBMP_DataStructures.h">
+      <Filter>EasyBMP</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EasyBMP\EasyBMP_VariousBMPutilities.h">
+      <Filter>EasyBMP</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\matrix\Matrices.cpp">
+      <Filter>matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="src\example.cpp" />
+    <ClCompile Include="src\EasyBMP\EasyBMP.cpp">
+      <Filter>EasyBMP</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

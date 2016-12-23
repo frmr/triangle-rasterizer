@@ -203,7 +203,7 @@ namespace tr
 
         ~Mat4()
         {
-            delete[] data;
+            //delete[] data;
         }
     };
 

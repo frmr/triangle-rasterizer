@@ -40,6 +40,10 @@ namespace tr
                 width(width),
                 data(new T[width*height])
         {
+			for (int i = 0; i < width * height; ++i)
+			{
+				data[i] = T();
+			}
         }
 
         ~Buffer()
