@@ -8,6 +8,7 @@ namespace tr
     public:
         const size_t    height;
         const size_t    width;
+		const size_t	size;
         T* const        data;
 
     public:
@@ -23,6 +24,14 @@ namespace tr
             return data[0];
         }
 
+		void Fill(const T& value)
+		{
+			for (int i = 0; i < size; ++i)
+			{
+				data[i] = value;
+			}
+		}
+
         T GetAt(const size_t& x, const size_t& y) const
         {
             return data[y*width+x];
@@ -37,12 +46,10 @@ namespace tr
         Buffer(const size_t& width, const size_t& height)
             :   height(height),
                 width(width),
-                data(new T[width*height])
+				size(width * height),
+                data(new T[size])
         {
-			for (int i = 0; i < width * height; ++i)
-			{
-				data[i] = T();
-			}
+			Fill(T());
         }
 
         ~Buffer()

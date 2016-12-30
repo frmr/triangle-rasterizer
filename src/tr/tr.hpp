@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <limits>
@@ -87,18 +88,19 @@ namespace tr
         }
     }
 
-    void Draw(const tr::DrawMode mode, const vector<tr::Vec4d>& vertices, const vector<size_t>& indices, const tr::Texture& texture, const tr::Mat4d& modelViewMatrix, const tr::Mat4d& projectionMatrix, tr::FrameBuffer& fb)
+    void Draw(const tr::DrawMode mode, const vector<tr::Vec4d>& vertices, const vector<size_t>& indices, const tr::Texture& texture, const tr::Mat4d& modelViewMatrix, const tr::Mat4d& projectionMatrix, const size_t width, const size_t height, tr::FrameBuffer& fb)
     {
-//        modelViewMatrix.Print();
+        modelViewMatrix.Print();
 //        projectionMatrix.Print();
-        vector<tr::Vec4d> transformedVertices;
-        transformedVertices.reserve(vertices.size());
+		vector<tr::Vec4d> transformedVertices;
+		transformedVertices.reserve(vertices.size());
         for (const auto& vertex : vertices)
-        {
-            transformedVertices.emplace_back(modelViewMatrix * projectionMatrix * vertex);
-            transformedVertices.back() /= transformedVertices.back().w; //normalized device coordinates (NDC)
-            //(modelViewMatrix*projectionMatrix*vertex).Print();
-        }
+		{
+			//transformedVertices.emplace_back(modelViewMatrix * projectionMatrix * vertex);
+			transformedVertices.emplace_back(projectionMatrix* modelViewMatrix * vertex);
+			transformedVertices.back() /= transformedVertices.back().w; //normalized device coordinates (NDC)
+			//(modelViewMatrix*projectionMatrix*vertex).Print();
+		}
 
         //clip
 
@@ -110,23 +112,33 @@ namespace tr
 
 
         vector<tr::Vec4d> clippedVertices;
+		clippedVertices.reserve(vertices.size());
+
+		const double halfWidth = double(width) / 2.0;
+		const double halfHeight = double(height) / 2.0;
 
         //viewport transformation
         for (const auto& vertex : transformedVertices)
         {
+			const double vx = halfWidth * vertex.x + halfWidth;
+			const double vy = halfHeight * vertex.y + halfHeight;
 
-            //const double vx = (vertex.x+1) * 800.0 / 2.0;
-            //const double vy = (vertex.y+1) * 600.0 / 2.0;
-            const double vx = (800.0 / 2.0) * vertex.x + (800.0 / 2.0);
-            const double vy = (600.0 / 2.0) * vertex.y + (600.0 / 2.0);
+			std::cout << vertex.x << ", " << vertex.y << ", " << vertex.z << std::endl;
 
+			if (vx < 0 || vx >= width || vy < 0 || vy >= height || vertex.z < 0.0 || vertex.z > 1.0)
+				continue;
 
-            clippedVertices.emplace_back(vx, vy, vertex.z, vertex.w);
+			fb.colorBuffer.At(floorl(vx), floorl(vy)) = std::numeric_limits<uint32_t>::max();
+
+			clippedVertices.emplace_back(vx, vy, vertex.z, vertex.w);
 
             //vertex.Print();
             //std::cout << vx << " " << vy << std::endl;
-            fb.colorBuffer.At(floor(vx), 600-floor(vy)) = std::numeric_limits<uint32_t>::max();
+
+			//if (clippedVertices.back().z > 0.0)
+				//fb.colorBuffer.At(floorl(vx), floorl(vy)) = std::numeric_limits<uint32_t>::max();
         }
+		//std::cout << std::endl;
 
         if (mode == tr::DrawMode::LINES)
         {
@@ -134,7 +146,7 @@ namespace tr
             for (int i = 1; i < transformedVertices.size(); ++i)
             {
                 //DrawLine(lround(it->x), lround(it->y), lround((it+1)->x), lround((it+1)->y), fb,
-                DrawLine(floor(transformedVertices[i-1].x), floor(transformedVertices[i-1].y), floor(transformedVertices[i].x), floor(transformedVertices[i].y), fb, std::numeric_limits<uint32_t>::max());
+                DrawLine(floorl(clippedVertices[i-1].x), floorl(clippedVertices[i-1].y), floorl(clippedVertices[i].x), floorl(clippedVertices[i].y), fb, std::numeric_limits<uint32_t>::max());
             }
         }
 
