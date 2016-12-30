@@ -10,6 +10,7 @@
 #include "trMat4.hpp"
 #include "trTexture.hpp"
 #include "trVec4.hpp"
+#include "../matrix/Matrices.h"
 
 using std::vector;
 
@@ -88,16 +89,15 @@ namespace tr
         }
     }
 
-    void Draw(const tr::DrawMode mode, const vector<tr::Vec4d>& vertices, const vector<size_t>& indices, const tr::Texture& texture, const tr::Mat4d& modelViewMatrix, const tr::Mat4d& projectionMatrix, const size_t width, const size_t height, tr::FrameBuffer& fb)
+    void Draw(const tr::DrawMode mode, const vector<Vector4>& vertices, const vector<size_t>& indices, const tr::Texture& texture, const Matrix4& modelViewProjectionMatrix, const size_t width, const size_t height, tr::FrameBuffer& fb)
     {
-        modelViewMatrix.Print();
-//        projectionMatrix.Print();
-		vector<tr::Vec4d> transformedVertices;
+		vector<Vector4> transformedVertices;
 		transformedVertices.reserve(vertices.size());
+
         for (const auto& vertex : vertices)
 		{
-			//transformedVertices.emplace_back(modelViewMatrix * projectionMatrix * vertex);
-			transformedVertices.emplace_back(projectionMatrix* modelViewMatrix * vertex);
+			transformedVertices.emplace_back(modelViewProjectionMatrix * vertex);
+			//transformedVertices.emplace_back(projectionMatrix * modelViewMatrix * vertex);
 			transformedVertices.back() /= transformedVertices.back().w; //normalized device coordinates (NDC)
 			//(modelViewMatrix*projectionMatrix*vertex).Print();
 		}
@@ -125,7 +125,7 @@ namespace tr
 
 			std::cout << vertex.x << ", " << vertex.y << ", " << vertex.z << std::endl;
 
-			if (vx < 0 || vx >= width || vy < 0 || vy >= height || vertex.z < 0.0 || vertex.z > 1.0)
+			if (vx < 0 || vx >= width || vy < 0 || vy >= height || vertex.z < -0.0 || vertex.z > 100.0)
 				continue;
 
 			fb.colorBuffer.At(floorl(vx), floorl(vy)) = std::numeric_limits<uint32_t>::max();

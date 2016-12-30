@@ -44,6 +44,35 @@ bool InitWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWi
     return true;
 }
 
+Matrix4 CreatePerspectiveProjectionMatrix(const float left, const float right, const float bottom, const float top, const float near, const float far)
+{
+	Matrix4 mat;
+
+	mat[0] = (2.0f * near) / (right - left);
+	mat[5] = (2.0f * near) / (top - bottom);
+	mat[8] = (right + left) / (right - left);
+	mat[9] = (top + bottom) / (top - bottom);
+	mat[10] = -(far + near) / (far - near);
+	mat[11] = -1.0f;
+	mat[14] = -(2.0f * far * near) / (far - near);
+
+	return mat;
+}
+
+Matrix4 CreateOrthographicProjectionMatrix(const float left, const float right, const float bottom, const float top, const float near, const float far)
+{
+	Matrix4 mat;
+
+	mat[0] = 2.0f / (right - left);
+	mat[5] = 2.0f / (top - bottom);
+	mat[10] = -2.0f / (far - near);
+	mat[12] = -(right + left) / (right - left);
+	mat[13] = -(top + bottom) / (top - bottom);
+	mat[14] = -(far + near) / (far - near);
+
+	return mat;
+}
+
 int main(int argc, char* argv[])
 {
     bool running = true;
@@ -68,37 +97,36 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    vector<tr::Vec4d> vertices;
+    vector<Vector4> vertices;
 	//vertices.emplace_back(0.0, 0.0, -1000.0, 1.0);
-    vertices.emplace_back(50.0, 50.0, -1000.0, 1.0);
-	vertices.emplace_back(-50.0, 0.0, -1000.0, 1.0);
-	vertices.emplace_back(50.0, 0.0, -1000.0, 1.0);
-	vertices.emplace_back(50.0, 50.0, -1000.0, 1.0);
+    vertices.emplace_back(2.0f, 2.0f, 10.0f, 1.0f);
+	vertices.emplace_back(-2.0f, -2.0f, 10.0f, 1.0f);
+	vertices.emplace_back(2.0f, -2.0f, 10.0f, 1.0f);
+	vertices.emplace_back(2.0f, 2.0f, 10.0f, 1.0f);
+	vertices.emplace_back(-2.0f, 2.0f, 10.0f, 1.0f);
 
     vector<size_t> indices;
 
     tr::Texture tex("data/udon1.bmp");
 
-    tr::Mat4d modelViewMatrix;
-    modelViewMatrix.SetIdentity();
-    //modelViewMatrix.RotateX(3.1416 / 4.0);
-    //modelViewMatrix.RotateY(3.1416 / 4.0);
-
-    tr::Mat4d projectionMatrix;
+	Matrix4 projectionMatrix = CreatePerspectiveProjectionMatrix(-1.0f, 1.0f, -0.75f, 0.75f, 1.0f, 100.0f);
 
     //projectionMatrix.SetOrthographic(-1.0, 1.0, -1.0, 1.0, -1.0, -100.0);
 	//projectionMatrix.SetOrthographic(-screenWidth/2, screenWidth/2, -screenHeight/2, screenHeight/2, -1.0, -100.0);
     //projectionMatrix.SetPerspective(0.0, double(screenWidth), 0.0, double(screenHeight), -1.0, -100.0);
-	projectionMatrix.SetPerspective(-400.0, 400.0, -300.0, 300.0, -400.0, -4000.0);
-	//projectionMatrix.SetPerspective(-double(screenWidth/2), double(screenWidth/2), -double(screenHeight/2), double(screenHeight/2), -1.0, -100.0);
 
+	//projectionMatrix.SetPerspective(-1.0, 1.0, -0.75, 0.75, -1.73, -100.0); //fov=60
+
+	//projectionMatrix.SetPerspective(-1.0, 1.0, -0.75, 0.75, -1.0, -100.0); //fov=90
 
     tr::FrameBuffer fb(screenWidth, screenHeight);
 
     SDL_Surface* sdlSurface;
 
-	tr::Vec4d rotation(0.0, 0.0, 0.0, 1.0);
-	tr::Vec4d position(0.0, 0.0, 0.0, 1.0);
+	Vector4 rotation(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector4 position(0.0f, 0.0f, 0.0f, 1.0f);
+
+	Matrix4 modelViewMatrix;
 
     while (running)
     {
@@ -114,8 +142,8 @@ int main(int argc, char* argv[])
             }
 			else if (e.type == SDL_KEYDOWN)
 			{
-				constexpr double translationIncrement = 10.0;
-				constexpr double rotationIncrement = 3.1416 / 16.0;
+				constexpr float translationIncrement = 10.0f;
+				constexpr float rotationIncrement = 3.1416f / 2.0f;
 
 				if (e.key.keysym.sym == SDLK_ESCAPE)
 				{
@@ -166,12 +194,12 @@ int main(int argc, char* argv[])
 
 		fb.colorBuffer.Fill(0);
 
-		modelViewMatrix.SetIdentity();
-		modelViewMatrix.RotateX(rotation.x);
-		modelViewMatrix.RotateY(rotation.y);
-		modelViewMatrix.Translate(-position.x, -position.y, -position.z);
+		modelViewMatrix.identity();
+		modelViewMatrix.rotateX(rotation.x);
+		modelViewMatrix.rotateY(rotation.y);
+		modelViewMatrix.translate(-position.x, -position.y, -position.z);
 
-        tr::Draw(tr::DrawMode::POINTS, vertices, indices, tex, modelViewMatrix, projectionMatrix, screenWidth, screenHeight, fb);
+        tr::Draw(tr::DrawMode::POINTS, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, fb);
         sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.colorBuffer.data, screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
 
         SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);

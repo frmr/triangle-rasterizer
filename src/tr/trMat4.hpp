@@ -42,6 +42,19 @@ namespace tr
             }
         }
 
+		void Transpose()
+		{
+			Mat4<T> original = *this;
+
+			for (size_t row = 0; row < size; ++row)
+			{
+				for (size_t col = 0; col < size; ++col)
+				{
+					(*this)[row][col] = original[col][row];
+				}
+			}
+		}
+
          void Print() const
         {
             for (size_t i = 0; i < size; ++i)
@@ -178,26 +191,20 @@ namespace tr
 
         Mat4<T>& operator=(const Mat4<T>& matA)
         {
-            for (int i = 0; i < 16; ++i)
-            {
-                data[i] = matA.data[i];
-            }
+			memcpy(data, matA.data, sizeof(T) * size * size);
         }
 
-        Mat4()
-            :   data(new T[size*size])
+        Mat4() :
+			data(new T[size*size])
         {
             SetZero();
         }
 
         template<typename U>
-        Mat4(const U* const dataInit)
-            :   data(new T[size*size])
+        Mat4(const U* const dataInit) :
+			data(new T[size*size])
         {
-            for (size_t i = 0; i < size*size; ++i)
-            {
-                data[i] = (T) dataInit[i];
-            }
+			memcpy(data, dataInit, sizeof(T) * size * size);
         }
 
         ~Mat4()
