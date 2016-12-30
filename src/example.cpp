@@ -83,8 +83,10 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    const size_t screenWidth = 800;
-    const size_t screenHeight = 600;
+    const int screenWidth = 800;
+    const int screenHeight = 600;
+
+	assert(screenWidth > 0 && screenHeight > 0);
 
     SDL_Window* window = NULL;
     SDL_Renderer* renderer = NULL;
@@ -100,9 +102,8 @@ int main(int argc, char* argv[])
     vector<Vector4> vertices;
 	//vertices.emplace_back(0.0, 0.0, -1000.0, 1.0);
     vertices.emplace_back(2.0f, 2.0f, 10.0f, 1.0f);
-	vertices.emplace_back(-2.0f, -2.0f, 10.0f, 1.0f);
 	vertices.emplace_back(2.0f, -2.0f, 10.0f, 1.0f);
-	vertices.emplace_back(2.0f, 2.0f, 10.0f, 1.0f);
+	vertices.emplace_back(-2.0f, -2.0f, 10.0f, 1.0f);
 	vertices.emplace_back(-2.0f, 2.0f, 10.0f, 1.0f);
 
     vector<size_t> indices;
@@ -193,7 +194,7 @@ int main(int argc, char* argv[])
 		modelViewMatrix.rotateY(rotation.y);
 		modelViewMatrix.translate(-position.x, -position.y, -position.z);
 
-        tr::Draw(tr::DrawMode::POINTS, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, fb);
+        tr::Draw(tr::DrawMode::LINE_LOOP, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, fb);
         sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.colorBuffer.data, screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
 
         SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);

@@ -54,6 +54,9 @@
     <ClInclude Include="src\EasyBMP\EasyBMP_VariousBMPutilities.h">
       <Filter>EasyBMP</Filter>
     </ClInclude>
+    <ClInclude Include="src\tr\trCoord.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\matrix\Matrices.cpp">
