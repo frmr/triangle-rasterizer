@@ -123,9 +123,9 @@ namespace tr
 			const double vx = halfWidth * vertex.x + halfWidth;
 			const double vy = halfHeight * vertex.y + halfHeight;
 
-			std::cout << vertex.x << ", " << vertex.y << ", " << vertex.z << std::endl;
+			//std::cout << vertex.x << ", " << vertex.y << ", " << vertex.z << std::endl;
 
-			if (vx < 0 || vx >= width || vy < 0 || vy >= height || vertex.z < -0.0 || vertex.z > 100.0)
+			if (vx < 0 || vx >= width || vy < 0 || vy >= height || vertex.z < 0.0 || vertex.z > 1.0)
 				continue;
 
 			fb.colorBuffer.At(floorl(vx), floorl(vy)) = std::numeric_limits<uint32_t>::max();

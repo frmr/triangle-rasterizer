@@ -109,15 +109,7 @@ int main(int argc, char* argv[])
 
     tr::Texture tex("data/udon1.bmp");
 
-	Matrix4 projectionMatrix = CreatePerspectiveProjectionMatrix(-1.0f, 1.0f, -0.75f, 0.75f, 1.0f, 100.0f);
-
-    //projectionMatrix.SetOrthographic(-1.0, 1.0, -1.0, 1.0, -1.0, -100.0);
-	//projectionMatrix.SetOrthographic(-screenWidth/2, screenWidth/2, -screenHeight/2, screenHeight/2, -1.0, -100.0);
-    //projectionMatrix.SetPerspective(0.0, double(screenWidth), 0.0, double(screenHeight), -1.0, -100.0);
-
-	//projectionMatrix.SetPerspective(-1.0, 1.0, -0.75, 0.75, -1.73, -100.0); //fov=60
-
-	//projectionMatrix.SetPerspective(-1.0, 1.0, -0.75, 0.75, -1.0, -100.0); //fov=90
+	Matrix4 projectionMatrix = CreatePerspectiveProjectionMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
 
     tr::FrameBuffer fb(screenWidth, screenHeight);
 
@@ -143,7 +135,7 @@ int main(int argc, char* argv[])
 			else if (e.type == SDL_KEYDOWN)
 			{
 				constexpr float translationIncrement = 10.0f;
-				constexpr float rotationIncrement = 3.1416f / 2.0f;
+				constexpr float rotationIncrement = 2.0f;
 
 				if (e.key.keysym.sym == SDLK_ESCAPE)
 				{
@@ -191,6 +183,8 @@ int main(int argc, char* argv[])
 				}
 			}
         }
+
+		std::cout << rotation.y << std::endl;
 
 		fb.colorBuffer.Fill(0);
 
