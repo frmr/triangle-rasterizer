@@ -192,13 +192,12 @@ namespace tr
 
 	bool ClipNdcLine(Vector4& start, Vector4& end)
 	{
-		const bool startInNdcCube = VertexInNdcCube(start);
-		const bool endInNdcCube = VertexInNdcCube(end);
+		if ((start.x < -1.0f && end.x < -1.0f) || (start.y < -1.0f && end.y < -1.0f) || (start.z < -1.0f && end.z < -1.0f))
+		{
+			return false;
+		}
 
-		const float xDiff = abs(end.x - start.x);
-		const float yDiff = abs(end.y - start.y);
-
-		if (!startInNdcCube && !endInNdcCube)
+		if ((start.x >= 1.0f && end.x >= 1.0f) || (start.y >= 1.0f && end.y > 1.0f) || (start.z > 1.0f && end.z > 1.0f))
 		{
 			return false;
 		}
@@ -242,6 +241,22 @@ namespace tr
 		return true;
 	}
 
+	void DrawLine(Vector4 v0, Vector4 v1, const double halfWidth, const double halfHeight, tr::FrameBuffer& frameBuffer)
+	{
+		//clip
+		if (!ClipNdcLine(v0, v1))
+		{
+			return;
+		}
+
+		//convert to screenspace
+		const tr::Coord c0(int(halfWidth * v0.x + halfWidth), int(halfHeight * v0.y + halfHeight), v0.z);
+		const tr::Coord c1(int(halfWidth * v1.x + halfWidth), int(halfHeight * v1.y + halfHeight), v1.z);
+
+		//draw
+		DrawLine(c0, c1, frameBuffer);
+	}
+
     void Draw(const tr::DrawMode mode, vector<Vector4> vertices, const vector<size_t>& indices, const tr::Texture& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::FrameBuffer& frameBuffer)
     {
 		assert(width > 0 && height > 0);
@@ -265,21 +280,7 @@ namespace tr
 		{
 			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end(); indexIt += 2)
 			{
-					Vector4 v0 = vertices[*indexIt];
-					Vector4 v1 = vertices[*(indexIt + 1)];
-
-					//clip
-					if (!ClipNdcLine(v0, v1))
-					{
-						continue;
-					}
-
-					//convert to screenspace
-					const tr::Coord c0(int(halfWidth * v0.x + halfWidth), int(halfHeight * v0.y + halfHeight), v0.z);
-					const tr::Coord c1(int(halfWidth * v1.x + halfWidth), int(halfHeight * v1.y + halfHeight), v1.z);
-
-					//draw
-					DrawLine(c0, c1, frameBuffer);
+				DrawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, frameBuffer);
 			}
 		}
 
