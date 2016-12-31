@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 	vertices.emplace_back(-2.0f, -2.0f, 10.0f, 1.0f);
 	vertices.emplace_back(-2.0f, 2.0f, 10.0f, 1.0f);
 
-	vector<size_t> indices = { 0, 2, 1, 3 };
+	vector<size_t> indices = { 0, 1, 2, 3 };
 
     tr::Texture tex("data/udon1.bmp");
 
@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
 		modelViewMatrix.rotateY(rotation.y);
 		modelViewMatrix.translate(-position.x, -position.y, -position.z);
 
-        tr::Draw(tr::DrawMode::LINES, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, fb);
+        tr::Draw(tr::DrawMode::LINE_LOOP, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, fb);
         sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.colorBuffer.data, screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
 
         SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);

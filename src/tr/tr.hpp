@@ -29,68 +29,6 @@ namespace tr
         TRIANGLE_FAN
     };
 
-    //void DrawLine(int xa, int ya, int xb, int yb, tr::FrameBuffer& fb, const tr::Color& color)
-    //{
-    //    const int dx = abs(xb - xa);
-    //    const int dy = abs(yb - ya);
-    //    const int sx = xb >= xa ? 1 : -1;
-    //    const int sy = yb >= ya ? 1 : -1;
-
-    //    fb.ColorAt(xa, ya) = color;
-
-    //    if (xa == xb && ya == yb)
-    //    {
-    //        return;
-    //    }
-
-    //    if (dy <= dx)
-    //    {
-    //        const int d1 = dy << 1;
-    //        const int d2 = (dy - dx) << 1;
-    //        int d = (dy << 1) - dx;
-    //        int x = xa + sx;
-    //        int y = ya;
-
-    //        for (int i = 1; i <= dx; ++i, x += sx)
-    //        {
-    //            if (d > 0)
-    //            {
-    //                d += d2;
-    //                y += sy;
-    //            }
-    //            else
-    //            {
-    //                d += d1;
-    //            }
-
-    //            fb.ColorAt(x, y) = color;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        const int d1 = dx << 1;
-    //        const int d2 = (dx - dy) << 1;
-    //        int d = (dx << 1) - dy;
-    //        int x = xa;
-    //        int y = ya + sy;
-
-    //        for (int i = 1; i <= dy; ++i, y += sy)
-    //        {
-    //            if (d > 0)
-    //            {
-    //                d += d2;
-    //                x += sx;
-    //            }
-    //            else
-    //            {
-    //                d += d1;
-    //            }
-
-    //            fb.ColorAt(x, y) = color;
-    //        }
-    //    }
-    //}
-
 	void GetLinePixels(const tr::Coord& start, const tr::Coord& end, vector<tr::Coord>& pixels)
 	{
 		const int dx = abs(end.x - start.x);
@@ -267,14 +205,12 @@ namespace tr
 		const double halfWidth = double(width) / 2.0;
 		const double halfHeight = double(height) / 2.0;
 
+		//transform vertices from world space to ndc
 		for (auto& vertex : vertices)
 		{
 			vertex = modelViewProjectionMatrix * vertex;
 			vertex /= vertex.w;
 		}
-
-		//vertices now contains ndc
-
 
 		if (mode == tr::DrawMode::LINES)
 		{
@@ -283,97 +219,21 @@ namespace tr
 				DrawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, frameBuffer);
 			}
 		}
+		else if (mode == tr::DrawMode::LINE_STRIP)
+		{
+			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end() - 1; ++indexIt)
+			{
+				DrawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, frameBuffer);
+			}
+		}
+		else if (mode == tr::DrawMode::LINE_LOOP)
+		{
+			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end() - 1; ++indexIt)
+			{
+				DrawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, frameBuffer);
+			}
 
-
-        //for (auto& vertex : vertices)
-		//{
-		//	vertex = modelViewProjectionMatrix * vertex;
-		//	vertex /= vertex.w; //normalized device coordinates (NDC)
-		//
-		//	screenCoords.emplace_back(std::floorl(halfWidth * vertex.x + halfWidth), std::floorl(halfHeight * vertex.y + halfHeight), vertex.z);
-		//}
-		//
-		//if (mode == tr::DrawMode::POINTS)
-		//{
-		//	for (const auto& coord : screenCoords)
-		//	{
-		//		if (coord.x >= 0 && coord.x < width && coord.y >= 0 && coord.y < height && coord.depth >= 0.0 && coord.depth < 1.0)
-		//			frameBuffer.colorBuffer.At(coord.x, coord.y) = std::numeric_limits<uint32_t>::max();
-		//	}
-		//}
-		//else if (mode == tr::DrawMode::LINES)
-		//{
-		//	if (screenCoords.size() < 2 || screenCoords.size() % 2 != 0)
-		//	{
-		//		return;
-		//	}
-		//
-		//	for (vector<tr::Coord>::const_iterator it = screenCoords.begin(); it != screenCoords.end(); it += 2)
-		//	{
-		//		//clip line
-		//		//convert to screenspace
-		//		DrawLine(*it, *(it + 1), width, height, frameBuffer);
-		//	}
-		//}
-		//else if (mode == tr::DrawMode::LINE_STRIP)
-		//{
-		//	if (screenCoords.size() < 2)
-		//	{
-		//		return;
-		//	}
-		//
-		//	for (vector<tr::Coord>::const_iterator it = screenCoords.begin(); it != screenCoords.end() - 1; ++it)
-		//	{
-		//		DrawLine(*it, *(it + 1), width, height, frameBuffer);
-		//	}
-		//}
-		//else if (mode == tr::DrawMode::LINE_LOOP)
-		//{
-		//	if (screenCoords.size() < 2)
-		//	{
-		//		return;
-		//	}
-		//
-		//	for (vector<tr::Coord>::const_iterator it = screenCoords.begin(); it != screenCoords.end() - 1; ++it)
-		//	{
-		//		DrawLine(*it, *(it + 1), width, height, frameBuffer);
-		//	}
-		//
-		//	DrawLine(*(screenCoords.end() - 1), *screenCoords.begin(), width, height, frameBuffer);
-		//}
-		//else if (mode == tr::DrawMode::TRIANGLES)
-		//{
-		//
-		//}
-		//else if (mode == tr::DrawMode::TRIANGLE_STRIP)
-		//{
-		//
-		//}
-		//else if (mode == tr::DrawMode::TRIANGLE_FAN)
-		//{
-		//
-		//}
-		//else
-		//{
-		//	assert(false);
-		//}
-
-		
-
-        //if (mode == tr::DrawMode::LINES)
-        //{
-        //    //for (const auto& it = transformedVertices.begin(); it != transformedVertices.end(); ++it)
-        //    for (int i = 1; i < transformedVertices.size(); ++i)
-        //    {
-        //        //DrawLine(lround(it->x), lround(it->y), lround((it+1)->x), lround((it+1)->y), fb,
-        //        DrawLine(floorl(clippedVertices[i-1].x), floorl(clippedVertices[i-1].y), floorl(clippedVertices[i].x), floorl(clippedVertices[i].y), fb, std::numeric_limits<uint32_t>::max());
-        //    }
-        //}
-
-//        const size_t totalPixels = fb.width * fb.height;
-//        for (size_t index = 0; index < totalPixels; ++index)
-//        {
-//            fb.colorBuffer.data[index] = texture.colorBuffer.data[index];
-//        }
+			DrawLine(vertices[indices.back()], vertices[indices.front()], halfWidth, halfHeight, frameBuffer);
+		}
     }
 }
