@@ -195,6 +195,15 @@ namespace tr
 		DrawLine(c0, c1, frameBuffer);
 	}
 
+	void DrawTriangle(Vector4 v0, Vector4 v1, Vector4 v2, const double halfWidth, const double halfHeight, tr::FrameBuffer& frameBuffer)
+	{
+		//if all vertices in
+			//draw one triangle
+		//else if all vertices out
+			//discard
+		//else if 
+	}
+
     void Draw(const tr::DrawMode mode, vector<Vector4> vertices, const vector<size_t>& indices, const tr::Texture& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::FrameBuffer& frameBuffer)
     {
 		assert(width > 0 && height > 0);
@@ -234,6 +243,13 @@ namespace tr
 			}
 
 			DrawLine(vertices[indices.back()], vertices[indices.front()], halfWidth, halfHeight, frameBuffer);
+		}
+		else if (mode == tr::DrawMode::TRIANGLES)
+		{
+			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end(); indexIt += 3)
+			{
+				DrawTriangle(vertices[*indexIt], vertices[*(indexIt + 1)], vertices[*(indexIt + 2)], halfWidth, halfHeight, frameBuffer);
+			}
 		}
     }
 }
