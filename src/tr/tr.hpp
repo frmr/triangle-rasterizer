@@ -18,16 +18,16 @@ using std::vector;
 
 namespace tr
 {
-    enum class DrawMode
-    {
-        POINTS,
-        LINES,
-        LINE_STRIP,
-        LINE_LOOP,
-        TRIANGLES,
-        TRIANGLE_STRIP,
-        TRIANGLE_FAN
-    };
+	enum class DrawMode
+	{
+		POINTS,
+		LINES,
+		LINE_STRIP,
+		LINE_LOOP,
+		TRIANGLES,
+		TRIANGLE_STRIP,
+		TRIANGLE_FAN
+	};
 
 	void GetLinePixels(const tr::Coord& start, const tr::Coord& end, vector<tr::Coord>& pixels)
 	{
@@ -204,8 +204,8 @@ namespace tr
 		//else if 
 	}
 
-    void Draw(const tr::DrawMode mode, vector<Vector4> vertices, const vector<size_t>& indices, const tr::Texture& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::FrameBuffer& frameBuffer)
-    {
+	void Draw(const tr::DrawMode mode, vector<Vector4> vertices, const vector<size_t>& indices, const tr::Texture& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::FrameBuffer& frameBuffer)
+	{
 		assert(width > 0 && height > 0);
 
 		vector<tr::Coord> screenCoords;
@@ -251,5 +251,5 @@ namespace tr
 				DrawTriangle(vertices[*indexIt], vertices[*(indexIt + 1)], vertices[*(indexIt + 2)], halfWidth, halfHeight, frameBuffer);
 			}
 		}
-    }
+	}
 }

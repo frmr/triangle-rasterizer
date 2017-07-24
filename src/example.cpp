@@ -16,32 +16,32 @@ using std::vector;
 
 bool InitSdl()
 {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0)
-    {
-        cerr << "InitSdl() in src/main.cpp: Failed to initialise SDL." << endl;
-        return false;
-    }
-    return true;
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0)
+	{
+		cerr << "InitSdl() in src/main.cpp: Failed to initialise SDL." << endl;
+		return false;
+	}
+	return true;
 }
 
 bool InitWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWidth, const int screenHeight, const bool fullscreen)
 {
-    *window = SDL_CreateWindow("Space Raster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
+	*window = SDL_CreateWindow("Space Raster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
 
-    if (!window)
-    {
-        cerr << "InitWindow() in src/main.cpp: Failed to initialise SDL window." << endl;
-        return false;
-    }
+	if (!window)
+	{
+		cerr << "InitWindow() in src/main.cpp: Failed to initialise SDL window." << endl;
+		return false;
+	}
 
-    *renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED);
+	*renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED);
 
-    if (!renderer)
-    {
-        cerr << "InitWindow() in src/main.cpp: Failed to initialise SDL renderer." << endl;
-    }
+	if (!renderer)
+	{
+		cerr << "InitWindow() in src/main.cpp: Failed to initialise SDL renderer." << endl;
+	}
 
-    return true;
+	return true;
 }
 
 Matrix4 CreatePerspectiveProjectionMatrix(const float left, const float right, const float bottom, const float top, const float near, const float far)
@@ -75,64 +75,64 @@ Matrix4 CreateOrthographicProjectionMatrix(const float left, const float right, 
 
 int main(int argc, char* argv[])
 {
-    bool running = true;
+	bool running = true;
 
-    if (!InitSdl())
-    {
-        SDL_Quit();
-        return 0;
-    }
+	if (!InitSdl())
+	{
+		SDL_Quit();
+		return 0;
+	}
 
-    const int screenWidth = 800;
-    const int screenHeight = 600;
+	const int screenWidth = 800;
+	const int screenHeight = 600;
 
 	assert(screenWidth > 0 && screenHeight > 0);
 
-    SDL_Window* window = NULL;
-    SDL_Renderer* renderer = NULL;
+	SDL_Window* window = NULL;
+	SDL_Renderer* renderer = NULL;
 
-    if (!InitWindow(&window, &renderer, screenWidth, screenHeight, false))
-    {
-        SDL_DestroyRenderer(renderer);
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 0;
-    }
+	if (!InitWindow(&window, &renderer, screenWidth, screenHeight, false))
+	{
+		SDL_DestroyRenderer(renderer);
+		SDL_DestroyWindow(window);
+		SDL_Quit();
+		return 0;
+	}
 
-    vector<Vector4> vertices;
+	vector<Vector4> vertices;
 	//vertices.emplace_back(0.0, 0.0, -1000.0, 1.0);
-    vertices.emplace_back(2.0f, 2.0f, 10.0f, 1.0f);
+	vertices.emplace_back(2.0f, 2.0f, 10.0f, 1.0f);
 	vertices.emplace_back(2.0f, -2.0f, 10.0f, 1.0f);
 	vertices.emplace_back(-2.0f, -2.0f, 10.0f, 1.0f);
 	vertices.emplace_back(-2.0f, 2.0f, 10.0f, 1.0f);
 
 	vector<size_t> indices = { 0, 1, 2, 3 };
 
-    tr::Texture tex("data/udon1.bmp");
+	tr::Texture tex("data/udon1.bmp");
 
 	Matrix4 projectionMatrix = CreatePerspectiveProjectionMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
 
-    tr::FrameBuffer fb(screenWidth, screenHeight);
+	tr::FrameBuffer fb(screenWidth, screenHeight);
 
-    SDL_Surface* sdlSurface;
+	SDL_Surface* sdlSurface;
 
 	Vector4 rotation(0.0f, 0.0f, 0.0f, 1.0f);
 	Vector4 position(0.0f, 0.0f, 0.0f, 1.0f);
 
 	Matrix4 modelViewMatrix;
 
-    while (running)
-    {
-        const auto start = std::chrono::high_resolution_clock::now();
+	while (running)
+	{
+		const auto start = std::chrono::high_resolution_clock::now();
 
-        SDL_Event e;
+		SDL_Event e;
 
-        while(SDL_PollEvent(&e))
-        {
-            if(e.type == SDL_QUIT)
-            {
-                running = false;
-            }
+		while(SDL_PollEvent(&e))
+		{
+			if(e.type == SDL_QUIT)
+			{
+				running = false;
+			}
 			else if (e.type == SDL_KEYDOWN)
 			{
 				constexpr float translationIncrement = 10.0f;
@@ -183,7 +183,7 @@ int main(int argc, char* argv[])
 					rotation.x += rotationIncrement;
 				}
 			}
-        }
+		}
 
 		std::cout << rotation.y << std::endl;
 
@@ -194,23 +194,23 @@ int main(int argc, char* argv[])
 		modelViewMatrix.rotateY(rotation.y);
 		modelViewMatrix.translate(-position.x, -position.y, -position.z);
 
-        tr::Draw(tr::DrawMode::LINE_LOOP, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, fb);
-        sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.colorBuffer.data, screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
+		tr::Draw(tr::DrawMode::LINE_LOOP, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, fb);
+		sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.colorBuffer.data, screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
 
-        SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
-        SDL_FreeSurface(sdlSurface);
-        SDL_RenderCopy(renderer, sdlTexture, nullptr, nullptr);
-        SDL_RenderPresent(renderer);
-        SDL_DestroyTexture(sdlTexture);
+		SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
+		SDL_FreeSurface(sdlSurface);
+		SDL_RenderCopy(renderer, sdlTexture, nullptr, nullptr);
+		SDL_RenderPresent(renderer);
+		SDL_DestroyTexture(sdlTexture);
 
-        const auto end = std::chrono::high_resolution_clock::now();
-        const auto diff = end - start;
-        //cout << std::chrono::duration<double, std::milli>(diff).count() << " ms" << endl;
-    }
+		const auto end = std::chrono::high_resolution_clock::now();
+		const auto diff = end - start;
+		//cout << std::chrono::duration<double, std::milli>(diff).count() << " ms" << endl;
+	}
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
 
-    return 0;
+	return 0;
 }

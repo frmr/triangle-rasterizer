@@ -2,27 +2,27 @@
 
 namespace tr
 {
-    template<typename T>
-    class Buffer
-    {
-    public:
-        const size_t    height;
-        const size_t    width;
+	template<typename T>
+	class Buffer
+	{
+	public:
+		const size_t    height;
+		const size_t    width;
 		const size_t	size;
-        T* const        data;
+		T* const        data;
 
-    public:
+	public:
 
-        T& At(const size_t x, const size_t y)
-        {
-            return data[y*width+x];
-        }
+		T& At(const size_t x, const size_t y)
+		{
+			return data[y*width+x];
+		}
 
-        T& At(const double x, const double y, const bool filter)
-        {
-            //interpolate
-            return data[0];
-        }
+		T& At(const double x, const double y, const bool filter)
+		{
+			//interpolate
+			return data[0];
+		}
 
 		void Fill(const T& value)
 		{
@@ -32,29 +32,29 @@ namespace tr
 			}
 		}
 
-        T GetAt(const size_t& x, const size_t& y) const
-        {
-            return data[y*width+x];
-        }
+		T GetAt(const size_t& x, const size_t& y) const
+		{
+			return data[y*width+x];
+		}
 
-        T GetAt(const double& x, const double& y, const bool filter) const
-        {
-            return data[0];
-        }
+		T GetAt(const double& x, const double& y, const bool filter) const
+		{
+			return data[0];
+		}
 
-    public:
-        Buffer(const size_t& width, const size_t& height)
-            :   height(height),
-                width(width),
+	public:
+		Buffer(const size_t& width, const size_t& height)
+			:   height(height),
+				width(width),
 				size(width * height),
-                data(new T[size])
-        {
+				data(new T[size])
+		{
 			Fill(T());
-        }
+		}
 
-        ~Buffer()
-        {
-            delete[] data;
-        }
-    };
+		~Buffer()
+		{
+			delete[] data;
+		}
+	};
 }

@@ -2,5 +2,5 @@
 
 namespace tr
 {
-    typedef uint32_t Color;
+	typedef uint32_t Color;
 }
