@@ -125,22 +125,22 @@ namespace tr
 		}
 
 	public:
-		Vec4()
-			:   data(new T[size]),
-				x(data[0]),
-				y(data[1]),
-				z(data[2]),
-				w(data[3])
+		Vec4() :
+			data(new T[size]),
+			x(data[0]),
+			y(data[1]),
+			z(data[2]),
+			w(data[3])
 		{
 			SetZero();
 		}
 
-		Vec4(const tr::Vec4<T>& vecA)
-			:   data(new T[size]),
-				x(data[0]),
-				y(data[1]),
-				z(data[2]),
-				w(data[3])
+		Vec4(const tr::Vec4<T>& vecA) :
+			data(new T[size]),
+			x(data[0]),
+			y(data[1]),
+			z(data[2]),
+			w(data[3])
 		{
 			x = vecA.x;
 			y = vecA.y;
@@ -148,12 +148,12 @@ namespace tr
 			w = vecA.w;
 		}
 
-		Vec4(const T& xInit, const T& yInit, const T& zInit, const T& wInit)
-			:   data(new T[size]),
-				x(data[0]),
-				y(data[1]),
-				z(data[2]),
-				w(data[3])
+		Vec4(const T& xInit, const T& yInit, const T& zInit, const T& wInit) :
+			data(new T[size]),
+			x(data[0]),
+			y(data[1]),
+			z(data[2]),
+			w(data[3])
 		{
 			x = xInit;
 			y = yInit;

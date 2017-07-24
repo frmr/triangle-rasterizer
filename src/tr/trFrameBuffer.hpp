@@ -25,11 +25,11 @@ namespace tr
 		}
 
 	public:
-		FrameBuffer(const size_t& width, const size_t& height)
-			:   width(width),
-				height(height),
-				colorBuffer(width, height),
-				depthBuffer(width, height)
+		FrameBuffer(const size_t& width, const size_t& height) :
+			width(width),
+			height(height),
+			colorBuffer(width, height),
+			depthBuffer(width, height)
 		{
 		}
 	};

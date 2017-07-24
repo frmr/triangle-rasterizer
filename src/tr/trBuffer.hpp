@@ -43,11 +43,11 @@ namespace tr
 		}
 
 	public:
-		Buffer(const size_t& width, const size_t& height)
-			:   height(height),
-				width(width),
-				size(width * height),
-				data(new T[size])
+		Buffer(const size_t& width, const size_t& height) :
+			height(height),
+			width(width),
+			size(width * height),
+			data(new T[size])
 		{
 			Fill(T());
 		}

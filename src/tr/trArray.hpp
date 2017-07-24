@@ -84,9 +84,9 @@ namespace tr
 		{
 		}
 
-		Array(const size_t xDim, const size_t yDim, const size_t zDim)
-			:   dims({xDim, yDim, zDim}),
-				data(new T[xDim * yDim * zDim])
+		Array(const size_t xDim, const size_t yDim, const size_t zDim) :
+			dims({xDim, yDim, zDim}),
+			data(new T[xDim * yDim * zDim])
 		{
 		}
 
