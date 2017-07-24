@@ -16,8 +16,8 @@ namespace tr
 		}
 
 	public:
-		int		x;
-		int		y;
-		float	depth;
+		int   x;
+		int   y;
+		float depth;
 	};
 }

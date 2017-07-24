@@ -8,7 +8,7 @@ namespace tr
 	public:
 		const size_t    height;
 		const size_t    width;
-		const size_t	size;
+		const size_t    size;
 		T* const        data;
 
 	public:

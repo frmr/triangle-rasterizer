@@ -177,7 +177,6 @@
     <ClInclude Include="src\matrix\Matrices.h" />
     <ClInclude Include="src\matrix\Vectors.h" />
     <ClInclude Include="src\tr\tr.hpp" />
-    <ClInclude Include="src\tr\trArray.hpp" />
     <ClInclude Include="src\tr\trBuffer.hpp" />
     <ClInclude Include="src\tr\trColor.hpp" />
     <ClInclude Include="src\tr\trCoord.hpp" />

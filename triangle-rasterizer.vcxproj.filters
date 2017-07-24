@@ -15,9 +15,6 @@
     <ClInclude Include="src\tr\tr.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="src\tr\trArray.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
     <ClInclude Include="src\tr\trBuffer.hpp">
       <Filter>tr</Filter>
     </ClInclude>

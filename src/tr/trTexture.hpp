@@ -24,7 +24,7 @@ namespace tr
 	private:
 		static BMP* LoadTempColorData(const string& filename)
 		{
-			BMP* image = new BMP();
+			BMP* image   = new BMP();
 			bool success = image->ReadFromFile(filename.c_str());
 
 			if (!success)
@@ -70,9 +70,9 @@ namespace tr
 			{
 				for (int y = 0; y < tempColorData->TellHeight(); ++y)
 				{
-					colorBuffer.At(x, y) = ((tr::Color) tempColorData->GetPixel(x, y).Red) << 16;
+					colorBuffer.At(x, y) =  ((tr::Color) tempColorData->GetPixel(x, y).Red)   << 16;
 					colorBuffer.At(x, y) += ((tr::Color) tempColorData->GetPixel(x, y).Green) << 8;
-					colorBuffer.At(x, y) += ((tr::Color) tempColorData->GetPixel(x, y).Blue) << 0;
+					colorBuffer.At(x, y) += ((tr::Color) tempColorData->GetPixel(x, y).Blue)  << 0;
 				}
 			}
 

@@ -46,10 +46,10 @@ Matrix4 CreatePerspectiveProjectionMatrix(const float left, const float right, c
 {
 	Matrix4 mat;
 
-	mat[0] = (2.0f * near) / (right - left);
-	mat[5] = (2.0f * near) / (top - bottom);
-	mat[8] = (right + left) / (right - left);
-	mat[9] = (top + bottom) / (top - bottom);
+	mat[0]  = (2.0f * near) / (right - left);
+	mat[5]  = (2.0f * near) / (top - bottom);
+	mat[8]  = (right + left) / (right - left);
+	mat[9]  = (top + bottom) / (top - bottom);
 	mat[10] = -(far + near) / (far - near);
 	mat[11] = -1.0f;
 	mat[14] = -(2.0f * far * near) / (far - near);
@@ -61,8 +61,8 @@ Matrix4 CreateOrthographicProjectionMatrix(const float left, const float right, 
 {
 	Matrix4 mat;
 
-	mat[0] = 2.0f / (right - left);
-	mat[5] = 2.0f / (top - bottom);
+	mat[0]  = 2.0f / (right - left);
+	mat[5]  = 2.0f / (top - bottom);
 	mat[10] = -2.0f / (far - near);
 	mat[12] = -(right + left) / (right - left);
 	mat[13] = -(top + bottom) / (top - bottom);
@@ -81,12 +81,12 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	const int screenWidth = 800;
+	const int screenWidth  = 800;
 	const int screenHeight = 600;
 
 	assert(screenWidth > 0 && screenHeight > 0);
 
-	SDL_Window* window = NULL;
+	SDL_Window*   window   = NULL;
 	SDL_Renderer* renderer = NULL;
 
 	if (!InitWindow(&window, &renderer, screenWidth, screenHeight, false))
@@ -94,15 +94,16 @@ int main(int argc, char* argv[])
 		SDL_DestroyRenderer(renderer);
 		SDL_DestroyWindow(window);
 		SDL_Quit();
+
 		return 0;
 	}
 
 	vector<Vector4> vertices;
 	//vertices.emplace_back(0.0, 0.0, -1000.0, 1.0);
-	vertices.emplace_back(2.0f, 2.0f, 10.0f, 1.0f);
-	vertices.emplace_back(2.0f, -2.0f, 10.0f, 1.0f);
+	vertices.emplace_back(2.0f,  2.0f,  10.0f, 1.0f);
+	vertices.emplace_back(2.0f,  -2.0f, 10.0f, 1.0f);
 	vertices.emplace_back(-2.0f, -2.0f, 10.0f, 1.0f);
-	vertices.emplace_back(-2.0f, 2.0f, 10.0f, 1.0f);
+	vertices.emplace_back(-2.0f, 2.0f,  10.0f, 1.0f);
 
 	vector<size_t> indices = { 0, 1, 2, 3 };
 
@@ -134,7 +135,7 @@ int main(int argc, char* argv[])
 			else if (e.type == SDL_KEYDOWN)
 			{
 				constexpr float translationIncrement = 10.0f;
-				constexpr float rotationIncrement = 2.0f;
+				constexpr float rotationIncrement    = 2.0f;
 
 				if (e.key.keysym.sym == SDLK_ESCAPE)
 				{

@@ -48,9 +48,9 @@ namespace tr
 		{
 			const int d1 = dy << 1;
 			const int d2 = (dy - dx) << 1;
-			int d = (dy << 1) - dx;
-			int x = start.x + sx;
-			int y = start.y;
+			int       d  = (dy << 1) - dx;
+			int       x  = start.x + sx;
+			int       y  = start.y;
 
 			for (int i = 1; i <= dx; ++i, x += sx)
 			{
@@ -71,9 +71,9 @@ namespace tr
 		{
 			const int d1 = dx << 1;
 			const int d2 = (dx - dy) << 1;
-			int d = (dx << 1) - dy;
-			int x = start.x;
-			int y = start.y + sy;
+			int       d  = (dx << 1) - dy;
+			int       x  = start.x;
+			int       y  = start.y + sy;
 
 			for (int i = 1; i <= dy; ++i, y += sy)
 			{
@@ -209,13 +209,13 @@ namespace tr
 		vector<tr::Coord> screenCoords;
 		screenCoords.reserve(vertices.size());
 
-		const float halfWidth = width / 2.0f;
+		const float halfWidth  = width / 2.0f;
 		const float halfHeight = height / 2.0f;
 
 		//transform vertices from world space to ndc
 		for (auto& vertex : vertices)
 		{
-			vertex = modelViewProjectionMatrix * vertex;
+			vertex =  modelViewProjectionMatrix * vertex;
 			vertex /= vertex.w;
 		}
 
