@@ -3,9 +3,7 @@
 #include <thread>
 #include <vector>
 
-#include "tr/trMat4.hpp"
 #include "tr/tr.hpp"
-#include "tr/trVec4.hpp"
 
 #include <SDL.h>
 

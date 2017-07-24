@@ -182,9 +182,7 @@
     <ClInclude Include="src\tr\trColor.hpp" />
     <ClInclude Include="src\tr\trCoord.hpp" />
     <ClInclude Include="src\tr\trFrameBuffer.hpp" />
-    <ClInclude Include="src\tr\trMat4.hpp" />
     <ClInclude Include="src\tr\trTexture.hpp" />
-    <ClInclude Include="src\tr\trVec4.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EasyBMP\EasyBMP.cpp" />

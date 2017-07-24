@@ -27,13 +27,7 @@
     <ClInclude Include="src\tr\trFrameBuffer.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="src\tr\trMat4.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
     <ClInclude Include="src\tr\trTexture.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tr\trVec4.hpp">
       <Filter>tr</Filter>
     </ClInclude>
     <ClInclude Include="src\matrix\Matrices.h">

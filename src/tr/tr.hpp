@@ -9,9 +9,7 @@
 
 #include "trCoord.hpp"
 #include "trFrameBuffer.hpp"
-#include "trMat4.hpp"
 #include "trTexture.hpp"
-#include "trVec4.hpp"
 #include "../matrix/Matrices.h"
 
 using std::vector;
@@ -179,7 +177,7 @@ namespace tr
 		return true;
 	}
 
-	void DrawLine(Vector4 v0, Vector4 v1, const double halfWidth, const double halfHeight, tr::FrameBuffer& frameBuffer)
+	void DrawLine(Vector4 v0, Vector4 v1, const float halfWidth, const float halfHeight, tr::FrameBuffer& frameBuffer)
 	{
 		//clip
 		if (!ClipNdcLine(v0, v1))
@@ -195,7 +193,7 @@ namespace tr
 		DrawLine(c0, c1, frameBuffer);
 	}
 
-	void DrawTriangle(Vector4 v0, Vector4 v1, Vector4 v2, const double halfWidth, const double halfHeight, tr::FrameBuffer& frameBuffer)
+	void DrawTriangle(Vector4 v0, Vector4 v1, Vector4 v2, const float halfWidth, const float halfHeight, tr::FrameBuffer& frameBuffer)
 	{
 		//if all vertices in
 			//draw one triangle
@@ -211,8 +209,8 @@ namespace tr
 		vector<tr::Coord> screenCoords;
 		screenCoords.reserve(vertices.size());
 
-		const double halfWidth = double(width) / 2.0;
-		const double halfHeight = double(height) / 2.0;
+		const float halfWidth = width / 2.0f;
+		const float halfHeight = height / 2.0f;
 
 		//transform vertices from world space to ndc
 		for (auto& vertex : vertices)
