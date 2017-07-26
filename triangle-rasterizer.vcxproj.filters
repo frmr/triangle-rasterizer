@@ -21,9 +21,6 @@
     <ClInclude Include="src\tr\trColor.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="src\tr\trFrameBuffer.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
     <ClInclude Include="src\matrix\Matrices.h">
       <Filter>matrix</Filter>
     </ClInclude>
@@ -60,6 +57,9 @@
     <ClInclude Include="src\tr\trFileException.hpp">
       <Filter>tr</Filter>
     </ClInclude>
+    <ClInclude Include="src\tr\trVertex.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\matrix\Matrices.cpp">
@@ -70,9 +70,6 @@
       <Filter>EasyBMP</Filter>
     </ClCompile>
     <ClCompile Include="src\tr\trFunctions.cpp">
-      <Filter>tr</Filter>
-    </ClCompile>
-    <ClCompile Include="src\tr\trFrameBuffer.cpp">
       <Filter>tr</Filter>
     </ClCompile>
   </ItemGroup>

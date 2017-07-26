@@ -8,8 +8,11 @@
 #include <vector>
 
 #include "trCoord.hpp"
-#include "trFrameBuffer.hpp"
 #include "trFunctions.hpp"
+#include "trVertex.hpp"
+#include "trColorBuffer.hpp"
+#include "trDepthBuffer.hpp"
+
 #include "../matrix/Matrices.h"
 
 using std::vector;
@@ -102,14 +105,14 @@ namespace tr
 		}
 	}
 
-	void drawLine(const tr::Coord& start, const tr::Coord& end, tr::FrameBuffer& frameBuffer)
+	void drawLine(const tr::Coord& start, const tr::Coord& end, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer)
 	{
 		vector<tr::Coord> pixels;
 		getLinePixels(start, end, pixels);
 
 		for (const auto& pixel : pixels)
 		{
-			frameBuffer.color.at(pixel.x, pixel.y) = std::numeric_limits<uint32_t>::max();
+			colorBuffer.at(pixel.x, pixel.y) = std::numeric_limits<uint32_t>::max();
 		}
 	}
 
@@ -187,7 +190,7 @@ namespace tr
 		return true;
 	}
 
-	void drawLine(Vector4 v0, Vector4 v1, const float halfWidth, const float halfHeight, tr::FrameBuffer& frameBuffer)
+	void drawLine(Vector4 v0, Vector4 v1, const float halfWidth, const float halfHeight, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer)
 	{
 		//clip
 		if (!clipNdcLine(v0, v1))
@@ -200,10 +203,10 @@ namespace tr
 		const tr::Coord c1(int(halfWidth * v1.x + halfWidth), int(halfHeight * v1.y + halfHeight), v1.z);
 
 		//draw
-		drawLine(c0, c1, frameBuffer);
+		drawLine(c0, c1, colorBuffer, depthBuffer);
 	}
 
-	void drawTriangle(Vector4 v0, Vector4 v1, Vector4 v2, const float halfWidth, const float halfHeight, tr::FrameBuffer& frameBuffer)
+	void drawTriangle(Vector4 v0, Vector4 v1, Vector4 v2, const float halfWidth, const float halfHeight, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer)
 	{
 		//if all vertices in
 			//draw one triangle
@@ -212,7 +215,7 @@ namespace tr
 		//else if 
 	}
 
-	void draw(const tr::DrawMode mode, vector<Vector4> vertices, const vector<size_t>& indices, const tr::ColorBuffer& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::FrameBuffer& frameBuffer)
+	void draw(const tr::DrawMode mode, vector<Vector4> vertices, const vector<size_t>& indices, const tr::ColorBuffer& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer)
 	{
 		assert(width > 0 && height > 0);
 
@@ -233,30 +236,30 @@ namespace tr
 		{
 			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end(); indexIt += 2)
 			{
-				drawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, frameBuffer);
+				drawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, colorBuffer, depthBuffer);
 			}
 		}
 		else if (mode == tr::DrawMode::LINE_STRIP)
 		{
 			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end() - 1; ++indexIt)
 			{
-				drawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, frameBuffer);
+				drawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, colorBuffer, depthBuffer);
 			}
 		}
 		else if (mode == tr::DrawMode::LINE_LOOP)
 		{
 			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end() - 1; ++indexIt)
 			{
-				drawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, frameBuffer);
+				drawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, colorBuffer, depthBuffer);
 			}
 
-			drawLine(vertices[indices.back()], vertices[indices.front()], halfWidth, halfHeight, frameBuffer);
+			drawLine(vertices[indices.back()], vertices[indices.front()], halfWidth, halfHeight, colorBuffer, depthBuffer);
 		}
 		else if (mode == tr::DrawMode::TRIANGLES)
 		{
 			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end(); indexIt += 3)
 			{
-				drawTriangle(vertices[*indexIt], vertices[*(indexIt + 1)], vertices[*(indexIt + 2)], halfWidth, halfHeight, frameBuffer);
+				drawTriangle(vertices[*indexIt], vertices[*(indexIt + 1)], vertices[*(indexIt + 2)], halfWidth, halfHeight, colorBuffer, depthBuffer);
 			}
 		}
 	}

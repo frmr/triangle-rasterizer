@@ -111,7 +111,8 @@ int main(int argc, char* argv[])
 
 	Matrix4 projectionMatrix = createPerspectiveProjectionMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
 
-	tr::FrameBuffer fb(screenWidth, screenHeight);
+	tr::ColorBuffer colorBuffer(screenWidth, screenHeight);
+	tr::DepthBuffer depthBuffer(screenWidth, screenHeight);
 
 	SDL_Surface* sdlSurface;
 
@@ -186,15 +187,15 @@ int main(int argc, char* argv[])
 
 		std::cout << rotation.y << std::endl;
 
-		fb.color.fill(0);
+		colorBuffer.fill(0);
 
 		modelViewMatrix.identity();
 		modelViewMatrix.rotateX(rotation.x);
 		modelViewMatrix.rotateY(rotation.y);
 		modelViewMatrix.translate(-position.x, -position.y, -position.z);
 
-		tr::draw(tr::DrawMode::LINE_LOOP, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, fb);
-		sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.color.getData(), screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
+		tr::draw(tr::DrawMode::LINE_LOOP, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, colorBuffer, depthBuffer);
+		sdlSurface = SDL_CreateRGBSurfaceFrom((void*) colorBuffer.getData(), screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
 
 		SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
 		SDL_FreeSurface(sdlSurface);

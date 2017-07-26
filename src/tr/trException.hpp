@@ -7,11 +7,11 @@ namespace tr
 	{
 	public:
 		Exception(const std::string& info) :
-			info(info)
+			m_info(info)
 		{
 		}
 
-	public:
-		const std::string info;
+	private:
+		const std::string m_info;
 	};
 }
