@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
 		modelViewMatrix.translate(-position.x, -position.y, -position.z);
 
 		tr::Draw(tr::DrawMode::LINE_LOOP, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, fb);
-		sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.color.data, screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
+		sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.color.GetData(), screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
 
 		SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
 		SDL_FreeSurface(sdlSurface);
