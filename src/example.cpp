@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
 
 	vector<size_t> indices = { 0, 1, 2, 3 };
 
-	tr::Texture tex("data/udon1.bmp");
+	tr::ColorBuffer tex = tr::LoadTexture("data/udon1.bmp");
 
 	Matrix4 projectionMatrix = CreatePerspectiveProjectionMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
 
@@ -186,7 +186,7 @@ int main(int argc, char* argv[])
 
 		std::cout << rotation.y << std::endl;
 
-		fb.colorBuffer.Fill(0);
+		fb.color.Fill(0);
 
 		modelViewMatrix.identity();
 		modelViewMatrix.rotateX(rotation.x);
@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
 		modelViewMatrix.translate(-position.x, -position.y, -position.z);
 
 		tr::Draw(tr::DrawMode::LINE_LOOP, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, fb);
-		sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.colorBuffer.data, screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
+		sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.color.data, screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
 
 		SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
 		SDL_FreeSurface(sdlSurface);

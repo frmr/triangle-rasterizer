@@ -179,14 +179,19 @@
     <ClInclude Include="src\tr\tr.hpp" />
     <ClInclude Include="src\tr\trBuffer.hpp" />
     <ClInclude Include="src\tr\trColor.hpp" />
+    <ClInclude Include="src\tr\trColorBuffer.hpp" />
     <ClInclude Include="src\tr\trCoord.hpp" />
+    <ClInclude Include="src\tr\trDepthBuffer.hpp" />
+    <ClInclude Include="src\tr\trException.hpp" />
+    <ClInclude Include="src\tr\trFileException.hpp" />
     <ClInclude Include="src\tr\trFrameBuffer.hpp" />
-    <ClInclude Include="src\tr\trTexture.hpp" />
+    <ClInclude Include="src\tr\trFunctions.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EasyBMP\EasyBMP.cpp" />
     <ClCompile Include="src\example.cpp" />
     <ClCompile Include="src\matrix\Matrices.cpp" />
+    <ClCompile Include="src\tr\trFunctions.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -6,16 +6,16 @@ namespace tr
 	class Buffer
 	{
 	public:
-		const size_t    height;
-		const size_t    width;
-		const size_t    size;
-		T* const        data;
+		const size_t height;
+		const size_t width;
+		const size_t size;
+		T* const     data;
 
 	public:
 
 		T& At(const size_t x, const size_t y)
 		{
-			return data[y*width+x];
+			return data[y * width + x];
 		}
 
 		T& At(const double x, const double y, const bool filter)

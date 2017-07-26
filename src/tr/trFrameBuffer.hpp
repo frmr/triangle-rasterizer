@@ -1,35 +1,35 @@
 #pragma once
 
-#include "trBuffer.hpp"
-#include "trColor.hpp"
+#include "trColorBuffer.hpp"
+#include "trDepthBuffer.hpp"
 
 namespace tr
 {
 	class FrameBuffer
 	{
 	public:
-		const size_t            width;
-		const size_t            height;
-		tr::Buffer<tr::Color>   colorBuffer;
-		tr::Buffer<double>      depthBuffer;
+		const size_t    width;
+		const size_t    height;
+		tr::ColorBuffer color;
+		tr::DepthBuffer depth;
 
 	public:
 		tr::Color& ColorAt(const size_t& x, const size_t& y)
 		{
-			return colorBuffer.At(x, y);
+			return color.At(x, y);
 		}
 
-		double& DepthAt(const size_t& x, const size_t& y)
+		float& DepthAt(const size_t& x, const size_t& y)
 		{
-			return depthBuffer.At(x, y);
+			return depth.At(x, y);
 		}
 
 	public:
 		FrameBuffer(const size_t& width, const size_t& height) :
 			width(width),
 			height(height),
-			colorBuffer(width, height),
-			depthBuffer(width, height)
+			color(width, height),
+			depth(width, height)
 		{
 		}
 	};

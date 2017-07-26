@@ -9,13 +9,23 @@
 
 #include "trCoord.hpp"
 #include "trFrameBuffer.hpp"
-#include "trTexture.hpp"
+#include "trFunctions.hpp"
 #include "../matrix/Matrices.h"
 
 using std::vector;
 
 namespace tr
 {
+	//class Rasterizer
+	//{
+	//public:
+	//	void setDepthTest(const tr::DepthTest depthTest);
+	//	void setFaceCulling(const tr::FaceCulling faceCulling);
+	//	void setMatrix(const Matrix4& matrix);
+	//
+	//	void Draw(tr::FrameBuffer frameBuffer);
+	//};
+
 	enum class DrawMode
 	{
 		POINTS,
@@ -99,7 +109,7 @@ namespace tr
 
 		for (const auto& pixel : pixels)
 		{
-			frameBuffer.colorBuffer.At(pixel.x, pixel.y) = std::numeric_limits<uint32_t>::max();
+			frameBuffer.color.At(pixel.x, pixel.y) = std::numeric_limits<uint32_t>::max();
 		}
 	}
 
@@ -202,7 +212,7 @@ namespace tr
 		//else if 
 	}
 
-	void Draw(const tr::DrawMode mode, vector<Vector4> vertices, const vector<size_t>& indices, const tr::Texture& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::FrameBuffer& frameBuffer)
+	void Draw(const tr::DrawMode mode, vector<Vector4> vertices, const vector<size_t>& indices, const tr::ColorBuffer& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::FrameBuffer& frameBuffer)
 	{
 		assert(width > 0 && height > 0);
 
