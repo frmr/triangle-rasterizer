@@ -176,6 +176,8 @@
     <ClInclude Include="src\EasyBMP\EasyBMP_VariousBMPutilities.h" />
     <ClInclude Include="src\matrix\Matrices.h" />
     <ClInclude Include="src\matrix\Vectors.h" />
+    <ClInclude Include="src\tr\trPrimitive.hpp" />
+    <ClInclude Include="src\tr\trRasterizer.hpp" />
     <ClInclude Include="src\tr\tr.hpp" />
     <ClInclude Include="src\tr\trBuffer.hpp" />
     <ClInclude Include="src\tr\trColor.hpp" />
@@ -192,6 +194,7 @@
     <ClCompile Include="src\example.cpp" />
     <ClCompile Include="src\matrix\Matrices.cpp" />
     <ClCompile Include="src\tr\trFunctions.cpp" />
+    <ClCompile Include="src\tr\trRasterizer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

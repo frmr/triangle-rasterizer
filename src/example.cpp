@@ -119,6 +119,8 @@ int main(int argc, char* argv[])
 
 	Matrix4 modelViewMatrix;
 
+	tr::Rasterizer rasterizer;
+
 	while (running)
 	{
 		const auto start = std::chrono::high_resolution_clock::now();
@@ -192,7 +194,7 @@ int main(int argc, char* argv[])
 		modelViewMatrix.rotateY(rotation.y);
 		modelViewMatrix.translate(-position.x, -position.y, -position.z);
 
-		tr::draw(tr::DrawMode::LINE_LOOP, vertices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, colorBuffer, depthBuffer);
+		rasterizer.draw(tr::Primitive::LINE_LOOP, vertices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, colorBuffer, depthBuffer);
 		sdlSurface = SDL_CreateRGBSurfaceFrom((void*) colorBuffer.getData(), screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
 
 		SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);

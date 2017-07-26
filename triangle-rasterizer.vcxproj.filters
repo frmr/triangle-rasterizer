@@ -60,6 +60,12 @@
     <ClInclude Include="src\tr\trVertex.hpp">
       <Filter>tr</Filter>
     </ClInclude>
+    <ClInclude Include="src\tr\trRasterizer.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trPrimitive.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\matrix\Matrices.cpp">
@@ -70,6 +76,9 @@
       <Filter>EasyBMP</Filter>
     </ClCompile>
     <ClCompile Include="src\tr\trFunctions.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tr\trRasterizer.cpp">
       <Filter>tr</Filter>
     </ClCompile>
   </ItemGroup>
