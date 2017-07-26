@@ -215,51 +215,51 @@ namespace tr
 		//else if 
 	}
 
-	void draw(const tr::DrawMode mode, vector<Vector4> vertices, const vector<size_t>& indices, const tr::ColorBuffer& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer)
+	void draw(const tr::DrawMode mode, vector<Vertex> vertices, const tr::ColorBuffer& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer)
 	{
 		assert(width > 0 && height > 0);
 
 		vector<tr::Coord> screenCoords;
 		screenCoords.reserve(vertices.size());
 
-		const float halfWidth  = width / 2.0f;
+		const float halfWidth  = width  / 2.0f;
 		const float halfHeight = height / 2.0f;
 
 		//transform vertices from world space to ndc
 		for (auto& vertex : vertices)
 		{
-			vertex =  modelViewProjectionMatrix * vertex;
-			vertex /= vertex.w;
+			vertex.position =  modelViewProjectionMatrix * vertex.position;
+			vertex.position /= vertex.position.w;
 		}
 
 		if (mode == tr::DrawMode::LINES)
 		{
-			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end(); indexIt += 2)
+			for (vector<Vertex>::const_iterator it = vertices.begin(); it != vertices.end(); it += 2)
 			{
-				drawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, colorBuffer, depthBuffer);
+				drawLine(it->position, (it + 1)->position, halfWidth, halfHeight, colorBuffer, depthBuffer);
 			}
 		}
 		else if (mode == tr::DrawMode::LINE_STRIP)
 		{
-			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end() - 1; ++indexIt)
+			for (vector<Vertex>::const_iterator it = vertices.begin(); it != vertices.end() - 1; ++it)
 			{
-				drawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, colorBuffer, depthBuffer);
+				drawLine(it->position, (it + 1)->position, halfWidth, halfHeight, colorBuffer, depthBuffer);
 			}
 		}
 		else if (mode == tr::DrawMode::LINE_LOOP)
 		{
-			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end() - 1; ++indexIt)
+			for (vector<Vertex>::const_iterator it = vertices.begin(); it != vertices.end() - 1; ++it)
 			{
-				drawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, colorBuffer, depthBuffer);
+				drawLine(it->position, (it + 1)->position, halfWidth, halfHeight, colorBuffer, depthBuffer);
 			}
 
-			drawLine(vertices[indices.back()], vertices[indices.front()], halfWidth, halfHeight, colorBuffer, depthBuffer);
+			drawLine(vertices.back().position, vertices.front().position, halfWidth, halfHeight, colorBuffer, depthBuffer);
 		}
 		else if (mode == tr::DrawMode::TRIANGLES)
 		{
-			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end(); indexIt += 3)
+			for (vector<Vertex>::const_iterator it = vertices.begin(); it != vertices.end(); it += 3)
 			{
-				drawTriangle(vertices[*indexIt], vertices[*(indexIt + 1)], vertices[*(indexIt + 2)], halfWidth, halfHeight, colorBuffer, depthBuffer);
+				drawTriangle(it->position, (it + 1)->position, (it + 2)->position, halfWidth, halfHeight, colorBuffer, depthBuffer);
 			}
 		}
 	}

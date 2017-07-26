@@ -98,14 +98,12 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	vector<Vector4> vertices;
+	vector<tr::Vertex> vertices;
 	//vertices.emplace_back(0.0, 0.0, -1000.0, 1.0);
-	vertices.emplace_back(2.0f,  2.0f,  10.0f, 1.0f);
-	vertices.emplace_back(2.0f,  -2.0f, 10.0f, 1.0f);
-	vertices.emplace_back(-2.0f, -2.0f, 10.0f, 1.0f);
-	vertices.emplace_back(-2.0f, 2.0f,  10.0f, 1.0f);
-
-	vector<size_t> indices = { 0, 1, 2, 3 };
+	vertices.push_back({ Vector4(2.0f,  2.0f,  10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) });
+	vertices.push_back({ Vector4(2.0f,  -2.0f, 10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) });
+	vertices.push_back({ Vector4(-2.0f, -2.0f, 10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) });
+	vertices.push_back({ Vector4(-2.0f, 2.0f,  10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) });
 
 	tr::ColorBuffer tex = tr::loadTexture("data/udon1.bmp");
 
@@ -194,7 +192,7 @@ int main(int argc, char* argv[])
 		modelViewMatrix.rotateY(rotation.y);
 		modelViewMatrix.translate(-position.x, -position.y, -position.z);
 
-		tr::draw(tr::DrawMode::LINE_LOOP, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, colorBuffer, depthBuffer);
+		tr::draw(tr::DrawMode::LINE_LOOP, vertices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, colorBuffer, depthBuffer);
 		sdlSurface = SDL_CreateRGBSurfaceFrom((void*) colorBuffer.getData(), screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
 
 		SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
