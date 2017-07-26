@@ -3,7 +3,7 @@
 
 #include "../EasyBMP/EasyBMP.h"
 
-tr::ColorBuffer tr::LoadTexture(const std::string& filename)
+tr::ColorBuffer tr::loadTexture(const std::string& filename)
 {
 	BMP* image   = new BMP();
 	bool success = image->ReadFromFile(filename.c_str());
@@ -16,9 +16,9 @@ tr::ColorBuffer tr::LoadTexture(const std::string& filename)
 		{
 			for (int y = 0; y < image->TellHeight(); ++y)
 			{
-				colorBuffer.At(x, y) =  ((tr::Color) image->GetPixel(x, y).Red)   << 16;
-				colorBuffer.At(x, y) += ((tr::Color) image->GetPixel(x, y).Green) << 8;
-				colorBuffer.At(x, y) += ((tr::Color) image->GetPixel(x, y).Blue)  << 0;
+				colorBuffer.at(x, y) =  ((tr::Color) image->GetPixel(x, y).Red)   << 16;
+				colorBuffer.at(x, y) += ((tr::Color) image->GetPixel(x, y).Green) << 8;
+				colorBuffer.at(x, y) += ((tr::Color) image->GetPixel(x, y).Blue)  << 0;
 			}
 		}
 

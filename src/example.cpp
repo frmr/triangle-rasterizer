@@ -12,7 +12,7 @@ using std::cerr;
 using std::endl;
 using std::vector;
 
-bool InitSdl()
+bool initSdl()
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0)
 	{
@@ -22,7 +22,7 @@ bool InitSdl()
 	return true;
 }
 
-bool InitWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWidth, const int screenHeight, const bool fullscreen)
+bool initWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWidth, const int screenHeight, const bool fullscreen)
 {
 	*window = SDL_CreateWindow("Space Raster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
 
@@ -42,7 +42,7 @@ bool InitWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWi
 	return true;
 }
 
-Matrix4 CreatePerspectiveProjectionMatrix(const float left, const float right, const float bottom, const float top, const float near, const float far)
+Matrix4 createPerspectiveProjectionMatrix(const float left, const float right, const float bottom, const float top, const float near, const float far)
 {
 	Matrix4 mat;
 
@@ -57,7 +57,7 @@ Matrix4 CreatePerspectiveProjectionMatrix(const float left, const float right, c
 	return mat;
 }
 
-Matrix4 CreateOrthographicProjectionMatrix(const float left, const float right, const float bottom, const float top, const float near, const float far)
+Matrix4 createOrthographicProjectionMatrix(const float left, const float right, const float bottom, const float top, const float near, const float far)
 {
 	Matrix4 mat;
 
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 {
 	bool running = true;
 
-	if (!InitSdl())
+	if (!initSdl())
 	{
 		SDL_Quit();
 		return 0;
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 	SDL_Window*   window   = NULL;
 	SDL_Renderer* renderer = NULL;
 
-	if (!InitWindow(&window, &renderer, screenWidth, screenHeight, false))
+	if (!initWindow(&window, &renderer, screenWidth, screenHeight, false))
 	{
 		SDL_DestroyRenderer(renderer);
 		SDL_DestroyWindow(window);
@@ -107,9 +107,9 @@ int main(int argc, char* argv[])
 
 	vector<size_t> indices = { 0, 1, 2, 3 };
 
-	tr::ColorBuffer tex = tr::LoadTexture("data/udon1.bmp");
+	tr::ColorBuffer tex = tr::loadTexture("data/udon1.bmp");
 
-	Matrix4 projectionMatrix = CreatePerspectiveProjectionMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
+	Matrix4 projectionMatrix = createPerspectiveProjectionMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
 
 	tr::FrameBuffer fb(screenWidth, screenHeight);
 
@@ -186,15 +186,15 @@ int main(int argc, char* argv[])
 
 		std::cout << rotation.y << std::endl;
 
-		fb.color.Fill(0);
+		fb.color.fill(0);
 
 		modelViewMatrix.identity();
 		modelViewMatrix.rotateX(rotation.x);
 		modelViewMatrix.rotateY(rotation.y);
 		modelViewMatrix.translate(-position.x, -position.y, -position.z);
 
-		tr::Draw(tr::DrawMode::LINE_LOOP, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, fb);
-		sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.color.GetData(), screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
+		tr::draw(tr::DrawMode::LINE_LOOP, vertices, indices, tex, (modelViewMatrix * projectionMatrix).invert(), screenWidth, screenHeight, fb);
+		sdlSurface = SDL_CreateRGBSurfaceFrom((void*) fb.color.getData(), screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
 
 		SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
 		SDL_FreeSurface(sdlSurface);

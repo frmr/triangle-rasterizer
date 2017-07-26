@@ -16,14 +16,14 @@ namespace tr
 		{
 		}
 
-		tr::Color& ColorAt(const size_t& x, const size_t& y)
+		tr::Color& colorAt(const size_t& x, const size_t& y)
 		{
-			return color.At(x, y);
+			return color.at(x, y);
 		}
 
-		float& DepthAt(const size_t& x, const size_t& y)
+		float& depthAt(const size_t& x, const size_t& y)
 		{
-			return depth.At(x, y);
+			return depth.at(x, y);
 		}
 
 	public:

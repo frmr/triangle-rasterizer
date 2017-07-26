@@ -10,7 +10,7 @@ namespace tr
 		{
 		}
 
-		bool IsValid(const int screenWidth, const int screenHeight) const
+		bool isValid(const int screenWidth, const int screenHeight) const
 		{
 			return x >= 0 && x < screenWidth && y >= 0 && y < screenHeight && depth >= -1.0 && depth <= 1.0;
 		}

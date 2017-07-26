@@ -17,18 +17,18 @@ namespace tr
 			data.resize(size, T());
 		}
 
-		T& At(const size_t x, const size_t y)
+		T& at(const size_t x, const size_t y)
 		{
 			return data.at(y * width + x);
 		}
 
-		T& At(const double x, const double y, const bool filter)
+		T& at(const double x, const double y, const bool filter)
 		{
 			//interpolate
 			return data.at(0);
 		}
 
-		void Fill(const T& value)
+		void fill(const T& value)
 		{
 			for (auto& element : data)
 			{
@@ -36,17 +36,17 @@ namespace tr
 			}
 		}
 
-		T GetAt(const size_t& x, const size_t& y) const
+		T getAt(const size_t& x, const size_t& y) const
 		{
 			return data[y*width+x];
 		}
 
-		T GetAt(const double& x, const double& y, const bool filter) const
+		T getAt(const double& x, const double& y, const bool filter) const
 		{
 			return data[0];
 		}
 
-		T* GetData()
+		T* getData()
 		{
 			return &data.front();
 		}

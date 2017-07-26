@@ -4,5 +4,5 @@
 
 namespace tr
 {
-	tr::ColorBuffer LoadTexture(const std::string& filename);
+	tr::ColorBuffer loadTexture(const std::string& filename);
 }

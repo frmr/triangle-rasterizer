@@ -37,7 +37,7 @@ namespace tr
 		TRIANGLE_FAN
 	};
 
-	void GetLinePixels(const tr::Coord& start, const tr::Coord& end, vector<tr::Coord>& pixels)
+	void getLinePixels(const tr::Coord& start, const tr::Coord& end, vector<tr::Coord>& pixels)
 	{
 		const int dx = abs(end.x - start.x);
 		const int dy = abs(end.y - start.y);
@@ -102,23 +102,23 @@ namespace tr
 		}
 	}
 
-	void DrawLine(const tr::Coord& start, const tr::Coord& end, tr::FrameBuffer& frameBuffer)
+	void drawLine(const tr::Coord& start, const tr::Coord& end, tr::FrameBuffer& frameBuffer)
 	{
 		vector<tr::Coord> pixels;
-		GetLinePixels(start, end, pixels);
+		getLinePixels(start, end, pixels);
 
 		for (const auto& pixel : pixels)
 		{
-			frameBuffer.color.At(pixel.x, pixel.y) = std::numeric_limits<uint32_t>::max();
+			frameBuffer.color.at(pixel.x, pixel.y) = std::numeric_limits<uint32_t>::max();
 		}
 	}
 
-	bool VertexInNdcCube(const Vector4 vertex)
+	bool vertexInNdcCube(const Vector4 vertex)
 	{
 		return vertex.x >= -1.0f && vertex.x < 1.0f && vertex.y >= -1.0f && vertex.y < 1.0f && vertex.z >= -1.0f && vertex.z < 1.0f;
 	}
 
-	void NdcIntersectionX(const Vector4& inside, Vector4& outside, const float xValue)
+	void ndcIntersectionX(const Vector4& inside, Vector4& outside, const float xValue)
 	{
 		const float alpha = (xValue - inside.x) / (outside.x - inside.x);
 
@@ -127,7 +127,7 @@ namespace tr
 		//TODO: set z
 	}
 
-	void NdcIntersectionY(const Vector4& inside, Vector4& outside, const float yValue)
+	void ndcIntersectionY(const Vector4& inside, Vector4& outside, const float yValue)
 	{
 		const float alpha = (yValue - inside.y) / (outside.y - inside.y);
 
@@ -136,7 +136,7 @@ namespace tr
 		//TODO: set z
 	}
 
-	bool ClipNdcLine(Vector4& start, Vector4& end)
+	bool clipNdcLine(Vector4& start, Vector4& end)
 	{
 		if ((start.x < -1.0f && end.x < -1.0f) || (start.y < -1.0f && end.y < -1.0f) || (start.z < -1.0f && end.z < -1.0f))
 		{
@@ -150,47 +150,47 @@ namespace tr
 
 		if (start.x < -1.0f)
 		{
-			NdcIntersectionX(end, start, -1.0f);
+			ndcIntersectionX(end, start, -1.0f);
 		}
 		else if (start.x >= 1.0f)
 		{
-			NdcIntersectionX(end, start, 0.9999f);
+			ndcIntersectionX(end, start, 0.9999f);
 		}
 		
 		if (end.x < -1.0f)
 		{
-			NdcIntersectionX(start, end, -1.0f);
+			ndcIntersectionX(start, end, -1.0f);
 		}
 		else if (end.x >= 1.0f)
 		{
-			NdcIntersectionX(start, end, 0.9999f);
+			ndcIntersectionX(start, end, 0.9999f);
 		}
 
 		if (start.y < -1.0f)
 		{
-			NdcIntersectionY(end, start, -1.0f);
+			ndcIntersectionY(end, start, -1.0f);
 		}
 		else if (start.y >= 1.0f)
 		{
-			NdcIntersectionY(end, start, 0.9999f);
+			ndcIntersectionY(end, start, 0.9999f);
 		}
 
 		if (end.y < -1.0f)
 		{
-			NdcIntersectionY(start, end, -1.0f);
+			ndcIntersectionY(start, end, -1.0f);
 		}
 		else if (end.y >= 1.0f)
 		{
-			NdcIntersectionY(start, end, 0.9999f);
+			ndcIntersectionY(start, end, 0.9999f);
 		}
 
 		return true;
 	}
 
-	void DrawLine(Vector4 v0, Vector4 v1, const float halfWidth, const float halfHeight, tr::FrameBuffer& frameBuffer)
+	void drawLine(Vector4 v0, Vector4 v1, const float halfWidth, const float halfHeight, tr::FrameBuffer& frameBuffer)
 	{
 		//clip
-		if (!ClipNdcLine(v0, v1))
+		if (!clipNdcLine(v0, v1))
 		{
 			return;
 		}
@@ -200,10 +200,10 @@ namespace tr
 		const tr::Coord c1(int(halfWidth * v1.x + halfWidth), int(halfHeight * v1.y + halfHeight), v1.z);
 
 		//draw
-		DrawLine(c0, c1, frameBuffer);
+		drawLine(c0, c1, frameBuffer);
 	}
 
-	void DrawTriangle(Vector4 v0, Vector4 v1, Vector4 v2, const float halfWidth, const float halfHeight, tr::FrameBuffer& frameBuffer)
+	void drawTriangle(Vector4 v0, Vector4 v1, Vector4 v2, const float halfWidth, const float halfHeight, tr::FrameBuffer& frameBuffer)
 	{
 		//if all vertices in
 			//draw one triangle
@@ -212,7 +212,7 @@ namespace tr
 		//else if 
 	}
 
-	void Draw(const tr::DrawMode mode, vector<Vector4> vertices, const vector<size_t>& indices, const tr::ColorBuffer& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::FrameBuffer& frameBuffer)
+	void draw(const tr::DrawMode mode, vector<Vector4> vertices, const vector<size_t>& indices, const tr::ColorBuffer& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::FrameBuffer& frameBuffer)
 	{
 		assert(width > 0 && height > 0);
 
@@ -233,30 +233,30 @@ namespace tr
 		{
 			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end(); indexIt += 2)
 			{
-				DrawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, frameBuffer);
+				drawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, frameBuffer);
 			}
 		}
 		else if (mode == tr::DrawMode::LINE_STRIP)
 		{
 			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end() - 1; ++indexIt)
 			{
-				DrawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, frameBuffer);
+				drawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, frameBuffer);
 			}
 		}
 		else if (mode == tr::DrawMode::LINE_LOOP)
 		{
 			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end() - 1; ++indexIt)
 			{
-				DrawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, frameBuffer);
+				drawLine(vertices[*indexIt], vertices[*(indexIt + 1)], halfWidth, halfHeight, frameBuffer);
 			}
 
-			DrawLine(vertices[indices.back()], vertices[indices.front()], halfWidth, halfHeight, frameBuffer);
+			drawLine(vertices[indices.back()], vertices[indices.front()], halfWidth, halfHeight, frameBuffer);
 		}
 		else if (mode == tr::DrawMode::TRIANGLES)
 		{
 			for (vector<size_t>::const_iterator indexIt = indices.begin(); indexIt != indices.end(); indexIt += 3)
 			{
-				DrawTriangle(vertices[*indexIt], vertices[*(indexIt + 1)], vertices[*(indexIt + 2)], halfWidth, halfHeight, frameBuffer);
+				drawTriangle(vertices[*indexIt], vertices[*(indexIt + 1)], vertices[*(indexIt + 2)], halfWidth, halfHeight, frameBuffer);
 			}
 		}
 	}
