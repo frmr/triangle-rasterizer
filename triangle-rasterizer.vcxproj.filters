@@ -72,5 +72,8 @@
     <ClCompile Include="src\tr\trFunctions.cpp">
       <Filter>tr</Filter>
     </ClCompile>
+    <ClCompile Include="src\tr\trFrameBuffer.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

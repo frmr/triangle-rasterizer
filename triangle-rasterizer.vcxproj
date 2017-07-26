@@ -191,6 +191,7 @@
     <ClCompile Include="src\EasyBMP\EasyBMP.cpp" />
     <ClCompile Include="src\example.cpp" />
     <ClCompile Include="src\matrix\Matrices.cpp" />
+    <ClCompile Include="src\tr\trFrameBuffer.cpp" />
     <ClCompile Include="src\tr\trFunctions.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
