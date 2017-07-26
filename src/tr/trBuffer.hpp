@@ -9,14 +9,13 @@ namespace tr
 	class Buffer
 	{
 	public:
-		const size_t   height;
-		const size_t   width;
-		const size_t   size;
-
-	private:
-		std::vector<T> data;
-
-	public:
+		Buffer(const size_t& width, const size_t& height) :
+			height(height),
+			width(width),
+			size(width * height)
+		{
+			data.resize(size, T());
+		}
 
 		T& At(const size_t x, const size_t y)
 		{
@@ -53,12 +52,11 @@ namespace tr
 		}
 
 	public:
-		Buffer(const size_t& width, const size_t& height) :
-			height(height),
-			width(width),
-			size(width * height)
-		{
-			data.resize(size, T());
-		}
+		const size_t   height;
+		const size_t   width;
+		const size_t   size;
+
+	private:
+		std::vector<T> data;
 	};
 }

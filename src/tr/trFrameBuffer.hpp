@@ -8,12 +8,14 @@ namespace tr
 	class FrameBuffer
 	{
 	public:
-		const size_t    width;
-		const size_t    height;
-		tr::ColorBuffer color;
-		tr::DepthBuffer depth;
+		FrameBuffer(const size_t& width, const size_t& height) :
+			width(width),
+			height(height),
+			color(width, height),
+			depth(width, height)
+		{
+		}
 
-	public:
 		tr::Color& ColorAt(const size_t& x, const size_t& y)
 		{
 			return color.At(x, y);
@@ -25,12 +27,9 @@ namespace tr
 		}
 
 	public:
-		FrameBuffer(const size_t& width, const size_t& height) :
-			width(width),
-			height(height),
-			color(width, height),
-			depth(width, height)
-		{
-		}
+		const size_t    width;
+		const size_t    height;
+		tr::ColorBuffer color;
+		tr::DepthBuffer depth;
 	};
 }
