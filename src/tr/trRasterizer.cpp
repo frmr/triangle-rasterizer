@@ -3,38 +3,38 @@
 
 #include <assert.h>
 
-void tr::Rasterizer::draw(const tr::Primitive primitive, std::vector<Vertex> vertices, const tr::ColorBuffer& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer)
+void tr::Rasterizer::draw(std::vector<Vertex> vertices, const tr::ColorBuffer& texture, const int width, const int height, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer)
 {
 	assert(width > 0 && height > 0);
 
 	std::vector<tr::Coord> screenCoords;
 	screenCoords.reserve(vertices.size());
 
-	const float halfWidth = width / 2.0f;
+	const float halfWidth  = width / 2.0f;
 	const float halfHeight = height / 2.0f;
 
 	//transform vertices from world space to ndc
 	for (auto& vertex : vertices)
 	{
-		vertex.position = modelViewProjectionMatrix * vertex.position;
+		vertex.position =  m_matrix * vertex.position;
 		vertex.position /= vertex.position.w;
 	}
 
-	if (primitive == tr::Primitive::LINES)
+	if (m_primitive == tr::Primitive::LINES)
 	{
 		for (std::vector<Vertex>::const_iterator it = vertices.begin(); it != vertices.end(); it += 2)
 		{
 			drawLine(it->position, (it + 1)->position, halfWidth, halfHeight, colorBuffer, depthBuffer);
 		}
 	}
-	else if (primitive == tr::Primitive::LINE_STRIP)
+	else if (m_primitive == tr::Primitive::LINE_STRIP)
 	{
 		for (std::vector<Vertex>::const_iterator it = vertices.begin(); it != vertices.end() - 1; ++it)
 		{
 			drawLine(it->position, (it + 1)->position, halfWidth, halfHeight, colorBuffer, depthBuffer);
 		}
 	}
-	else if (primitive == tr::Primitive::LINE_LOOP)
+	else if (m_primitive == tr::Primitive::LINE_LOOP)
 	{
 		for (std::vector<Vertex>::const_iterator it = vertices.begin(); it != vertices.end() - 1; ++it)
 		{
@@ -43,13 +43,23 @@ void tr::Rasterizer::draw(const tr::Primitive primitive, std::vector<Vertex> ver
 
 		drawLine(vertices.back().position, vertices.front().position, halfWidth, halfHeight, colorBuffer, depthBuffer);
 	}
-	else if (primitive == tr::Primitive::TRIANGLES)
+	else if (m_primitive == tr::Primitive::TRIANGLES)
 	{
 		for (std::vector<Vertex>::const_iterator it = vertices.begin(); it != vertices.end(); it += 3)
 		{
 			drawTriangle(it->position, (it + 1)->position, (it + 2)->position, halfWidth, halfHeight, colorBuffer, depthBuffer);
 		}
 	}
+}
+
+void tr::Rasterizer::setPrimitive(const tr::Primitive primitive)
+{
+	m_primitive = primitive;
+}
+
+void tr::Rasterizer::setMatrix(const Matrix4& matrix)
+{
+	m_matrix = matrix;
 }
 
 void tr::Rasterizer::getLinePixels(const tr::Coord& start, const tr::Coord& end, std::vector<tr::Coord>& pixels)

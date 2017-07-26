@@ -12,7 +12,9 @@ namespace tr
 	class Rasterizer
 	{
 	public:
-		void draw(const tr::Primitive primitive, std::vector<Vertex> vertices, const tr::ColorBuffer& texture, const Matrix4& modelViewProjectionMatrix, const int width, const int height, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
+		void draw(std::vector<Vertex> vertices, const tr::ColorBuffer& texture, const int width, const int height, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
+		void setPrimitive(const tr::Primitive primitive);
+		void setMatrix(const Matrix4& matrix);
 
 	private:
 		void getLinePixels(const tr::Coord& start, const tr::Coord& end, std::vector<tr::Coord>& pixels);
@@ -27,5 +29,9 @@ namespace tr
 		void drawLine(const tr::Coord& start, const tr::Coord& end, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
 		void drawLine(Vector4 v0, Vector4 v1, const float halfWidth, const float halfHeight, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
 		void drawTriangle(Vector4 v0, Vector4 v1, Vector4 v2, const float halfWidth, const float halfHeight, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
+	
+	private:
+		tr::Primitive m_primitive;
+		Matrix4       m_matrix;
 	};
 }
