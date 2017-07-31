@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
 
 	tr::Rasterizer rasterizer;
 
-	rasterizer.setPrimitive(tr::Primitive::LINE_LOOP);
+	rasterizer.setPrimitive(tr::Primitive::POINTS);
 
 	while (running)
 	{
@@ -187,7 +187,7 @@ int main(int argc, char* argv[])
 			}
 		}
 
-		std::cout << rotation.y << std::endl;
+		//std::cout << rotation.y << std::endl;
 
 		colorBuffer.fill(0);
 
@@ -199,6 +199,7 @@ int main(int argc, char* argv[])
 		rasterizer.setMatrix((modelViewMatrix * projectionMatrix).invert());
 
 		rasterizer.draw(vertices, tex, screenWidth, screenHeight, colorBuffer, depthBuffer);
+
 		sdlSurface = SDL_CreateRGBSurfaceFrom((void*) colorBuffer.getData(), screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
 
 		SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
@@ -207,7 +208,7 @@ int main(int argc, char* argv[])
 		SDL_RenderPresent(renderer);
 		SDL_DestroyTexture(sdlTexture);
 
-		const auto end = std::chrono::high_resolution_clock::now();
+		const auto end  = std::chrono::high_resolution_clock::now();
 		const auto diff = end - start;
 		//cout << std::chrono::duration<double, std::milli>(diff).count() << " ms" << endl;
 	}

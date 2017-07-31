@@ -25,6 +25,10 @@ namespace tr
 		void ndcIntersectionX(const Vector4& inside, Vector4& outside, const float xValue);
 		void ndcIntersectionY(const Vector4& inside, Vector4& outside, const float yValue);
 
+		void drawPoint(const tr::Coord& position, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
+
+		void drawPoint(const Vector4& position, const float halfWidth, const float halfHeight, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
+
 		
 		void drawLine(const tr::Coord& start, const tr::Coord& end, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
 		void drawLine(Vector4 v0, Vector4 v1, const float halfWidth, const float halfHeight, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);

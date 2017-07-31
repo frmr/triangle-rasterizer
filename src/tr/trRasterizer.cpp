@@ -10,17 +10,38 @@ void tr::Rasterizer::draw(std::vector<Vertex> vertices, const tr::ColorBuffer& t
 	std::vector<tr::Coord> screenCoords;
 	screenCoords.reserve(vertices.size());
 
-	const float halfWidth  = width / 2.0f;
+	const float halfWidth  = width  / 2.0f;
 	const float halfHeight = height / 2.0f;
 
+	std::vector<Vertex> vertices2 = vertices;
+	vertices.clear();
+
 	//transform vertices from world space to ndc
-	for (auto& vertex : vertices)
+	for (auto& vertex : vertices2)
 	{
 		vertex.position =  m_matrix * vertex.position;
-		vertex.position /= vertex.position.w;
+		//vertex.position /= vertex.position.w;
+
+		if (vertex.position.x <= vertex.position.w && vertex.position.x >= -vertex.position.w &&
+			vertex.position.y <= vertex.position.w && vertex.position.y >= -vertex.position.w &&
+			vertex.position.z <= vertex.position.w && vertex.position.z >= -vertex.position.w &&
+			vertex.position.w > 0)
+		{
+			vertex.position /= vertex.position.w;
+			vertices.push_back(vertex);
+		}
 	}
 
-	if (m_primitive == tr::Primitive::LINES)
+	std::cout << vertices.size() << std::endl;
+
+	if (m_primitive == tr::Primitive::POINTS)
+	{
+		for (std::vector<Vertex>::const_iterator it = vertices.begin(); it != vertices.end(); ++it)
+		{
+			drawPoint(it->position, halfWidth, halfHeight, colorBuffer, depthBuffer);
+		}
+	}
+	else if (m_primitive == tr::Primitive::LINES)
 	{
 		for (std::vector<Vertex>::const_iterator it = vertices.begin(); it != vertices.end(); it += 2)
 		{
@@ -199,6 +220,16 @@ void tr::Rasterizer::ndcIntersectionY(const Vector4& inside, Vector4& outside, c
 	outside.y = yValue;
 	outside.x = inside.x + alpha * (outside.x - inside.x);
 	//TODO: set z
+}
+
+void tr::Rasterizer::drawPoint(const tr::Coord& position, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer)
+{
+	colorBuffer.at(position.x, position.y) = std::numeric_limits<uint32_t>::max();
+}
+
+void tr::Rasterizer::drawPoint(const Vector4& position, const float halfWidth, const float halfHeight, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer)
+{
+	drawPoint(tr::Coord(int(halfWidth * position.x + halfWidth), int(halfHeight * position.y + halfHeight), position.z), colorBuffer, depthBuffer);
 }
 
 void tr::Rasterizer::drawLine(const tr::Coord& start, const tr::Coord& end, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer)
