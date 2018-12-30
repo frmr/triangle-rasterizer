@@ -24,12 +24,13 @@ namespace tr
 
 		T& at(const double x, const double y, const bool filter)
 		{
-			//interpolate
+			//TODO: interpolate
 			return m_data.at(0);
 		}
 
 		void fill(const T& value)
 		{
+			//TODO: optimize
 			for (auto& element : m_data)
 			{
 				element = value;
@@ -48,17 +49,17 @@ namespace tr
 
 		T* getData()
 		{
-			return &m_data.front();
+			return m_data.data();
 		}
 
 		size_t getWidth() const
 		{
-			return m_Width;
+			return m_width;
 		}
 
 		size_t getHeight() const
 		{
-			return m_Height;
+			return m_height;
 		}
 
 	private:

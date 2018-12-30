@@ -7,16 +7,11 @@
 
 #include <SDL.h>
 
-using std::cout;
-using std::cerr;
-using std::endl;
-using std::vector;
-
 bool initSdl()
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0)
 	{
-		cerr << "InitSdl() in src/main.cpp: Failed to initialise SDL." << endl;
+		std::cerr << "InitSdl() in src/main.cpp: Failed to initialise SDL." << std::endl;
 		return false;
 	}
 	return true;
@@ -28,7 +23,7 @@ bool initWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWi
 
 	if (!window)
 	{
-		cerr << "InitWindow() in src/main.cpp: Failed to initialise SDL window." << endl;
+		std::cerr << "InitWindow() in src/main.cpp: Failed to initialise SDL window." << std::endl;
 		return false;
 	}
 
@@ -36,7 +31,7 @@ bool initWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWi
 
 	if (!renderer)
 	{
-		cerr << "InitWindow() in src/main.cpp: Failed to initialise SDL renderer." << endl;
+		std::cerr << "InitWindow() in src/main.cpp: Failed to initialise SDL renderer." << std::endl;
 	}
 
 	return true;
@@ -71,23 +66,82 @@ Matrix4 createOrthographicProjectionMatrix(const float left, const float right, 
 	return mat;
 }
 
+std::vector<tr::Vertex> defineVertices()
+{
+	return {
+		{ Vector4(2.0f,  2.0f,  10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4(2.0f,  -2.0f, 10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4(-2.0f, -2.0f, 10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) }
+	};
+}
+
+void renderColorBufferToWindow(tr::ColorBuffer& colorBuffer, SDL_Renderer* renderer)
+{
+	SDL_Surface* sdlSurface = SDL_CreateRGBSurfaceFrom((void*)colorBuffer.getData(), int(colorBuffer.getWidth()), int(colorBuffer.getHeight()), 32, int(sizeof(tr::Color) * colorBuffer.getWidth()), 0, 0, 0, 0);
+	SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
+
+	SDL_FreeSurface(sdlSurface);
+	SDL_RenderCopy(renderer, sdlTexture, nullptr, nullptr);
+	SDL_RenderPresent(renderer);
+	SDL_DestroyTexture(sdlTexture);
+}
+
+void updateInputs(bool& running, Vector4& position, Vector4& rotation)
+{
+	SDL_Event  event;
+
+	while (SDL_PollEvent(&event))
+	{
+		if (event.type == SDL_QUIT)
+		{
+			running = false;
+		}
+		else if (event.type == SDL_KEYDOWN)
+		{
+			constexpr float translationIncrement = 10.0f;
+			constexpr float rotationIncrement    = 2.0f;
+
+			if      (event.key.keysym.sym == SDLK_ESCAPE) { running = false;                    }
+			else if (event.key.keysym.sym == SDLK_w)      { position.z += translationIncrement; }
+			else if (event.key.keysym.sym == SDLK_a)      { position.x -= translationIncrement; }
+			else if (event.key.keysym.sym == SDLK_s)      { position.z -= translationIncrement; }
+			else if (event.key.keysym.sym == SDLK_d)      { position.x += translationIncrement; }
+			else if (event.key.keysym.sym == SDLK_LSHIFT) { position.y += translationIncrement; }
+			else if (event.key.keysym.sym == SDLK_LCTRL)  { position.y -= translationIncrement; }
+			else if (event.key.keysym.sym == SDLK_LEFT)   { rotation.y += rotationIncrement;    }
+			else if (event.key.keysym.sym == SDLK_RIGHT)  { rotation.y -= rotationIncrement;    }
+			else if (event.key.keysym.sym == SDLK_UP)     { rotation.x -= rotationIncrement;    }
+			else if (event.key.keysym.sym == SDLK_DOWN)   { rotation.x += rotationIncrement;    }
+		}
+	}
+}
+
 int main(int argc, char* argv[])
 {
-	bool running = true;
+	constexpr int                 screenWidth      = 800;
+	constexpr int                 screenHeight     = 600;
+	bool                          running          = true;
+	SDL_Window*                   window           = nullptr;
+	SDL_Renderer*                 renderer         = nullptr;
+	const std::vector<tr::Vertex> vertices         = defineVertices();
+	const tr::ColorBuffer         texture          = tr::loadTexture("data/udon1.bmp");
+	const Matrix4                 projectionMatrix = createPerspectiveProjectionMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
+	tr::ColorBuffer               colorBuffer(screenWidth, screenHeight);
+	tr::DepthBuffer               depthBuffer(screenWidth, screenHeight);
+	Vector4                       rotation(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector4                       position(0.0f, 0.0f, 0.0f, 1.0f);
+	tr::Rasterizer                rasterizer;
+
+	if (screenWidth <= 0 || screenHeight <= 0)
+	{
+		return 0;
+	}
 
 	if (!initSdl())
 	{
 		SDL_Quit();
 		return 0;
 	}
-
-	const int screenWidth  = 800;
-	const int screenHeight = 600;
-
-	assert(screenWidth > 0 && screenHeight > 0);
-
-	SDL_Window*   window   = NULL;
-	SDL_Renderer* renderer = NULL;
 
 	if (!initWindow(&window, &renderer, screenWidth, screenHeight, false))
 	{
@@ -98,96 +152,14 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	vector<tr::Vertex> vertices;
-	//vertices.emplace_back(0.0, 0.0, -1000.0, 1.0);
-	vertices.push_back({ Vector4(2.0f,  2.0f,  10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) });
-	vertices.push_back({ Vector4(2.0f,  -2.0f, 10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) });
-	vertices.push_back({ Vector4(-2.0f, -2.0f, 10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) });
-	vertices.push_back({ Vector4(-2.0f, 2.0f,  10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) });
-
-	tr::ColorBuffer tex = tr::loadTexture("data/udon1.bmp");
-
-	Matrix4 projectionMatrix = createPerspectiveProjectionMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
-
-	tr::ColorBuffer colorBuffer(screenWidth, screenHeight);
-	tr::DepthBuffer depthBuffer(screenWidth, screenHeight);
-
-	SDL_Surface* sdlSurface;
-
-	Vector4 rotation(0.0f, 0.0f, 0.0f, 1.0f);
-	Vector4 position(0.0f, 0.0f, 0.0f, 1.0f);
-
-	Matrix4 modelViewMatrix;
-
-	tr::Rasterizer rasterizer;
-
-	rasterizer.setPrimitive(tr::Primitive::POINTS);
+	rasterizer.setPrimitive(tr::Primitive::TRIANGLES);
 
 	while (running)
 	{
 		const auto start = std::chrono::high_resolution_clock::now();
-
-		SDL_Event e;
-
-		while(SDL_PollEvent(&e))
-		{
-			if(e.type == SDL_QUIT)
-			{
-				running = false;
-			}
-			else if (e.type == SDL_KEYDOWN)
-			{
-				constexpr float translationIncrement = 10.0f;
-				constexpr float rotationIncrement    = 2.0f;
-
-				if (e.key.keysym.sym == SDLK_ESCAPE)
-				{
-					running = false;
-				}
-				else if (e.key.keysym.sym == SDLK_w)
-				{
-					position.z += translationIncrement;
-				}
-				else if (e.key.keysym.sym == SDLK_a)
-				{
-					position.x -= translationIncrement;
-				}
-				else if (e.key.keysym.sym == SDLK_s)
-				{
-					position.z -= translationIncrement;
-				}
-				else if (e.key.keysym.sym == SDLK_d)
-				{
-					position.x += translationIncrement;
-				}
-				else if (e.key.keysym.sym == SDLK_LSHIFT)
-				{
-					position.y += translationIncrement;
-				}
-				else if (e.key.keysym.sym == SDLK_LCTRL)
-				{
-					position.y -= translationIncrement;
-				}
-				else if (e.key.keysym.sym == SDLK_LEFT)
-				{
-					rotation.y += rotationIncrement;
-				}
-				else if (e.key.keysym.sym == SDLK_RIGHT)
-				{
-					rotation.y -= rotationIncrement;
-				}
-				else if (e.key.keysym.sym == SDLK_UP)
-				{
-					rotation.x -= rotationIncrement;
-				}
-				else if (e.key.keysym.sym == SDLK_DOWN)
-				{
-					rotation.x += rotationIncrement;
-				}
-			}
-		}
-
-		//std::cout << rotation.y << std::endl;
+		Matrix4    modelViewMatrix;
+		
+		updateInputs(running, position, rotation);
 
 		colorBuffer.fill(0);
 
@@ -197,19 +169,11 @@ int main(int argc, char* argv[])
 		modelViewMatrix.translate(-position.x, -position.y, -position.z);
 
 		rasterizer.setMatrix((modelViewMatrix * projectionMatrix).invert());
+		rasterizer.draw(vertices, texture, screenWidth, screenHeight, colorBuffer, depthBuffer);
 
-		rasterizer.draw(vertices, tex, screenWidth, screenHeight, colorBuffer, depthBuffer);
+		renderColorBufferToWindow(colorBuffer, renderer);
 
-		sdlSurface = SDL_CreateRGBSurfaceFrom((void*) colorBuffer.getData(), screenWidth, screenHeight, 32, sizeof(tr::Color) * screenWidth, 0, 0, 0, 0);
-
-		SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
-		SDL_FreeSurface(sdlSurface);
-		SDL_RenderCopy(renderer, sdlTexture, nullptr, nullptr);
-		SDL_RenderPresent(renderer);
-		SDL_DestroyTexture(sdlTexture);
-
-		const auto end  = std::chrono::high_resolution_clock::now();
-		const auto diff = end - start;
+		const auto frameTime = std::chrono::high_resolution_clock::now() - start;
 		//cout << std::chrono::duration<double, std::milli>(diff).count() << " ms" << endl;
 	}
 
