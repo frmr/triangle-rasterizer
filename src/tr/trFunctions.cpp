@@ -10,15 +10,15 @@ tr::ColorBuffer tr::loadTexture(const std::string& filename)
 
 	if (success)
 	{
-		tr::ColorBuffer colorBuffer(image->TellWidth(), image->TellHeight());
+		ColorBuffer colorBuffer(image->TellWidth(), image->TellHeight());
 
 		for (int x = 0; x < image->TellWidth(); ++x)
 		{
 			for (int y = 0; y < image->TellHeight(); ++y)
 			{
-				colorBuffer.at(x, y) =  ((tr::Color) image->GetPixel(x, y).Red)   << 16;
-				colorBuffer.at(x, y) += ((tr::Color) image->GetPixel(x, y).Green) << 8;
-				colorBuffer.at(x, y) += ((tr::Color) image->GetPixel(x, y).Blue)  << 0;
+				colorBuffer.at(x, y) =  ((Color) image->GetPixel(x, y).Red)   << 16;
+				colorBuffer.at(x, y) += ((Color) image->GetPixel(x, y).Green) << 8;
+				colorBuffer.at(x, y) += ((Color) image->GetPixel(x, y).Blue)  << 0;
 			}
 		}
 
@@ -30,6 +30,6 @@ tr::ColorBuffer tr::loadTexture(const std::string& filename)
 	{
 		delete image;
 
-		throw tr::FileException("Failed to load texture " + filename);
+		throw FileException("Failed to load texture " + filename);
 	}
 }

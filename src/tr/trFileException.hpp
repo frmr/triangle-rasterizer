@@ -1,6 +1,9 @@
+#pragma once
+
 #include "trException.hpp"
 
 namespace tr
 {
-	typedef tr::Exception FileException;
+	// TODO: Should be its own class
+	typedef Exception FileException;
 }

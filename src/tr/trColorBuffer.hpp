@@ -1,7 +1,9 @@
+#pragma once
+
 #include "trBuffer.hpp"
 #include "trColor.hpp"
 
 namespace tr
 {
-	typedef tr::Buffer<tr::Color> ColorBuffer;
+	typedef Buffer<Color> ColorBuffer;
 }

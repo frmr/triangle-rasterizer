@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
 	tr::ColorBuffer               colorBuffer(screenWidth, screenHeight);
 	tr::DepthBuffer               depthBuffer(screenWidth, screenHeight);
 	Vector4                       rotation(0.0f, 0.0f, 0.0f, 1.0f);
-	Vector4                       position(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector4                       position(0.0f, 0.0f, -20.0f, 1.0f);
 	tr::Rasterizer                rasterizer;
 
 	if (screenWidth <= 0 || screenHeight <= 0)
@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
 		modelViewMatrix.translate(-position.x, -position.y, -position.z);
 
 		rasterizer.setMatrix((modelViewMatrix * projectionMatrix).invert());
-		rasterizer.draw(vertices, texture, screenWidth, screenHeight, colorBuffer, depthBuffer);
+		rasterizer.draw(vertices, texture, colorBuffer, depthBuffer);
 
 		renderColorBufferToWindow(colorBuffer, renderer);
 

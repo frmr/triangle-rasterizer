@@ -66,6 +66,15 @@
     <ClInclude Include="src\tr\trPrimitive.hpp">
       <Filter>tr</Filter>
     </ClInclude>
+    <ClInclude Include="src\tr\trTriangle.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trEdgeInfo.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trVertexClipBitMasks.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\matrix\Matrices.cpp">

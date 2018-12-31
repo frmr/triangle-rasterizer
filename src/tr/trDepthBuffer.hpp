@@ -1,6 +1,8 @@
+#pragma once
+
 #include "trBuffer.hpp"
 
 namespace tr
 {
-	typedef tr::Buffer<float> DepthBuffer;
+	typedef Buffer<float> DepthBuffer;
 }

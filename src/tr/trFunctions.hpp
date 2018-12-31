@@ -1,8 +1,10 @@
+#pragma once
+
 #include <string>
 
 #include "trColorBuffer.hpp"
 
 namespace tr
 {
-	tr::ColorBuffer loadTexture(const std::string& filename);
+	ColorBuffer loadTexture(const std::string& filename);
 }

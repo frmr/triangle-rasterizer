@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../matrix/Vectors.h"
 
 namespace tr

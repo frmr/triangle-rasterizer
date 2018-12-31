@@ -1,7 +1,10 @@
+#pragma once
+
 #include "trColorBuffer.hpp"
 #include "trCoord.hpp"
 #include "trDepthBuffer.hpp"
 #include "trPrimitive.hpp"
+#include "trTriangle.hpp"
 #include "trVertex.hpp"
 #include "../matrix/Matrices.h"
 
@@ -12,30 +15,28 @@ namespace tr
 	class Rasterizer
 	{
 	public:
-		void draw(std::vector<Vertex> vertices, const tr::ColorBuffer& texture, const int width, const int height, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
-		void setPrimitive(const tr::Primitive primitive);
-		void setMatrix(const Matrix4& matrix);
+		void           draw(std::vector<Vertex> vertices, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
+		void           setPrimitive(const Primitive primitive);
+		void           setMatrix(const Matrix4& matrix);
 
 	private:
-		void getLinePixels(const tr::Coord& start, const tr::Coord& end, std::vector<tr::Coord>& pixels);
-		
-		bool vertexInNdcCube(const Vector4 vertex);
-		bool clipNdcLine(Vector4& start, Vector4& end);
+		static void    getLinePixels(const Coord& start, const Coord& end, std::vector<Coord>& pixels);
+		static void    clipTriangles(std::vector<Triangle>& triangles);
 
-		void ndcIntersectionX(const Vector4& inside, Vector4& outside, const float xValue);
-		void ndcIntersectionY(const Vector4& inside, Vector4& outside, const float yValue);
+		static Vertex  lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const float alpha);
+		static Vertex  lineFrustumIntersectionRight(const Vertex& lineStart, const Vertex& lineEnd);
+		static Vertex  lineFrustumIntersectionLeft(const Vertex& lineStart, const Vertex& lineEnd);
+		static Vertex  lineFrustumIntersectionBottom(const Vertex& lineStart, const Vertex& lineEnd);
+		static Vertex  lineFrustumIntersectionTop(const Vertex& lineStart, const Vertex& lineEnd);
+		static Vertex  lineFrustumIntersectionFar(const Vertex& lineStart, const Vertex& lineEnd);
+		static Vertex  lineFrustumIntersectionNear(const Vertex& lineStart, const Vertex& lineEnd);
 
-		void drawPoint(const tr::Coord& position, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
-
-		void drawPoint(const Vector4& position, const float halfWidth, const float halfHeight, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
-
-		
-		void drawLine(const tr::Coord& start, const tr::Coord& end, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
-		void drawLine(Vector4 v0, Vector4 v1, const float halfWidth, const float halfHeight, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
-		void drawTriangle(Vector4 v0, Vector4 v1, Vector4 v2, const float halfWidth, const float halfHeight, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer);
+		static void    drawPoint(const Coord& position, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
+		static void    drawPoint(const Vector4& position, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
+		static void    drawTriangle(const Triangle& triangle, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
 	
 	private:
-		tr::Primitive m_primitive;
-		Matrix4       m_matrix;
+		Primitive      m_primitive;
+		Matrix4        m_matrix;
 	};
 }
