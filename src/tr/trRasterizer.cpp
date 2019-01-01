@@ -172,23 +172,23 @@ void tr::Rasterizer::clipTriangles(std::vector<Triangle>& triangles)
 			{
 				const unsigned char firstClipField      = vertexClipBitFields[edge.firstVertexIndex];
 				const unsigned char secondClipField     = vertexClipBitFields[edge.secondVertexIndex];
-				const unsigned char clipFieldXor        = firstClipField ^ secondClipField;
 				const unsigned char firstEqualityField  = vertexEqualityBitFields[edge.firstVertexIndex];
 				const unsigned char secondEqualityField = vertexEqualityBitFields[edge.secondVertexIndex];
+				const unsigned char combinedField       = (firstClipField ^ secondClipField) & ~(firstEqualityField | secondEqualityField);
 
-				if (clipFieldXor & ~(firstEqualityField | secondEqualityField))
+				if (combinedField)
 				{
 					const Vertex firstVertex    = triangle.vertices[edge.firstVertexIndex];
 					const Vertex secondVertex   = triangle.vertices[edge.secondVertexIndex];
 					const Vertex oppositeVertex = triangle.vertices[edge.oppositeVertexIndex];
 					Vertex       intersection;
 
-					if      (clipFieldXor & leftBitMask)   { intersection = lineFrustumIntersectionLeft(  firstVertex, secondVertex); }
-					else if (clipFieldXor & rightBitMask)  { intersection = lineFrustumIntersectionRight( firstVertex, secondVertex); }
-					else if (clipFieldXor & topBitMask)    { intersection = lineFrustumIntersectionTop(   firstVertex, secondVertex); }
-					else if (clipFieldXor & bottomBitMask) { intersection = lineFrustumIntersectionBottom(firstVertex, secondVertex); }
-					else if (clipFieldXor & nearBitMask)   { intersection = lineFrustumIntersectionNear(  firstVertex, secondVertex); }
-					else if (clipFieldXor & farBitMask)    { intersection = lineFrustumIntersectionFar(   firstVertex, secondVertex); }
+					if      (combinedField & leftBitMask)   { intersection = lineFrustumIntersectionLeft(  firstVertex, secondVertex); }
+					else if (combinedField & rightBitMask)  { intersection = lineFrustumIntersectionRight( firstVertex, secondVertex); }
+					else if (combinedField & topBitMask)    { intersection = lineFrustumIntersectionTop(   firstVertex, secondVertex); }
+					else if (combinedField & bottomBitMask) { intersection = lineFrustumIntersectionBottom(firstVertex, secondVertex); }
+					else if (combinedField & nearBitMask)   { intersection = lineFrustumIntersectionNear(  firstVertex, secondVertex); }
+					else if (combinedField & farBitMask)    { intersection = lineFrustumIntersectionFar(   firstVertex, secondVertex); }
 					else
 					{
 						assert(false);
