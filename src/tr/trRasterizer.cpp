@@ -11,8 +11,8 @@ void tr::Rasterizer::draw(std::vector<Vertex> vertices, const ColorBuffer& textu
 		return;
 	}
 
-	const float           halfWidth  = float(colorBuffer.getWidth())  / 2.0f;
-	const float           halfHeight = float(colorBuffer.getHeight()) / 2.0f;
+	const float           halfWidth  = float(colorBuffer.getWidth())  / 2.0f - 0.0001f;
+	const float           halfHeight = float(colorBuffer.getHeight()) / 2.0f - 0.0001f;
 	std::vector<Triangle> triangles;
 
 	for (auto& vertex : vertices)
@@ -253,11 +253,8 @@ tr::Vertex tr::Rasterizer::lineFrustumIntersectionNear(const Vertex& lineStart, 
 
 void tr::Rasterizer::drawPoint(const Coord& position, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
-	if (position.isValid(800, 600))
-	{
-		colorBuffer.at(position.x, position.y) = std::numeric_limits<uint32_t>::max();
-		depthBuffer.at(position.x, position.y) = position.depth;
-	}
+	colorBuffer.at(position.x, position.y) = std::numeric_limits<uint32_t>::max();
+	depthBuffer.at(position.x, position.y) = position.depth;
 }
 
 void tr::Rasterizer::drawPoint(const Vector4& position, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
