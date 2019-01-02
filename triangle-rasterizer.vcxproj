@@ -22,7 +22,7 @@
     <ProjectGuid>{E1B0201A-68AD-48E7-825E-65170D56712A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>trianglerasterizer</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='debug|Win32'" Label="Configuration">
@@ -176,6 +176,7 @@
     <ClInclude Include="src\EasyBMP\EasyBMP_VariousBMPutilities.h" />
     <ClInclude Include="src\matrix\Matrices.h" />
     <ClInclude Include="src\matrix\Vectors.h" />
+    <ClInclude Include="src\tr\trAxis.hpp" />
     <ClInclude Include="src\tr\trEdgeInfo.hpp" />
     <ClInclude Include="src\tr\trPrimitive.hpp" />
     <ClInclude Include="src\tr\trRasterizer.hpp" />

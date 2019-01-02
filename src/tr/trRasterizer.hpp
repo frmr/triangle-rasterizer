@@ -1,5 +1,6 @@
 #pragma once
 
+#include "trAxis.hpp"
 #include "trColorBuffer.hpp"
 #include "trCoord.hpp"
 #include "trDepthBuffer.hpp"
@@ -22,14 +23,7 @@ namespace tr
 	private:
 		static void    getLinePixels(const Coord& start, const Coord& end, std::vector<Coord>& pixels);
 		static void    clipTriangles(std::vector<Triangle>& triangles);
-
-		static Vertex  lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const float alpha);
-		static Vertex  lineFrustumIntersectionRight(const Vertex& lineStart, const Vertex& lineEnd);
-		static Vertex  lineFrustumIntersectionLeft(const Vertex& lineStart, const Vertex& lineEnd);
-		static Vertex  lineFrustumIntersectionBottom(const Vertex& lineStart, const Vertex& lineEnd);
-		static Vertex  lineFrustumIntersectionTop(const Vertex& lineStart, const Vertex& lineEnd);
-		static Vertex  lineFrustumIntersectionFar(const Vertex& lineStart, const Vertex& lineEnd);
-		static Vertex  lineFrustumIntersectionNear(const Vertex& lineStart, const Vertex& lineEnd);
+		static Vertex  lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const tr::Axis axis, const bool negativeW);
 
 		static void    drawPoint(const Coord& position, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
 		static void    drawPoint(const Vector4& position, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);

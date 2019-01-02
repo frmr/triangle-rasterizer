@@ -72,6 +72,9 @@
     <ClInclude Include="src\tr\trEdgeInfo.hpp">
       <Filter>tr</Filter>
     </ClInclude>
+    <ClInclude Include="src\tr\trAxis.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
     <ClInclude Include="src\tr\trVertexClipBitMasks.hpp">
       <Filter>tr</Filter>
     </ClInclude>
