@@ -159,15 +159,21 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const float halfWidt
 	Vector4 vertex0 = triangle.vertices[0].position / triangle.vertices[0].position.w;
 	Vector4 vertex1 = triangle.vertices[1].position / triangle.vertices[1].position.w;
 	Vector4 vertex2 = triangle.vertices[2].position / triangle.vertices[2].position.w;
+	Vector2 point;
+
+	if (orientPoint(vertex0, vertex1, vertex2) >= 0.0f)
+	{
+		return;
+	}
 
 	vertex0.x = vertex0.x * halfWidth + halfWidth;
 	vertex1.x = vertex1.x * halfWidth + halfWidth;
 	vertex2.x = vertex2.x * halfWidth + halfWidth;
 
-	vertex0.y = vertex0.y * halfHeight + halfHeight;
-	vertex1.y = vertex1.y * halfHeight + halfHeight;
-	vertex2.y = vertex2.y * halfHeight + halfHeight;
-	
+	vertex0.y = halfHeight - vertex0.y * halfHeight;
+	vertex1.y = halfHeight - vertex1.y * halfHeight;
+	vertex2.y = halfHeight - vertex2.y * halfHeight;
+
 	float minX = std::min({ vertex0.x, vertex1.x, vertex2.x });
 	float minY = std::min({ vertex0.y, vertex1.y, vertex2.y });
 	float maxX = std::max({ vertex0.x, vertex1.x, vertex2.x });
@@ -175,13 +181,11 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const float halfWidt
 	
 	minX = std::max(minX, 0.0f);
 	minY = std::max(minY, 0.0f);
-	maxX = std::min(maxX, 800.0f);
-	maxY = std::min(maxY, 600.0f);
+	maxX = std::min(maxX, 2560.0f);
+	maxY = std::min(maxY, 1440.0f);
 
 	minX = std::trunc(minX) + 0.5f;
 	minY = std::trunc(minY) + 0.5f;
-	
-	Vector2 point;
 
 	for (point.x = minX; point.x < maxX; point.x += 1.0f)
 	{
@@ -202,7 +206,8 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const float halfWidt
 	}
 }
 
-float tr::Rasterizer::orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const Vector2& point)
+template<typename T>
+float tr::Rasterizer::orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const T& point)
 {
 	return (lineEnd.x - lineStart.x) * (point.y - lineStart.y) - (lineEnd.y - lineStart.y) * (point.x - lineStart.x);
 }

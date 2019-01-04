@@ -69,9 +69,31 @@ Matrix4 createOrthographicProjectionMatrix(const float left, const float right, 
 std::vector<tr::Vertex> defineVertices()
 {
 	return {
-		{ Vector4(2.0f,  2.0f,  10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-		{ Vector4(2.0f,  -2.0f, 10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-		{ Vector4(-2.0f, -2.0f, 10.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) }
+		
+		
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4( 2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+
+		{ Vector4(-2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+
+		{ Vector4(-2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4(-2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+
+		{ Vector4(-2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4( 2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+
+		{ Vector4( 2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4( 2.0f, -2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4( 2.0f, -2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4( 2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
 	};
 }
 
@@ -98,28 +120,28 @@ void updateInputs(bool& running, Vector4& position, Vector4& rotation)
 		}
 		else if (event.type == SDL_KEYDOWN)
 		{
-			constexpr float translationIncrement = 10.0f;
+			constexpr float translationIncrement = 5.0f;
 			constexpr float rotationIncrement    = 2.0f;
 
 			if      (event.key.keysym.sym == SDLK_ESCAPE) { running = false;                    }
-			else if (event.key.keysym.sym == SDLK_w)      { position.z += translationIncrement; }
+			else if (event.key.keysym.sym == SDLK_w)      { position.z -= translationIncrement; }
 			else if (event.key.keysym.sym == SDLK_a)      { position.x -= translationIncrement; }
-			else if (event.key.keysym.sym == SDLK_s)      { position.z -= translationIncrement; }
+			else if (event.key.keysym.sym == SDLK_s)      { position.z += translationIncrement; }
 			else if (event.key.keysym.sym == SDLK_d)      { position.x += translationIncrement; }
 			else if (event.key.keysym.sym == SDLK_LSHIFT) { position.y += translationIncrement; }
 			else if (event.key.keysym.sym == SDLK_LCTRL)  { position.y -= translationIncrement; }
 			else if (event.key.keysym.sym == SDLK_LEFT)   { rotation.y += rotationIncrement;    }
 			else if (event.key.keysym.sym == SDLK_RIGHT)  { rotation.y -= rotationIncrement;    }
-			else if (event.key.keysym.sym == SDLK_UP)     { rotation.x -= rotationIncrement;    }
-			else if (event.key.keysym.sym == SDLK_DOWN)   { rotation.x += rotationIncrement;    }
+			else if (event.key.keysym.sym == SDLK_UP)     { rotation.x += rotationIncrement;    }
+			else if (event.key.keysym.sym == SDLK_DOWN)   { rotation.x -= rotationIncrement;    }
 		}
 	}
 }
 
 int main(int argc, char* argv[])
 {
-	constexpr int                 screenWidth      = 800;
-	constexpr int                 screenHeight     = 600;
+	constexpr int                 screenWidth      = 2560;
+	constexpr int                 screenHeight     = 1440;
 	bool                          running          = true;
 	SDL_Window*                   window           = nullptr;
 	SDL_Renderer*                 renderer         = nullptr;
@@ -129,7 +151,7 @@ int main(int argc, char* argv[])
 	tr::ColorBuffer               colorBuffer(screenWidth, screenHeight);
 	tr::DepthBuffer               depthBuffer(screenWidth, screenHeight);
 	Vector4                       rotation(0.0f, 0.0f, 0.0f, 1.0f);
-	Vector4                       position(0.0f, 0.0f, -20.0f, 1.0f);
+	Vector4                       position(0.0f, 0.0f, 40.0f, 1.0f);
 	tr::Rasterizer                rasterizer;
 
 	if (screenWidth <= 0 || screenHeight <= 0)
@@ -166,7 +188,7 @@ int main(int argc, char* argv[])
 		modelViewMatrix.identity();
 		modelViewMatrix.rotateX(rotation.x);
 		modelViewMatrix.rotateY(rotation.y);
-		modelViewMatrix.translate(-position.x, -position.y, -position.z);
+		modelViewMatrix.translate(position.x, position.y, position.z);
 
 		rasterizer.setMatrix((modelViewMatrix * projectionMatrix).invert());
 		rasterizer.draw(vertices, texture, colorBuffer, depthBuffer);
