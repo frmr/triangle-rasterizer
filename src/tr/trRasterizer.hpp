@@ -22,6 +22,7 @@ namespace tr
 
 	private:
 		static void    clipTriangles(std::vector<Triangle>& triangles);
+		static Vertex  lineWPlaneIntersection(const Vertex& lineStart, const Vertex& lineEnd);
 		static Vertex  lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const tr::Axis axis, const bool negativeW);
 
 		static void    drawPoint(const Coord& position, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
