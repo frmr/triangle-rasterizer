@@ -73,7 +73,6 @@ void tr::Rasterizer::clipTriangles(std::vector<Triangle>& triangles)
 			unsigned char&  clipBitField     = vertexClipBitFields[vertexIndex];
 			unsigned char&  equalityBitField = vertexEqualityBitFields[vertexIndex];
 
-			if (vertex.position.w < -margin     ) { clipBitField |= wBitMask;    }
 			if (vertex.position.z < -wPlusMargin) { clipBitField |= nearBitMask; }
 			if (vertex.position.z >  wPlusMargin) { clipBitField |= farBitMask;  }
 
@@ -100,24 +99,19 @@ void tr::Rasterizer::clipTriangles(std::vector<Triangle>& triangles)
 				const Vertex firstVertex    = triangle.vertices[edge.firstVertexIndex];
 				const Vertex secondVertex   = triangle.vertices[edge.secondVertexIndex];
 				const Vertex oppositeVertex = triangle.vertices[edge.oppositeVertexIndex];
-				bool         clip           = false;
 				Vertex       intersection;
 
-				if ((vertexClipBitFields[edge.firstVertexIndex] | vertexClipBitFields[edge.secondVertexIndex]) & wBitMask)
-				{
-					intersection = lineWPlaneIntersection(firstVertex, secondVertex);
-					clip      = true;
-				}
-				else
-				{
-					const unsigned char combinedField = (vertexClipBitFields[edge.firstVertexIndex] ^ vertexClipBitFields[edge.secondVertexIndex]) & ~(vertexEqualityBitFields[edge.firstVertexIndex] | vertexEqualityBitFields[edge.secondVertexIndex]);
+				const unsigned char combinedField = (vertexClipBitFields[edge.firstVertexIndex] ^ vertexClipBitFields[edge.secondVertexIndex]) & ~(vertexEqualityBitFields[edge.firstVertexIndex] | vertexEqualityBitFields[edge.secondVertexIndex]);
 
-					if      (combinedField & nearBitMask) { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Z, true ); clip = true; }
-					else if (combinedField & farBitMask)  { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Z, false); clip = true; }
-				}
-
-				if (clip)
+				if (combinedField)
 				{
+					if      (combinedField & nearBitMask) { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Z, true ); }
+					else if (combinedField & farBitMask)  { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Z, false); }
+					else
+					{
+						assert(false);
+					}
+
 					triangles.push_back(Triangle{ { firstVertex,  intersection,   oppositeVertex } });
 					triangles.push_back(Triangle{ { secondVertex, oppositeVertex, intersection   } });
 
@@ -128,17 +122,6 @@ void tr::Rasterizer::clipTriangles(std::vector<Triangle>& triangles)
 			}
 		}
 	}
-}
-
-tr::Vertex tr::Rasterizer::lineWPlaneIntersection(const Vertex& lineStart, const Vertex& lineEnd)
-{
-	const float   alpha        = -lineStart.position.w / (lineEnd.position.w - lineStart.position.w);
-	
-	const Vector4 position     = lineStart.position     + (lineEnd.position     - lineStart.position)     * alpha;
-	const Vector3 normal       = lineStart.normal       + (lineEnd.normal       - lineStart.normal)       * alpha;
-	const Vector2 textureCoord = lineStart.textureCoord + (lineEnd.textureCoord - lineStart.textureCoord) * alpha;
-
-	return { position, normal, textureCoord };
 }
 
 tr::Vertex tr::Rasterizer::lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const tr::Axis axis, const bool negativeW)
@@ -154,18 +137,15 @@ tr::Vertex tr::Rasterizer::lineFrustumIntersection(const Vertex& lineStart, cons
 	return { position, normal, textureCoord };
 }
 
-void tr::Rasterizer::drawPoint(const Coord& position, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+void tr::Rasterizer::drawPoint(const int x, const int y, const float depth, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
-	if (position.x >= 0.0f && position.x < 800.0f && position.y >= 0.0f && position.y < 600.0f)
-	{
-		colorBuffer.at(position.x, position.y) = std::numeric_limits<uint32_t>::max();
-		depthBuffer.at(position.x, position.y) = position.depth;
-	}
+	colorBuffer.at(x, y) = std::numeric_limits<uint32_t>::max();
+	depthBuffer.at(x, y) = depth;
 }
 
-void tr::Rasterizer::drawPoint(const Vector4& position, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+void tr::Rasterizer::drawPoint(const Vector2& point, const float depth, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
-	drawPoint(Coord(int(halfWidth * position.x + halfWidth), int(halfHeight * position.y + halfHeight), position.z), colorBuffer, depthBuffer);
+	drawPoint(int(point.x), int(point.y), depth, colorBuffer, depthBuffer);
 }
 
 void tr::Rasterizer::drawTriangle(const Triangle& triangle, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
@@ -176,10 +156,53 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const float halfWidt
 		{ 2, 0, 1 }
 	};
 
-	for (const auto edge : edges)
-	{
-		const Vertex& firstVertex  = triangle.vertices[edge.firstVertexIndex];
+	Vector4 vertex0 = triangle.vertices[0].position / triangle.vertices[0].position.w;
+	Vector4 vertex1 = triangle.vertices[1].position / triangle.vertices[1].position.w;
+	Vector4 vertex2 = triangle.vertices[2].position / triangle.vertices[2].position.w;
 
-		drawPoint(firstVertex.position / firstVertex.position.w, halfWidth, halfHeight, colorBuffer, depthBuffer);
+	vertex0.x = vertex0.x * halfWidth + halfWidth;
+	vertex1.x = vertex1.x * halfWidth + halfWidth;
+	vertex2.x = vertex2.x * halfWidth + halfWidth;
+
+	vertex0.y = vertex0.y * halfHeight + halfHeight;
+	vertex1.y = vertex1.y * halfHeight + halfHeight;
+	vertex2.y = vertex2.y * halfHeight + halfHeight;
+	
+	float minX = std::min({ vertex0.x, vertex1.x, vertex2.x });
+	float minY = std::min({ vertex0.y, vertex1.y, vertex2.y });
+	float maxX = std::max({ vertex0.x, vertex1.x, vertex2.x });
+	float maxY = std::max({ vertex0.y, vertex1.y, vertex2.y });
+	
+	minX = std::max(minX, 0.0f);
+	minY = std::max(minY, 0.0f);
+	maxX = std::min(maxX, 800.0f);
+	maxY = std::min(maxY, 600.0f);
+
+	minX = std::trunc(minX) + 0.5f;
+	minY = std::trunc(minY) + 0.5f;
+	
+	Vector2 point;
+
+	for (point.x = minX; point.x < maxX; point.x += 1.0f)
+	{
+		for (point.y = minY; point.y < maxY; point.y += 1.0f)
+		{
+			const float weight0 = orientPoint(vertex1, vertex2, point);
+			const float weight1 = orientPoint(vertex2, vertex0, point);
+			const float weight2 = orientPoint(vertex0, vertex1, point);
+
+			if (weight0 >= 0.0f && weight1 >= 0.0f && weight2 >= 0.0f)
+			{
+				// interpolate depth
+				const float depth = 0.5f;
+
+				drawPoint(point, depth, colorBuffer, depthBuffer);
+			}
+		}
 	}
+}
+
+float tr::Rasterizer::orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const Vector2& point)
+{
+	return (lineEnd.x - lineStart.x) * (point.y - lineStart.y) - (lineEnd.y - lineStart.y) * (point.x - lineStart.x);
 }

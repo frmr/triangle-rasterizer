@@ -22,13 +22,14 @@ namespace tr
 
 	private:
 		static void    clipTriangles(std::vector<Triangle>& triangles);
-		static Vertex  lineWPlaneIntersection(const Vertex& lineStart, const Vertex& lineEnd);
 		static Vertex  lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const tr::Axis axis, const bool negativeW);
 
-		static void    drawPoint(const Coord& position, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
-		static void    drawPoint(const Vector4& position, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
+		static void    drawPoint(const int x, const int y, const float depth, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
+		static void    drawPoint(const Vector2& point, const float depth, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
 		static void    drawTriangle(const Triangle& triangle, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
 	
+		static float   orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const Vector2& point);
+
 	private:
 		Primitive      m_primitive;
 		Matrix4        m_matrix;
