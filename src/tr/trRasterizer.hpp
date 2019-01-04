@@ -21,7 +21,6 @@ namespace tr
 		void           setMatrix(const Matrix4& matrix);
 
 	private:
-		static void    getLinePixels(const Coord& start, const Coord& end, std::vector<Coord>& pixels);
 		static void    clipTriangles(std::vector<Triangle>& triangles);
 		static Vertex  lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const tr::Axis axis, const bool negativeW);
 

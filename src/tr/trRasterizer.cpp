@@ -54,70 +54,6 @@ void tr::Rasterizer::setMatrix(const Matrix4& matrix)
 	m_matrix = matrix;
 }
 
-void tr::Rasterizer::getLinePixels(const Coord& start, const Coord& end, std::vector<Coord>& pixels)
-{
-	const int dx = abs(end.x - start.x);
-	const int dy = abs(end.y - start.y);
-
-	const int sx = end.x >= start.x ? 1 : -1;
-	const int sy = end.y >= start.y ? 1 : -1;
-
-	pixels.reserve(dx < dy ? dy : dx);
-	pixels.push_back(start);
-
-	if (start.x == end.x && start.y == end.y)
-	{
-		return;
-	}
-
-	if (dy <= dx)
-	{
-		const int d1 = dy << 1;
-		const int d2 = (dy - dx) << 1;
-		int       d  = (dy << 1) - dx;
-		int       x  = start.x + sx;
-		int       y  = start.y;
-
-		for (int i = 1; i <= dx; ++i, x += sx)
-		{
-			if (d > 0)
-			{
-				d += d2;
-				y += sy;
-			}
-			else
-			{
-				d += d1;
-			}
-
-			pixels.push_back(Coord(x, y, start.depth));
-		}
-	}
-	else
-	{
-		const int d1 = dx << 1;
-		const int d2 = (dx - dy) << 1;
-		int       d  = (dx << 1) - dy;
-		int       x  = start.x;
-		int       y  = start.y + sy;
-
-		for (int i = 1; i <= dy; ++i, y += sy)
-		{
-			if (d > 0)
-			{
-				d += d2;
-				x += sx;
-			}
-			else
-			{
-				d += d1;
-			}
-
-			pixels.push_back(Coord(x, y, start.depth));
-		}
-	}
-}
-
 void tr::Rasterizer::clipTriangles(std::vector<Triangle>& triangles)
 {
 	for (size_t triangleIndex = 0; triangleIndex < triangles.size();)
@@ -135,8 +71,7 @@ void tr::Rasterizer::clipTriangles(std::vector<Triangle>& triangles)
 			unsigned char&  clipBitField     = vertexClipBitFields[vertexIndex];
 			unsigned char&  equalityBitField = vertexEqualityBitFields[vertexIndex];
 
-			//vertexClipBitFields[vertexIndex] |= (vertex.position.w <=  0          ) ? wBitMask      : 0;
-
+			if (vertex.position.w < -margin     ) { clipBitField |= wBitMask;      }
 			if (vertex.position.x < -wPlusMargin) { clipBitField |= leftBitMask;   }
 			if (vertex.position.x >  wPlusMargin) { clipBitField |= rightBitMask;  }
 			if (vertex.position.y < -wPlusMargin) { clipBitField |= topBitMask;    }
@@ -146,6 +81,7 @@ void tr::Rasterizer::clipTriangles(std::vector<Triangle>& triangles)
 
 			const unsigned char notClipField = ~clipBitField;
 
+			if (vertex.position.w <=  margin     ) { equalityBitField |= notClipField & wBitMask;      }
 			if (vertex.position.x <= -wLessMargin) { equalityBitField |= notClipField & leftBitMask;   }
 			if (vertex.position.x >=  wLessMargin) { equalityBitField |= notClipField & rightBitMask;  }
 			if (vertex.position.y <= -wLessMargin) { equalityBitField |= notClipField & topBitMask;    }
@@ -179,12 +115,22 @@ void tr::Rasterizer::clipTriangles(std::vector<Triangle>& triangles)
 					const Vertex oppositeVertex = triangle.vertices[edge.oppositeVertexIndex];
 					Vertex       intersection;
 
-					if      (combinedField & leftBitMask)   { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::X, true ); }
+					if ((vertexClipBitFields[edge.firstVertexIndex] | vertexClipBitFields[edge.secondVertexIndex]) & wBitMask)
+					{
+						float alpha = -firstVertex.position.w / (secondVertex.position.w - firstVertex.position.w);
+						
+						const Vector4 position     = firstVertex.position     + (secondVertex.position     - firstVertex.position)     * alpha;
+						const Vector3 normal       = firstVertex.normal       + (secondVertex.normal       - firstVertex.normal)       * alpha;
+						const Vector2 textureCoord = firstVertex.textureCoord + (secondVertex.textureCoord - firstVertex.textureCoord) * alpha;
+
+						intersection = { position, normal, textureCoord };
+					}
+					else if (combinedField & leftBitMask)   { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::X, true ); }
 					else if (combinedField & rightBitMask)  { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::X, false); }
 					else if (combinedField & topBitMask)    { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Y, true ); }
 					else if (combinedField & bottomBitMask) { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Y, false); }
-					else if (combinedField & nearBitMask)   { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Z, false); }
-					else if (combinedField & farBitMask)    { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Z, true ); }
+					else if (combinedField & nearBitMask)   { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Z, true ); }
+					else if (combinedField & farBitMask)    { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Z, false); }
 					else
 					{
 						assert(false);
@@ -237,11 +183,7 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const float halfWidt
 	for (const auto edge : edges)
 	{
 		const Vertex& firstVertex  = triangle.vertices[edge.firstVertexIndex];
-		const Vertex& secondVertex = triangle.vertices[edge.secondVertexIndex];
 
-		Vector4 firstVertexScreenSpace = firstVertex.position / firstVertex.position.w;
-		Vector4 secondVertexScreenSpace = secondVertex.position / firstVertex.position.w;
-
-		drawPoint(firstVertexScreenSpace, halfWidth, halfHeight, colorBuffer, depthBuffer);
+		drawPoint(firstVertex.position / firstVertex.position.w, halfWidth, halfHeight, colorBuffer, depthBuffer);
 	}
 }
