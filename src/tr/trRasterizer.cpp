@@ -147,10 +147,19 @@ void tr::Rasterizer::clipAndDrawTriangle(const Triangle& triangle, const ColorBu
 		unsigned char&  clipBitField     = vertexClipBitFields[vertexIndex];
 		unsigned char&  equalityBitField = vertexEqualityBitFields[vertexIndex];
 
-		if (vertex.position.z <  -wPlusMargin) { clipBitField     |= nearBitMask;                   }
-		if (vertex.position.z >   wPlusMargin) { clipBitField     |= farBitMask;                    }
-		if (vertex.position.z <= -wLessMargin) { equalityBitField |= (~clipBitField) & nearBitMask; }
-		if (vertex.position.z >=  wLessMargin) { equalityBitField |= (~clipBitField) & farBitMask;  }
+		if (vertex.position.x <  -wPlusMargin) { clipBitField     |= leftBitMask;                     }
+		if (vertex.position.x >   wPlusMargin) { clipBitField     |= rightBitMask;                    }
+		if (vertex.position.y <  -wPlusMargin) { clipBitField     |= bottomBitMask;                   }
+		if (vertex.position.y >   wPlusMargin) { clipBitField     |= topBitMask;                      }
+		if (vertex.position.z <  -wPlusMargin) { clipBitField     |= nearBitMask;                     }
+		if (vertex.position.z >   wPlusMargin) { clipBitField     |= farBitMask;                      }
+
+		if (vertex.position.x <= -wLessMargin) { equalityBitField |= (~clipBitField) & leftBitMask;   }
+		if (vertex.position.x >=  wLessMargin) { equalityBitField |= (~clipBitField) & rightBitMask;  }
+		if (vertex.position.y <= -wLessMargin) { equalityBitField |= (~clipBitField) & bottomBitMask; }
+		if (vertex.position.y >=  wLessMargin) { equalityBitField |= (~clipBitField) & topBitMask;    }
+		if (vertex.position.z <= -wLessMargin) { equalityBitField |= (~clipBitField) & nearBitMask;   }
+		if (vertex.position.z >=  wLessMargin) { equalityBitField |= (~clipBitField) & farBitMask;    }
 	}
 
 	if (!(vertexClipBitFields[0] | vertexClipBitFields[1] | vertexClipBitFields[2]))
@@ -179,8 +188,12 @@ void tr::Rasterizer::clipAndDrawTriangle(const Triangle& triangle, const ColorBu
 			{
 				Vertex intersection;
 
-				if      (combinedField & nearBitMask) { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Z, true ); }
-				else if (combinedField & farBitMask)  { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Z, false); }
+				if      (combinedField & leftBitMask)   { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::X, true ); } 
+				else if (combinedField & rightBitMask)  { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::X, false); }
+				else if (combinedField & bottomBitMask) { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Y, true ); }
+				else if (combinedField & topBitMask)    { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Y, false); }
+				else if (combinedField & nearBitMask)   { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Z, true ); }
+				else if (combinedField & farBitMask)    { intersection = lineFrustumIntersection(firstVertex, secondVertex, Axis::Z, false); }
 				else
 				{
 					assert(false);
