@@ -70,7 +70,6 @@ std::vector<tr::Vertex> defineVertices()
 {
 	return {
 		
-		
 		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
 		{ Vector4( 2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
 		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
@@ -128,7 +127,7 @@ void updateInputs(bool& running, Vector4& position, Vector4& rotation)
 			else if (event.key.keysym.sym == SDLK_a)      { position.x -= translationIncrement; }
 			else if (event.key.keysym.sym == SDLK_s)      { position.z += translationIncrement; }
 			else if (event.key.keysym.sym == SDLK_d)      { position.x += translationIncrement; }
-			else if (event.key.keysym.sym == SDLK_LSHIFT) { position.y += translationIncrement; }
+			else if (event.key.keysym.sym == SDLK_SPACE)  { position.y += translationIncrement; }
 			else if (event.key.keysym.sym == SDLK_LCTRL)  { position.y -= translationIncrement; }
 			else if (event.key.keysym.sym == SDLK_LEFT)   { rotation.y += rotationIncrement;    }
 			else if (event.key.keysym.sym == SDLK_RIGHT)  { rotation.y -= rotationIncrement;    }
@@ -150,8 +149,13 @@ int main(int argc, char* argv[])
 	const Matrix4                 projectionMatrix = createPerspectiveProjectionMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
 	tr::ColorBuffer               colorBuffer(screenWidth, screenHeight);
 	tr::DepthBuffer               depthBuffer(screenWidth, screenHeight);
-	Vector4                       rotation(0.0f, 0.0f, 0.0f, 1.0f);
-	Vector4                       position(0.0f, 0.0f, 40.0f, 1.0f);
+
+	Vector4                       cameraRotation(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector4                       cameraPosition(0.0f, 0.0f, -30.0f, 1.0f);
+
+	Vector4                       modelRotation(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector4                       modelPosition(10.0f, 0.0f, 0.0f, 1.0f);
+
 	tr::Rasterizer                rasterizer;
 
 	if (screenWidth <= 0 || screenHeight <= 0)
@@ -179,18 +183,25 @@ int main(int argc, char* argv[])
 	while (running)
 	{
 		const auto start = std::chrono::high_resolution_clock::now();
-		Matrix4    modelViewMatrix;
+		Matrix4    modelMatrix;
+		Matrix4    viewMatrix;
 		
-		updateInputs(running, position, rotation);
+		updateInputs(running, cameraPosition, cameraRotation);
 
 		colorBuffer.fill(0);
 
-		modelViewMatrix.identity();
-		modelViewMatrix.rotateX(rotation.x);
-		modelViewMatrix.rotateY(rotation.y);
-		modelViewMatrix.translate(position.x, position.y, position.z);
-
-		rasterizer.setMatrix((modelViewMatrix * projectionMatrix).invert());
+		modelMatrix.identity();
+		modelMatrix.translate(modelPosition.x, modelPosition.y, modelPosition.z);
+		modelMatrix.rotateX(modelRotation.x);
+		modelMatrix.rotateY(modelRotation.y);
+		modelMatrix.rotateZ(modelRotation.z);
+		
+		viewMatrix.identity();
+		viewMatrix.translate(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
+		viewMatrix.rotateY(-cameraRotation.y);
+		viewMatrix.rotateX(-cameraRotation.x);
+		
+		rasterizer.setMatrix(projectionMatrix * viewMatrix * modelMatrix);
 		rasterizer.draw(vertices, texture, colorBuffer, depthBuffer);
 
 		renderColorBufferToWindow(colorBuffer, renderer);
