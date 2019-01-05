@@ -109,18 +109,23 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const float halfWidt
 	minX = std::trunc(minX) + 0.5f;
 	minY = std::trunc(minY) + 0.5f;
 
+	const float triangleAreaInverse = 1.0f / orientPoint(vertex0, vertex1, vertex2);
+
 	for (point.x = minX; point.x < maxX; point.x += 1.0f)
 	{
 		for (point.y = minY; point.y < maxY; point.y += 1.0f)
 		{
-			const float weight0 = orientPoint(vertex1, vertex2, point);
-			const float weight1 = orientPoint(vertex2, vertex0, point);
-			const float weight2 = orientPoint(vertex0, vertex1, point);
+			float weight0 = orientPoint(vertex1, vertex2, point);
+			float weight1 = orientPoint(vertex2, vertex0, point);
+			float weight2 = orientPoint(vertex0, vertex1, point);
 
 			if (weight0 >= 0.0f && weight1 >= 0.0f && weight2 >= 0.0f)
 			{
-				// interpolate depth
-				const float depth = 0.5f;
+				weight0 *= triangleAreaInverse;
+				weight1 *= triangleAreaInverse;
+				weight2 *= triangleAreaInverse;
+
+				const float depth = weight0 * vertex0.z + weight1 * vertex1.z + weight2 * vertex2.z;
 
 				drawPoint(point, depth, colorBuffer, depthBuffer);
 			}
