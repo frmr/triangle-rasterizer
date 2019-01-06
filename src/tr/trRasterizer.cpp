@@ -11,8 +11,8 @@ void tr::Rasterizer::draw(std::vector<Vertex> vertices, const ColorBuffer& textu
 		return;
 	}
 
-	const float           halfWidth  = float(colorBuffer.getWidth())  / 2.0f - 0.0001f;
-	const float           halfHeight = float(colorBuffer.getHeight()) / 2.0f - 0.0001f;
+	const float halfWidth  = float(colorBuffer.getWidth())  / 2.0f - 0.0001f;
+	const float halfHeight = float(colorBuffer.getHeight()) / 2.0f - 0.0001f;
 
 	for (auto& vertex : vertices)
 	{
@@ -80,7 +80,7 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const ColorBuffer& t
 	Vector4 position0 = vertex0.position / vertex0.position.w;
 	Vector4 position1 = vertex1.position / vertex1.position.w;
 	Vector4 position2 = vertex2.position / vertex2.position.w;
-	Vector2 point;
+	Coord   point;
 
 	if (orientPoint(position0, position1, position2) >= 0.0f)
 	{
@@ -95,32 +95,35 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const ColorBuffer& t
 	position1.y = halfHeight - position1.y * halfHeight;
 	position2.y = halfHeight - position2.y * halfHeight;
 
-	float minX = std::min({ position0.x, position1.x, position2.x });
-	float minY = std::min({ position0.y, position1.y, position2.y });
-	float maxX = std::max({ position0.x, position1.x, position2.x });
-	float maxY = std::max({ position0.y, position1.y, position2.y });
-	
-	minX = std::max(minX, 0.0f);
-	minY = std::max(minY, 0.0f);
-	maxX = std::min(maxX, 2560.0f);
-	maxY = std::min(maxY, 1440.0f);
+	uint16_t minX = std::min({ uint16_t(position0.x), uint16_t(position1.x), uint16_t(position2.x) });
+	uint16_t minY = std::min({ uint16_t(position0.y), uint16_t(position1.y), uint16_t(position2.y) });
+	uint16_t maxX = std::max({ uint16_t(position0.x), uint16_t(position1.x), uint16_t(position2.x) });
+	uint16_t maxY = std::max({ uint16_t(position0.y), uint16_t(position1.y), uint16_t(position2.y) });
 
-	minX = std::trunc(minX) + 0.5f;
-	minY = std::trunc(minY) + 0.5f;
+	position0.x -= 0.5f;
+	position0.y -= 0.5f;
+	position1.x -= 0.5f;
+	position1.y -= 0.5f;
+	position2.x -= 0.5f;
+	position2.y -= 0.5f;
+
+	size_t step = colorBuffer.getWidth() - (maxX - minX) - 1;
+
+	Color* colorPointer = colorBuffer.getData() + (minY * colorBuffer.getWidth() + minX);
+	float* depthPointer = depthBuffer.getData() + (minY * depthBuffer.getWidth() + minX);
 
 	const float triangleAreaInverse = 1.0f / orientPoint(position0, position1, position2);
 
-	for (point.x = minX; point.x < maxX; point.x += 1.0f)
+	for (point.y = minY; point.y <= maxY; ++point.y)
 	{
-		for (point.y = minY; point.y < maxY; point.y += 1.0f)
+		for (point.x = minX; point.x <= maxX; ++point.x, ++colorPointer, ++depthPointer)
 		{
-			float weight0 = orientPoint(position1, position2, point);
-			float weight1 = orientPoint(position2, position0, point);
-			float weight2 = orientPoint(position0, position1, point);
+			const Vector2 pointFloat(float(point.x), float(point.y));
 
-			//if (~((reinterpret_cast<uint32_t&>(weight0) | reinterpret_cast<uint32_t&>(weight1) | reinterpret_cast<uint32_t&>(weight2)) & 0x00000080))
-			//if (~((*(unsigned long *)&weight0 | *(unsigned long *)&weight1 | *(unsigned long *)&weight2) & 0x00000080))
-			//if (!std::signbit(weight0) && !std::signbit(weight1) && !std::signbit(weight2))
+			float weight0 = orientPoint(position1, position2, pointFloat);
+			float weight1 = orientPoint(position2, position0, pointFloat);
+			float weight2 = orientPoint(position0, position1, pointFloat);
+
 			if (weight0 >= 0.0f && weight1 >= 0.0f && weight2 >= 0.0f)
 			{
 				weight0 *= triangleAreaInverse;
@@ -129,18 +132,23 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const ColorBuffer& t
 
 				const float depth = interpolate(weight0, position0.z, weight1, position1.z, weight2, position2.z);
 
-				// Depth test
+				if (depth < *depthPointer)
+				{
+					const Vector2 interpolatedTextureCoord(
+						interpolate(weight0, vertex0.textureCoord.x, weight1, vertex1.textureCoord.x, weight2, vertex2.textureCoord.x),
+						interpolate(weight0, vertex0.textureCoord.y, weight1, vertex1.textureCoord.y, weight2, vertex2.textureCoord.y)
+					);
 
-				const Vector2 interpolatedTextureCoord(
-					interpolate(weight0, vertex0.textureCoord.x, weight1, vertex1.textureCoord.x, weight2, vertex2.textureCoord.x),
-					interpolate(weight0, vertex0.textureCoord.y, weight1, vertex1.textureCoord.y, weight2, vertex2.textureCoord.y)
-				);
+					const Color color = texture.getAt(size_t(interpolatedTextureCoord.x * (texture.getWidth() - 1)), size_t(interpolatedTextureCoord.y * (texture.getHeight() - 1)));
 
-				const Color color = texture.getAt(size_t(interpolatedTextureCoord.x * (texture.getWidth() - 1)), size_t(interpolatedTextureCoord.y * (texture.getHeight() - 1)));
-
-				drawPoint(point, color, depth, colorBuffer, depthBuffer);
+					memcpy(colorPointer, &color, sizeof(Color));
+					*depthPointer = depth;
+				}
 			}
 		}
+
+		colorPointer += step;
+		depthPointer += step;
 	}
 }
 

@@ -4,20 +4,7 @@ namespace tr
 {
 	struct Coord
 	{
-	public:
-		Coord(const int x, const int y, const float depth) :
-			x(x), y(y), depth(depth)
-		{
-		}
-
-		bool isValid(const int screenWidth, const int screenHeight) const
-		{
-			return x >= 0 && x < screenWidth && y >= 0 && y < screenHeight && depth >= -1.0 && depth <= 1.0;
-		}
-
-	public:
-		int   x;
-		int   y;
-		float depth;
+		uint16_t x;
+		uint16_t y;
 	};
 }

@@ -70,6 +70,7 @@ std::vector<tr::Vertex> defineVertices()
 {
 	return {
 		
+		// Front
 		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 0.0f) },
 		{ Vector4( 2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 1.0f) },
 		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 1.0f) },
@@ -78,6 +79,7 @@ std::vector<tr::Vertex> defineVertices()
 		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 0.0f) },
 		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 1.0f) },
 
+		// Top
 		{ Vector4(-2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
 		{ Vector4(-2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 0.0f) },
 		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 1.0f) },
@@ -86,6 +88,7 @@ std::vector<tr::Vertex> defineVertices()
 		{ Vector4( 2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 1.0f) },
 		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 1.0f) },
 
+		// Right
 		{ Vector4( 2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 0.0f) },
 		{ Vector4( 2.0f, -2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 1.0f) },
 		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
@@ -93,6 +96,15 @@ std::vector<tr::Vertex> defineVertices()
 		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
 		{ Vector4( 2.0f, -2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 1.0f) },
 		{ Vector4( 2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 1.0f) },
+
+		// Back
+		{ Vector4(-2.0f, -2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 1.0f) },
+		{ Vector4( 2.0f, -2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 1.0f) },
+		{ Vector4( 2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		
+		{ Vector4(-2.0f, -2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 1.0f) },
+		{ Vector4( 2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4(-2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 0.0f) },
 	};
 }
 
@@ -151,7 +163,7 @@ int main(int argc, char* argv[])
 	tr::DepthBuffer               depthBuffer(screenWidth, screenHeight);
 
 	Vector4                       cameraRotation(0.0f, 0.0f, 0.0f, 1.0f);
-	Vector4                       cameraPosition(0.0f, 0.0f, -30.0f, 1.0f);
+	Vector4                       cameraPosition(10.0f, 0.0f, -45.0f, 1.0f);
 
 	Vector4                       modelRotation(0.0f, 0.0f, 0.0f, 1.0f);
 	Vector4                       modelPosition(10.0f, 0.0f, 0.0f, 1.0f);
@@ -189,6 +201,7 @@ int main(int argc, char* argv[])
 		updateInputs(running, cameraPosition, cameraRotation);
 
 		colorBuffer.fill(tr::Color{ 0, 0, 0, 0 });
+		depthBuffer.fill(1.0f);
 
 		modelMatrix.identity();
 		modelMatrix.translate(modelPosition.x, modelPosition.y, modelPosition.z);
@@ -207,7 +220,7 @@ int main(int argc, char* argv[])
 		renderColorBufferToWindow(colorBuffer, renderer);
 
 		const auto frameTime = std::chrono::high_resolution_clock::now() - start;
-		//cout << std::chrono::duration<double, std::milli>(diff).count() << " ms" << endl;
+		std::cout << std::chrono::duration<double, std::milli>(frameTime).count() << " ms" << std::endl;
 	}
 
 	SDL_DestroyRenderer(renderer);
