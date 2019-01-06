@@ -39,7 +39,7 @@ namespace tr
 
 		T getAt(const size_t& x, const size_t& y) const
 		{
-			return m_data[y*width+x];
+			return m_data[y * m_width + x];
 		}
 
 		T getAt(const double& x, const double& y, const bool filter) const

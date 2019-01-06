@@ -7,8 +7,8 @@
     <Filter Include="matrix">
       <UniqueIdentifier>{63ef8641-1f2a-457d-ad6f-2d4edfd5449b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EasyBMP">
-      <UniqueIdentifier>{2e9203f9-2c1f-4991-bfe7-a34017e30e2a}</UniqueIdentifier>
+    <Filter Include="lodepng">
+      <UniqueIdentifier>{f8c2e606-d648-4ff7-901c-e5b48e4c7ff2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -26,18 +26,6 @@
     </ClInclude>
     <ClInclude Include="src\matrix\Vectors.h">
       <Filter>matrix</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EasyBMP\EasyBMP.h">
-      <Filter>EasyBMP</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EasyBMP\EasyBMP_BMP.h">
-      <Filter>EasyBMP</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EasyBMP\EasyBMP_DataStructures.h">
-      <Filter>EasyBMP</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EasyBMP\EasyBMP_VariousBMPutilities.h">
-      <Filter>EasyBMP</Filter>
     </ClInclude>
     <ClInclude Include="src\tr\trCoord.hpp">
       <Filter>tr</Filter>
@@ -78,20 +66,23 @@
     <ClInclude Include="src\tr\trVertexClipBitMasks.hpp">
       <Filter>tr</Filter>
     </ClInclude>
+    <ClInclude Include="src\lodepng\lodepng.h">
+      <Filter>lodepng</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\matrix\Matrices.cpp">
       <Filter>matrix</Filter>
     </ClCompile>
     <ClCompile Include="src\example.cpp" />
-    <ClCompile Include="src\EasyBMP\EasyBMP.cpp">
-      <Filter>EasyBMP</Filter>
-    </ClCompile>
     <ClCompile Include="src\tr\trFunctions.cpp">
       <Filter>tr</Filter>
     </ClCompile>
     <ClCompile Include="src\tr\trRasterizer.cpp">
       <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lodepng\lodepng.cpp">
+      <Filter>lodepng</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

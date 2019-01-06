@@ -70,29 +70,29 @@ std::vector<tr::Vertex> defineVertices()
 {
 	return {
 		
-		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-		{ Vector4( 2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 0.0f) },
+		{ Vector4( 2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 1.0f) },
+		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 1.0f) },
 
 		{ Vector4(-2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 0.0f) },
+		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 1.0f) },
 
 		{ Vector4(-2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-		{ Vector4(-2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4(-2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 0.0f) },
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 1.0f) },
+
+		{ Vector4(-2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 0.0f) },
+		{ Vector4( 2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 1.0f) },
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 1.0f) },
+
+		{ Vector4( 2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 0.0f) },
+		{ Vector4( 2.0f, -2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 1.0f) },
 		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
 
-		{ Vector4(-2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-		{ Vector4( 2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
 		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-
-		{ Vector4( 2.0f,  2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-		{ Vector4( 2.0f, -2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-
-		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-		{ Vector4( 2.0f, -2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-		{ Vector4( 2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4( 2.0f, -2.0f, -54.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 1.0f) },
+		{ Vector4( 2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 1.0f) },
 	};
 }
 
@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
 	SDL_Window*                   window           = nullptr;
 	SDL_Renderer*                 renderer         = nullptr;
 	const std::vector<tr::Vertex> vertices         = defineVertices();
-	const tr::ColorBuffer         texture          = tr::loadTexture("data/udon1.bmp");
+	const tr::ColorBuffer         texture          = tr::loadTexture("data/udon.png");
 	const Matrix4                 projectionMatrix = createPerspectiveProjectionMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
 	tr::ColorBuffer               colorBuffer(screenWidth, screenHeight);
 	tr::DepthBuffer               depthBuffer(screenWidth, screenHeight);
@@ -188,7 +188,7 @@ int main(int argc, char* argv[])
 		
 		updateInputs(running, cameraPosition, cameraRotation);
 
-		colorBuffer.fill(0);
+		colorBuffer.fill(tr::Color{ 0, 0, 0, 0 });
 
 		modelMatrix.identity();
 		modelMatrix.translate(modelPosition.x, modelPosition.y, modelPosition.z);

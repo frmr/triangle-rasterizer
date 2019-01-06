@@ -59,18 +59,13 @@ tr::Vertex tr::Rasterizer::lineFrustumIntersection(const Vertex& lineStart, cons
 	return { position, normal, textureCoord };
 }
 
-void tr::Rasterizer::drawPoint(const int x, const int y, const float depth, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+void tr::Rasterizer::drawPoint(const Vector2& point, const Color& color, const float depth, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
-	colorBuffer.at(x, y) = std::numeric_limits<uint32_t>::max();
-	depthBuffer.at(x, y) = depth;
+	colorBuffer.at(point.x, point.y) = color;
+	depthBuffer.at(point.x, point.y) = depth;
 }
 
-void tr::Rasterizer::drawPoint(const Vector2& point, const float depth, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
-{
-	drawPoint(int(point.x), int(point.y), depth, colorBuffer, depthBuffer);
-}
-
-void tr::Rasterizer::drawTriangle(const Triangle& triangle, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+void tr::Rasterizer::drawTriangle(const Triangle& triangle, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
 	constexpr EdgeInfo edges[3] = {
 		{ 0, 1, 2 },
@@ -78,28 +73,32 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const float halfWidt
 		{ 2, 0, 1 }
 	};
 
-	Vector4 vertex0 = triangle.vertices[0].position / triangle.vertices[0].position.w;
-	Vector4 vertex1 = triangle.vertices[1].position / triangle.vertices[1].position.w;
-	Vector4 vertex2 = triangle.vertices[2].position / triangle.vertices[2].position.w;
+	const Vertex& vertex0 = triangle.vertices[0];
+	const Vertex& vertex1 = triangle.vertices[1];
+	const Vertex& vertex2 = triangle.vertices[2];
+
+	Vector4 position0 = vertex0.position / vertex0.position.w;
+	Vector4 position1 = vertex1.position / vertex1.position.w;
+	Vector4 position2 = vertex2.position / vertex2.position.w;
 	Vector2 point;
 
-	if (orientPoint(vertex0, vertex1, vertex2) >= 0.0f)
+	if (orientPoint(position0, position1, position2) >= 0.0f)
 	{
 		return;
 	}
 
-	vertex0.x = vertex0.x * halfWidth + halfWidth;
-	vertex1.x = vertex1.x * halfWidth + halfWidth;
-	vertex2.x = vertex2.x * halfWidth + halfWidth;
+	position0.x = position0.x * halfWidth + halfWidth;
+	position1.x = position1.x * halfWidth + halfWidth;
+	position2.x = position2.x * halfWidth + halfWidth;
 
-	vertex0.y = halfHeight - vertex0.y * halfHeight;
-	vertex1.y = halfHeight - vertex1.y * halfHeight;
-	vertex2.y = halfHeight - vertex2.y * halfHeight;
+	position0.y = halfHeight - position0.y * halfHeight;
+	position1.y = halfHeight - position1.y * halfHeight;
+	position2.y = halfHeight - position2.y * halfHeight;
 
-	float minX = std::min({ vertex0.x, vertex1.x, vertex2.x });
-	float minY = std::min({ vertex0.y, vertex1.y, vertex2.y });
-	float maxX = std::max({ vertex0.x, vertex1.x, vertex2.x });
-	float maxY = std::max({ vertex0.y, vertex1.y, vertex2.y });
+	float minX = std::min({ position0.x, position1.x, position2.x });
+	float minY = std::min({ position0.y, position1.y, position2.y });
+	float maxX = std::max({ position0.x, position1.x, position2.x });
+	float maxY = std::max({ position0.y, position1.y, position2.y });
 	
 	minX = std::max(minX, 0.0f);
 	minY = std::max(minY, 0.0f);
@@ -109,25 +108,37 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const float halfWidt
 	minX = std::trunc(minX) + 0.5f;
 	minY = std::trunc(minY) + 0.5f;
 
-	const float triangleAreaInverse = 1.0f / orientPoint(vertex0, vertex1, vertex2);
+	const float triangleAreaInverse = 1.0f / orientPoint(position0, position1, position2);
 
 	for (point.x = minX; point.x < maxX; point.x += 1.0f)
 	{
 		for (point.y = minY; point.y < maxY; point.y += 1.0f)
 		{
-			float weight0 = orientPoint(vertex1, vertex2, point);
-			float weight1 = orientPoint(vertex2, vertex0, point);
-			float weight2 = orientPoint(vertex0, vertex1, point);
+			float weight0 = orientPoint(position1, position2, point);
+			float weight1 = orientPoint(position2, position0, point);
+			float weight2 = orientPoint(position0, position1, point);
 
+			//if (~((reinterpret_cast<uint32_t&>(weight0) | reinterpret_cast<uint32_t&>(weight1) | reinterpret_cast<uint32_t&>(weight2)) & 0x00000080))
+			//if (~((*(unsigned long *)&weight0 | *(unsigned long *)&weight1 | *(unsigned long *)&weight2) & 0x00000080))
+			//if (!std::signbit(weight0) && !std::signbit(weight1) && !std::signbit(weight2))
 			if (weight0 >= 0.0f && weight1 >= 0.0f && weight2 >= 0.0f)
 			{
 				weight0 *= triangleAreaInverse;
 				weight1 *= triangleAreaInverse;
 				weight2 *= triangleAreaInverse;
 
-				const float depth = weight0 * vertex0.z + weight1 * vertex1.z + weight2 * vertex2.z;
+				const float depth = interpolate(weight0, position0.z, weight1, position1.z, weight2, position2.z);
 
-				drawPoint(point, depth, colorBuffer, depthBuffer);
+				// Depth test
+
+				const Vector2 interpolatedTextureCoord(
+					interpolate(weight0, vertex0.textureCoord.x, weight1, vertex1.textureCoord.x, weight2, vertex2.textureCoord.x),
+					interpolate(weight0, vertex0.textureCoord.y, weight1, vertex1.textureCoord.y, weight2, vertex2.textureCoord.y)
+				);
+
+				const Color color = texture.getAt(size_t(interpolatedTextureCoord.x * (texture.getWidth() - 1)), size_t(interpolatedTextureCoord.y * (texture.getHeight() - 1)));
+
+				drawPoint(point, color, depth, colorBuffer, depthBuffer);
 			}
 		}
 	}
@@ -164,7 +175,7 @@ void tr::Rasterizer::clipAndDrawTriangle(const Triangle& triangle, const ColorBu
 
 	if (!(vertexClipBitFields[0] | vertexClipBitFields[1] | vertexClipBitFields[2]))
 	{
-		drawTriangle(triangle, halfWidth, halfHeight, colorBuffer, depthBuffer);
+		drawTriangle(triangle, texture, halfWidth, halfHeight, colorBuffer, depthBuffer);
 	}
 	else if ((vertexClipBitFields[0] | vertexEqualityBitFields[0]) &
 	         (vertexClipBitFields[1] | vertexEqualityBitFields[1]) &
@@ -206,6 +217,11 @@ void tr::Rasterizer::clipAndDrawTriangle(const Triangle& triangle, const ColorBu
 			}
 		}
 	}
+}
+
+float tr::Rasterizer::interpolate(const float weight0, const float value0, const float weight1, const float value1, const float weight2, const float value2)
+{
+	return weight0 * value0 + weight1 * value1 + weight2 * value2;
 }
 
 template<typename T>

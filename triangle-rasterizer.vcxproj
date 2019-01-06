@@ -170,10 +170,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\EasyBMP\EasyBMP.h" />
-    <ClInclude Include="src\EasyBMP\EasyBMP_BMP.h" />
-    <ClInclude Include="src\EasyBMP\EasyBMP_DataStructures.h" />
-    <ClInclude Include="src\EasyBMP\EasyBMP_VariousBMPutilities.h" />
+    <ClInclude Include="src\lodepng\lodepng.h" />
     <ClInclude Include="src\matrix\Matrices.h" />
     <ClInclude Include="src\matrix\Vectors.h" />
     <ClInclude Include="src\tr\trAxis.hpp" />
@@ -194,8 +191,8 @@
     <ClInclude Include="src\tr\trVertexClipBitMasks.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\EasyBMP\EasyBMP.cpp" />
     <ClCompile Include="src\example.cpp" />
+    <ClCompile Include="src\lodepng\lodepng.cpp" />
     <ClCompile Include="src\matrix\Matrices.cpp" />
     <ClCompile Include="src\tr\trFunctions.cpp" />
     <ClCompile Include="src\tr\trRasterizer.cpp" />
