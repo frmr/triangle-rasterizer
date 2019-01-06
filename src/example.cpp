@@ -17,7 +17,7 @@ bool initSdl()
 	return true;
 }
 
-bool initWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWidth, const int screenHeight, const bool fullscreen)
+bool initWindow(SDL_Window** window, SDL_Renderer** renderer, SDL_Texture** texture, const int screenWidth, const int screenHeight, const bool fullscreen)
 {
 	*window = SDL_CreateWindow("Space Raster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
 
@@ -32,6 +32,13 @@ bool initWindow(SDL_Window** window, SDL_Renderer** renderer, const int screenWi
 	if (!renderer)
 	{
 		std::cerr << "InitWindow() in src/main.cpp: Failed to initialise SDL renderer." << std::endl;
+	}
+
+	*texture = SDL_CreateTexture(*renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, screenWidth, screenHeight);
+
+	if (!texture)
+	{
+		std::cerr << "InitWindow() in src/main.cpp: Failed to initialize SDL teuxtre." << std::endl;
 	}
 
 	return true;
@@ -108,15 +115,19 @@ std::vector<tr::Vertex> defineVertices()
 	};
 }
 
-void renderColorBufferToWindow(tr::ColorBuffer& colorBuffer, SDL_Renderer* renderer)
+void renderColorBufferToWindow(tr::ColorBuffer& colorBuffer, SDL_Renderer* renderer, SDL_Texture* texture)
 {
-	SDL_Surface* sdlSurface = SDL_CreateRGBSurfaceFrom((void*)colorBuffer.getData(), int(colorBuffer.getWidth()), int(colorBuffer.getHeight()), 32, int(sizeof(tr::Color) * colorBuffer.getWidth()), 0, 0, 0, 0);
-	SDL_Texture* sdlTexture = SDL_CreateTextureFromSurface(renderer, sdlSurface);
-
-	SDL_FreeSurface(sdlSurface);
-	SDL_RenderCopy(renderer, sdlTexture, nullptr, nullptr);
+	tr::Color* pixels;
+	int        pitch;
+	
+	SDL_SetRenderTarget(renderer, texture);
+	SDL_LockTexture(texture, NULL, (void**)&pixels, &pitch);
+	
+	memcpy(pixels, colorBuffer.getData(), colorBuffer.getWidth() * colorBuffer.getHeight() * 4);
+	
+	SDL_UnlockTexture(texture);
+	SDL_RenderCopy(renderer, texture, NULL, NULL);
 	SDL_RenderPresent(renderer);
-	SDL_DestroyTexture(sdlTexture);
 }
 
 void updateInputs(bool& running, Vector4& position, Vector4& rotation)
@@ -154,8 +165,9 @@ int main(int argc, char* argv[])
 	constexpr int                 screenWidth      = 2560;
 	constexpr int                 screenHeight     = 1440;
 	bool                          running          = true;
-	SDL_Window*                   window           = nullptr;
-	SDL_Renderer*                 renderer         = nullptr;
+	SDL_Window*                   sdlWindow           = nullptr;
+	SDL_Renderer*                 sdlRenderer         = nullptr;
+	SDL_Texture*                  sdlTexture          = nullptr;
 	const std::vector<tr::Vertex> vertices         = defineVertices();
 	const tr::ColorBuffer         texture          = tr::loadTexture("data/udon.png");
 	const Matrix4                 projectionMatrix = createPerspectiveProjectionMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
@@ -181,10 +193,10 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	if (!initWindow(&window, &renderer, screenWidth, screenHeight, false))
+	if (!initWindow(&sdlWindow, &sdlRenderer, &sdlTexture, screenWidth, screenHeight, false))
 	{
-		SDL_DestroyRenderer(renderer);
-		SDL_DestroyWindow(window);
+		SDL_DestroyRenderer(sdlRenderer);
+		SDL_DestroyWindow(sdlWindow);
 		SDL_Quit();
 
 		return 0;
@@ -217,14 +229,15 @@ int main(int argc, char* argv[])
 		rasterizer.setMatrix(projectionMatrix * viewMatrix * modelMatrix);
 		rasterizer.draw(vertices, texture, colorBuffer, depthBuffer);
 
-		renderColorBufferToWindow(colorBuffer, renderer);
+		renderColorBufferToWindow(colorBuffer, sdlRenderer, sdlTexture);
 
 		const auto frameTime = std::chrono::high_resolution_clock::now() - start;
 		std::cout << std::chrono::duration<double, std::milli>(frameTime).count() << " ms" << std::endl;
 	}
 
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
+	SDL_DestroyTexture(sdlTexture);
+	SDL_DestroyRenderer(sdlRenderer);
+	SDL_DestroyWindow(sdlWindow);
 	SDL_Quit();
 
 	return 0;
