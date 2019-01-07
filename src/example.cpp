@@ -165,9 +165,9 @@ int main(int argc, char* argv[])
 	constexpr int                 screenWidth      = 2560;
 	constexpr int                 screenHeight     = 1440;
 	bool                          running          = true;
-	SDL_Window*                   sdlWindow           = nullptr;
-	SDL_Renderer*                 sdlRenderer         = nullptr;
-	SDL_Texture*                  sdlTexture          = nullptr;
+	SDL_Window*                   sdlWindow        = nullptr;
+	SDL_Renderer*                 sdlRenderer      = nullptr;
+	SDL_Texture*                  sdlTexture       = nullptr;
 	const std::vector<tr::Vertex> vertices         = defineVertices();
 	const tr::ColorBuffer         texture          = tr::loadTexture("data/udon.png");
 	const Matrix4                 projectionMatrix = createPerspectiveProjectionMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);

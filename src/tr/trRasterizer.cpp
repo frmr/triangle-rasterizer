@@ -141,7 +141,7 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const ColorBuffer& t
 
 					const Color color = texture.getAt(size_t(interpolatedTextureCoord.x * (texture.getWidth() - 1)), size_t(interpolatedTextureCoord.y * (texture.getHeight() - 1)));
 
-					memcpy(colorPointer, &color, sizeof(Color));
+					*colorPointer = color;
 					*depthPointer = depth;
 				}
 			}
