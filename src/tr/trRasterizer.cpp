@@ -67,12 +67,6 @@ void tr::Rasterizer::drawPoint(const Vector2& point, const Color& color, const f
 
 void tr::Rasterizer::drawTriangle(const Triangle& triangle, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
-	constexpr EdgeInfo edges[3] = {
-		{ 0, 1, 2 },
-		{ 1, 2, 0 },
-		{ 2, 0, 1 }
-	};
-
 	const Vertex& vertex0 = triangle.vertices[0];
 	const Vertex& vertex1 = triangle.vertices[1];
 	const Vertex& vertex2 = triangle.vertices[2];

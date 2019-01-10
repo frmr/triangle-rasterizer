@@ -142,7 +142,7 @@ void updateInputs(bool& running, Vector4& position, Vector4& rotation)
 		}
 		else if (event.type == SDL_KEYDOWN)
 		{
-			constexpr float translationIncrement = 5.0f;
+			constexpr float translationIncrement = 0.1f;
 			constexpr float rotationIncrement    = 2.0f;
 
 			if      (event.key.keysym.sym == SDLK_ESCAPE) { running = false;                    }
@@ -162,15 +162,16 @@ void updateInputs(bool& running, Vector4& position, Vector4& rotation)
 
 int main(int argc, char* argv[])
 {
-	constexpr int                 screenWidth      = 2560;
-	constexpr int                 screenHeight     = 1440;
+	constexpr int                 screenWidth      = 1920;
+	constexpr int                 screenHeight     = 1080;
 	bool                          running          = true;
 	SDL_Window*                   sdlWindow        = nullptr;
 	SDL_Renderer*                 sdlRenderer      = nullptr;
 	SDL_Texture*                  sdlTexture       = nullptr;
 	const std::vector<tr::Vertex> vertices         = defineVertices();
 	const tr::ColorBuffer         texture          = tr::loadTexture("data/udon.png");
-	const Matrix4                 projectionMatrix = createPerspectiveProjectionMatrix(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
+	const float                   aspectRatio      = float(screenWidth) / float(screenHeight);
+	const Matrix4                 projectionMatrix = createPerspectiveProjectionMatrix(-aspectRatio, aspectRatio, -1.0f, 1.0f, 1.0f, 100.0f);
 	tr::ColorBuffer               colorBuffer(screenWidth, screenHeight);
 	tr::DepthBuffer               depthBuffer(screenWidth, screenHeight);
 
