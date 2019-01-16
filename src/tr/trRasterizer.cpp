@@ -23,7 +23,7 @@ void tr::Rasterizer::draw(std::vector<Vertex> vertices, const ColorBuffer& textu
 	{
 		for (std::vector<Vertex>::const_iterator it = vertices.begin(); it < vertices.end() - 2; it += 3)
 		{
-			clipAndDrawTriangle(Triangle{ *it, *(it + 1), *(it + 2) }, texture, halfWidth, halfHeight, colorBuffer, depthBuffer);
+			clipAndDrawTriangle({ *it, *(it + 1), *(it + 2) }, texture, halfWidth, halfHeight, colorBuffer, depthBuffer);
 		}
 	}
 	else if (m_primitive == Primitive::TRIANGLE_STRIP)
@@ -59,21 +59,11 @@ tr::Vertex tr::Rasterizer::lineFrustumIntersection(const Vertex& lineStart, cons
 	return { position, normal, textureCoord };
 }
 
-void tr::Rasterizer::drawPoint(const Vector2& point, const Color& color, const float depth, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+void tr::Rasterizer::drawTriangle(std::array<Vertex, 3> vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
-	colorBuffer.at(point.x, point.y) = color;
-	depthBuffer.at(point.x, point.y) = depth;
-}
-
-void tr::Rasterizer::drawTriangle(const Triangle& triangle, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
-{
-	const Vertex& vertex0 = triangle.vertices[0];
-	const Vertex& vertex1 = triangle.vertices[1];
-	const Vertex& vertex2 = triangle.vertices[2];
-
-	Vector4 position0 = vertex0.position / vertex0.position.w;
-	Vector4 position1 = vertex1.position / vertex1.position.w;
-	Vector4 position2 = vertex2.position / vertex2.position.w;
+	Vector4 position0 = vertices[0].position / vertices[0].position.w;
+	Vector4 position1 = vertices[1].position / vertices[1].position.w;
+	Vector4 position2 = vertices[2].position / vertices[2].position.w;
 	Coord   point;
 
 	if (orientPoint(position0, position1, position2) >= 0.0f)
@@ -129,8 +119,8 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const ColorBuffer& t
 				if (depth < *depthPointer)
 				{
 					const Vector2 interpolatedTextureCoord(
-						interpolate(weight0, vertex0.textureCoord.x, weight1, vertex1.textureCoord.x, weight2, vertex2.textureCoord.x),
-						interpolate(weight0, vertex0.textureCoord.y, weight1, vertex1.textureCoord.y, weight2, vertex2.textureCoord.y)
+						interpolate(weight0, vertices[0].textureCoord.x, weight1, vertices[1].textureCoord.x, weight2, vertices[2].textureCoord.x),
+						interpolate(weight0, vertices[0].textureCoord.y, weight1, vertices[1].textureCoord.y, weight2, vertices[2].textureCoord.y)
 					);
 
 					const Color color = texture.getAt(size_t(interpolatedTextureCoord.x * (texture.getWidth() - 1)), size_t(interpolatedTextureCoord.y * (texture.getHeight() - 1)));
@@ -146,14 +136,14 @@ void tr::Rasterizer::drawTriangle(const Triangle& triangle, const ColorBuffer& t
 	}
 }
 
-void tr::Rasterizer::clipAndDrawTriangle(const Triangle& triangle, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+void tr::Rasterizer::clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
 	std::array<unsigned char, 3> vertexClipBitFields     = { 0, 0, 0 };
 	std::array<unsigned char, 3> vertexEqualityBitFields = { 0, 0, 0 };
 
 	for (size_t vertexIndex = 0; vertexIndex < 3; ++vertexIndex)
 	{
-		const Vertex&   vertex           = triangle.vertices[vertexIndex];
+		const Vertex&   vertex           = vertices[vertexIndex];
 		constexpr float margin           = 0.0001f;
 		const float     wLessMargin      = vertex.position.w - margin;
 		const float     wPlusMargin      = vertex.position.w + margin;
@@ -177,7 +167,7 @@ void tr::Rasterizer::clipAndDrawTriangle(const Triangle& triangle, const ColorBu
 
 	if (!(vertexClipBitFields[0] | vertexClipBitFields[1] | vertexClipBitFields[2]))
 	{
-		drawTriangle(triangle, texture, halfWidth, halfHeight, colorBuffer, depthBuffer);
+		drawTriangle(vertices, texture, halfWidth, halfHeight, colorBuffer, depthBuffer);
 	}
 	else if ((vertexClipBitFields[0] | vertexEqualityBitFields[0]) &
 	         (vertexClipBitFields[1] | vertexEqualityBitFields[1]) &
@@ -191,9 +181,9 @@ void tr::Rasterizer::clipAndDrawTriangle(const Triangle& triangle, const ColorBu
 
 		for (const EdgeInfo& edge : edges)
 		{
-			const Vertex firstVertex    = triangle.vertices[edge.firstVertexIndex];
-			const Vertex secondVertex   = triangle.vertices[edge.secondVertexIndex];
-			const Vertex oppositeVertex = triangle.vertices[edge.oppositeVertexIndex];
+			const Vertex firstVertex    = vertices[edge.firstVertexIndex];
+			const Vertex secondVertex   = vertices[edge.secondVertexIndex];
+			const Vertex oppositeVertex = vertices[edge.oppositeVertexIndex];
 
 			const unsigned char combinedField = (vertexClipBitFields[edge.firstVertexIndex] ^ vertexClipBitFields[edge.secondVertexIndex]) & ~(vertexEqualityBitFields[edge.firstVertexIndex] | vertexEqualityBitFields[edge.secondVertexIndex]);
 
@@ -212,8 +202,8 @@ void tr::Rasterizer::clipAndDrawTriangle(const Triangle& triangle, const ColorBu
 					assert(false);
 				}
 
-				clipAndDrawTriangle(Triangle{ firstVertex,  intersection,   oppositeVertex }, texture, halfWidth, halfHeight, colorBuffer, depthBuffer);
-				clipAndDrawTriangle(Triangle{ secondVertex, oppositeVertex, intersection   }, texture, halfWidth, halfHeight, colorBuffer, depthBuffer);
+				clipAndDrawTriangle({ firstVertex,  intersection,   oppositeVertex }, texture, halfWidth, halfHeight, colorBuffer, depthBuffer);
+				clipAndDrawTriangle({ secondVertex, oppositeVertex, intersection   }, texture, halfWidth, halfHeight, colorBuffer, depthBuffer);
 
 				break;
 			}

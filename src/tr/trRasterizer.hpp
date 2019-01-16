@@ -5,11 +5,11 @@
 #include "trCoord.hpp"
 #include "trDepthBuffer.hpp"
 #include "trPrimitive.hpp"
-#include "trTriangle.hpp"
 #include "trVertex.hpp"
 #include "../matrix/Matrices.h"
 
 #include <vector>
+#include <array>
 
 namespace tr
 {
@@ -22,10 +22,8 @@ namespace tr
 
 	private:
 		static Vertex  lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const tr::Axis axis, const bool negativeW);
-
-		static void    drawPoint(const Vector2& point, const Color& color, const float depth, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
-		static void    drawTriangle(const Triangle& triangle, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
-		static void    clipAndDrawTriangle(const Triangle& triangle, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
+		static void    drawTriangle(std::array<Vertex, 3> vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
+		static void    clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
 		static float   interpolate(const float weight0, const float value0, const float weight1, const float value1, const float weight2, const float value2);
 	
 		template<typename T>
