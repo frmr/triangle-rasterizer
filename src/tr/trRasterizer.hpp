@@ -25,7 +25,10 @@ namespace tr
 		static void    drawTriangle(std::array<Vertex, 3> vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
 		static void    clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
 		static float   interpolate(const float weight0, const float value0, const float weight1, const float value1, const float weight2, const float value2);
-	
+		static void    pixelShift(std::array<Vertex, 3>& vertices);
+		static void    perspectiveDivide(std::array<Vertex, 3>& vertices);
+		static void    viewportTransformation(std::array<Vertex,3>& vertices, const float halfWidth, const float halfHeight);
+
 		template<typename T>
 		static float   orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const T& point);
 

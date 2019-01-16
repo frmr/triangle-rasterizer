@@ -61,42 +61,29 @@ tr::Vertex tr::Rasterizer::lineFrustumIntersection(const Vertex& lineStart, cons
 
 void tr::Rasterizer::drawTriangle(std::array<Vertex, 3> vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
-	Vector4 position0 = vertices[0].position / vertices[0].position.w;
-	Vector4 position1 = vertices[1].position / vertices[1].position.w;
-	Vector4 position2 = vertices[2].position / vertices[2].position.w;
-	Coord   point;
+	perspectiveDivide(vertices);
 
-	if (orientPoint(position0, position1, position2) >= 0.0f)
+	if (orientPoint(vertices[0].position, vertices[1].position, vertices[2].position) >= 0.0f)
 	{
 		return;
 	}
 
-	position0.x = position0.x * halfWidth + halfWidth;
-	position1.x = position1.x * halfWidth + halfWidth;
-	position2.x = position2.x * halfWidth + halfWidth;
+	viewportTransformation(vertices, halfWidth, halfHeight);
 
-	position0.y = halfHeight - position0.y * halfHeight;
-	position1.y = halfHeight - position1.y * halfHeight;
-	position2.y = halfHeight - position2.y * halfHeight;
+	const uint16_t minX = std::min({ uint16_t(vertices[0].position.x), uint16_t(vertices[1].position.x), uint16_t(vertices[2].position.x) });
+	const uint16_t minY = std::min({ uint16_t(vertices[0].position.y), uint16_t(vertices[1].position.y), uint16_t(vertices[2].position.y) });
+	const uint16_t maxX = std::max({ uint16_t(vertices[0].position.x), uint16_t(vertices[1].position.x), uint16_t(vertices[2].position.x) });
+	const uint16_t maxY = std::max({ uint16_t(vertices[0].position.y), uint16_t(vertices[1].position.y), uint16_t(vertices[2].position.y) });
 
-	uint16_t minX = std::min({ uint16_t(position0.x), uint16_t(position1.x), uint16_t(position2.x) });
-	uint16_t minY = std::min({ uint16_t(position0.y), uint16_t(position1.y), uint16_t(position2.y) });
-	uint16_t maxX = std::max({ uint16_t(position0.x), uint16_t(position1.x), uint16_t(position2.x) });
-	uint16_t maxY = std::max({ uint16_t(position0.y), uint16_t(position1.y), uint16_t(position2.y) });
+	pixelShift(vertices);
 
-	position0.x -= 0.5f;
-	position0.y -= 0.5f;
-	position1.x -= 0.5f;
-	position1.y -= 0.5f;
-	position2.x -= 0.5f;
-	position2.y -= 0.5f;
+	const size_t step                = colorBuffer.getWidth() - (maxX - minX) - 1;
+	const float  triangleAreaInverse = 1.0f / orientPoint(vertices[0].position, vertices[1].position, vertices[2].position);
 
-	size_t step = colorBuffer.getWidth() - (maxX - minX) - 1;
+	Color*       colorPointer        = colorBuffer.getData() + (minY * colorBuffer.getWidth() + minX);
+	float*       depthPointer        = depthBuffer.getData() + (minY * depthBuffer.getWidth() + minX);
 
-	Color* colorPointer = colorBuffer.getData() + (minY * colorBuffer.getWidth() + minX);
-	float* depthPointer = depthBuffer.getData() + (minY * depthBuffer.getWidth() + minX);
-
-	const float triangleAreaInverse = 1.0f / orientPoint(position0, position1, position2);
+	Coord        point;
 
 	for (point.y = minY; point.y <= maxY; ++point.y)
 	{
@@ -104,9 +91,9 @@ void tr::Rasterizer::drawTriangle(std::array<Vertex, 3> vertices, const ColorBuf
 		{
 			const Vector2 pointFloat(float(point.x), float(point.y));
 
-			float weight0 = orientPoint(position1, position2, pointFloat);
-			float weight1 = orientPoint(position2, position0, pointFloat);
-			float weight2 = orientPoint(position0, position1, pointFloat);
+			float weight0 = orientPoint(vertices[1].position, vertices[2].position, pointFloat);
+			float weight1 = orientPoint(vertices[2].position, vertices[0].position, pointFloat);
+			float weight2 = orientPoint(vertices[0].position, vertices[1].position, pointFloat);
 
 			if (weight0 >= 0.0f && weight1 >= 0.0f && weight2 >= 0.0f)
 			{
@@ -114,7 +101,7 @@ void tr::Rasterizer::drawTriangle(std::array<Vertex, 3> vertices, const ColorBuf
 				weight1 *= triangleAreaInverse;
 				weight2 *= triangleAreaInverse;
 
-				const float depth = interpolate(weight0, position0.z, weight1, position1.z, weight2, position2.z);
+				const float depth = interpolate(weight0, vertices[0].position.z, weight1, vertices[1].position.z, weight2, vertices[2].position.z);
 
 				if (depth < *depthPointer)
 				{
@@ -214,6 +201,32 @@ void tr::Rasterizer::clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, 
 float tr::Rasterizer::interpolate(const float weight0, const float value0, const float weight1, const float value1, const float weight2, const float value2)
 {
 	return weight0 * value0 + weight1 * value1 + weight2 * value2;
+}
+
+void tr::Rasterizer::pixelShift(std::array<Vertex, 3>& vertices)
+{
+	for (Vertex& vertex : vertices)
+	{
+		vertex.position.x -= 0.5f;
+		vertex.position.y -= 0.5f;
+	}
+}
+
+void tr::Rasterizer::perspectiveDivide(std::array<Vertex, 3>& vertices)
+{
+	for (Vertex& vertex : vertices)
+	{
+		vertex.position /= vertex.position.w;
+	}
+}
+
+void tr::Rasterizer::viewportTransformation(std::array<Vertex, 3>& vertices, const float halfWidth, const float halfHeight)
+{
+	for (Vertex& vertex : vertices)
+	{
+		vertex.position.x = vertex.position.x * halfWidth + halfWidth;
+		vertex.position.y = halfHeight - vertex.position.y * halfHeight;
+	}
 }
 
 template<typename T>
