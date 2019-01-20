@@ -28,6 +28,9 @@ namespace tr
 		static void    pixelShift(std::array<Vertex, 3>& vertices);
 		static void    perspectiveDivide(std::array<Vertex, 3>& vertices);
 		static void    viewportTransformation(std::array<Vertex,3>& vertices, const float halfWidth, const float halfHeight);
+		static void    sortVertices(std::array<Vertex,3>& vertices);
+		static void    fillTriangle(const std::array<Vertex,3>& vertices, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
+		static void    fillTriangle(const Vector2& leftVector, const Vector2& rightVector, const size_t firstY, const size_t targetY, const float leftStart, const float rightStart, ColorBuffer& colorBuffer);
 
 		template<typename T>
 		static float   orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const T& point);

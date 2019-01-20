@@ -76,51 +76,8 @@ void tr::Rasterizer::drawTriangle(std::array<Vertex, 3> vertices, const ColorBuf
 	const uint16_t maxY = std::max({ uint16_t(vertices[0].position.y), uint16_t(vertices[1].position.y), uint16_t(vertices[2].position.y) });
 
 	pixelShift(vertices);
-
-	const size_t step                = colorBuffer.getWidth() - (maxX - minX) - 1;
-	const float  triangleAreaInverse = 1.0f / orientPoint(vertices[0].position, vertices[1].position, vertices[2].position);
-
-	Color*       colorPointer        = colorBuffer.getData() + (minY * colorBuffer.getWidth() + minX);
-	float*       depthPointer        = depthBuffer.getData() + (minY * depthBuffer.getWidth() + minX);
-
-	Coord        point;
-
-	for (point.y = minY; point.y <= maxY; ++point.y)
-	{
-		for (point.x = minX; point.x <= maxX; ++point.x, ++colorPointer, ++depthPointer)
-		{
-			const Vector2 pointFloat(float(point.x), float(point.y));
-
-			float weight0 = orientPoint(vertices[1].position, vertices[2].position, pointFloat);
-			float weight1 = orientPoint(vertices[2].position, vertices[0].position, pointFloat);
-			float weight2 = orientPoint(vertices[0].position, vertices[1].position, pointFloat);
-
-			if (weight0 >= 0.0f && weight1 >= 0.0f && weight2 >= 0.0f)
-			{
-				weight0 *= triangleAreaInverse;
-				weight1 *= triangleAreaInverse;
-				weight2 *= triangleAreaInverse;
-
-				const float depth = interpolate(weight0, vertices[0].position.z, weight1, vertices[1].position.z, weight2, vertices[2].position.z);
-
-				if (depth < *depthPointer)
-				{
-					const Vector2 interpolatedTextureCoord(
-						interpolate(weight0, vertices[0].textureCoord.x, weight1, vertices[1].textureCoord.x, weight2, vertices[2].textureCoord.x),
-						interpolate(weight0, vertices[0].textureCoord.y, weight1, vertices[1].textureCoord.y, weight2, vertices[2].textureCoord.y)
-					);
-
-					const Color color = texture.getAt(size_t(interpolatedTextureCoord.x * (texture.getWidth() - 1)), size_t(interpolatedTextureCoord.y * (texture.getHeight() - 1)));
-
-					*colorPointer = color;
-					*depthPointer = depth;
-				}
-			}
-		}
-
-		colorPointer += step;
-		depthPointer += step;
-	}
+	sortVertices(vertices);
+	fillTriangle(vertices, texture, colorBuffer, depthBuffer);
 }
 
 void tr::Rasterizer::clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
@@ -226,6 +183,94 @@ void tr::Rasterizer::viewportTransformation(std::array<Vertex, 3>& vertices, con
 	{
 		vertex.position.x = vertex.position.x * halfWidth + halfWidth;
 		vertex.position.y = halfHeight - vertex.position.y * halfHeight;
+	}
+}
+
+void tr::Rasterizer::sortVertices(std::array<Vertex, 3>& vertices)
+{
+	for (int iteration = 0; iteration < 2; ++iteration)
+	{
+		for (size_t vertexIndex = 0; vertexIndex < 2; ++vertexIndex)
+		{
+			if (vertices[vertexIndex].position.y > vertices[vertexIndex+1].position.y)
+			{
+				Vertex temp = vertices[vertexIndex];
+
+				vertices[vertexIndex]   = vertices[vertexIndex+1];
+				vertices[vertexIndex+1] = temp;
+			}
+		}
+	}
+}
+
+void tr::Rasterizer::fillTriangle(const std::array<Vertex, 3>& vertices, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+{
+	const Vector2 top(   vertices[0].position.x, vertices[0].position.y);
+	const Vector2 middle(vertices[1].position.x, vertices[1].position.y);
+	const Vector2 bottom(vertices[2].position.x, vertices[2].position.y);
+
+	const Vector2 topToMiddleVector    = (middle - top   ).normalize();
+	const Vector2 topToBottomVector    = (bottom - top   ).normalize();
+	const Vector2 middleToBottomVector = (bottom - middle).normalize();
+
+	if (top.y != middle.y)
+	{
+		const size_t   firstY          = size_t(std::ceil(top.y));
+
+		const float    topToFirstYDiff = float(firstY) - top.y;
+
+		const Vector2& leftVector      = topToMiddleVector.x <= topToBottomVector.x ? topToMiddleVector : topToBottomVector;
+		const Vector2& rightVector     = topToMiddleVector.x <= topToBottomVector.x ? topToBottomVector : topToMiddleVector;
+
+		const float    startLeft       = top.x + leftVector.x  * topToFirstYDiff / leftVector.y;
+		const float    startRight      = top.x + rightVector.x * topToFirstYDiff / rightVector.y;
+
+		const size_t   targetY         = size_t(std::ceil(middle.y));
+
+		fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, colorBuffer);
+	}
+
+	if (middle.y != bottom.y)
+	{
+		const size_t   firstY             = size_t(std::ceil(middle.y));
+
+		const float    middleToFirstYDiff = float(firstY) - middle.y;
+		const float    topToFirstYDiff    = float(firstY) - top.y;
+
+		const Vector2& leftVector         = topToMiddleVector.x <= topToBottomVector.x ? middleToBottomVector : topToBottomVector;
+		const Vector2& rightVector        = topToMiddleVector.x <= topToBottomVector.x ? topToBottomVector    : middleToBottomVector;
+
+		const float    ratioLeft          = (topToMiddleVector.x <= topToBottomVector.x ? middleToFirstYDiff : topToFirstYDiff)    / leftVector.y;
+		const float    ratioRight         = (topToMiddleVector.x <= topToBottomVector.x ? topToFirstYDiff    : middleToFirstYDiff) / rightVector.y;
+
+		const float    startLeft          = (topToMiddleVector.x <= topToBottomVector.x ? middle.x : top.x   ) + leftVector.x  * ratioLeft;
+		const float    startRight         = (topToMiddleVector.x <= topToBottomVector.x ? top.x    : middle.x) + rightVector.x * ratioRight;
+
+		const size_t   targetY            = size_t(std::ceil(bottom.y));
+
+		fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, colorBuffer);
+	}
+}
+
+void tr::Rasterizer::fillTriangle(const Vector2& leftVector, const Vector2& rightVector, const size_t firstY, const size_t targetY, const float leftStart, const float rightStart, ColorBuffer& colorBuffer)
+{
+	float leftChange   = leftVector.x  / leftVector.y;
+	float rightChange  = rightVector.x / rightVector.y;
+
+	float currentLeft  = leftStart;
+	float currentRight = rightStart;
+
+	for (size_t currentY = firstY; currentY < targetY; ++currentY, currentLeft += leftChange, currentRight += rightChange)
+	{
+		const size_t firstX       = size_t(std::ceil(currentLeft));
+		const size_t lastX        = size_t(std::ceil(currentRight));
+	
+		Color*       colorPointer = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
+	
+		for (size_t x = firstX; x < lastX; ++x, ++colorPointer)
+		{
+			*colorPointer = Color{ 255, 255, 255, 255};
+		}
 	}
 }
 
