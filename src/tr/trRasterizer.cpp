@@ -211,11 +211,11 @@ void tr::Rasterizer::fillTriangle(const std::array<Vertex, 3>& vertices, const C
 
 	const bool   middleVertexLeft     =  topToMiddleVector.position.x <= topToBottomVector.position.x;
 
-	fillBottomHeavyTriangle(vertices, topToMiddleVector, topToBottomVector, middleToBottomVector, middleVertexLeft, colorBuffer);
-	fillTopHeavyTriangle(   vertices, topToMiddleVector, topToBottomVector, middleToBottomVector, middleVertexLeft, colorBuffer);
+	fillBottomHeavyTriangle(vertices, topToMiddleVector, topToBottomVector, middleToBottomVector, middleVertexLeft, texture, colorBuffer);
+	fillTopHeavyTriangle(   vertices, topToMiddleVector, topToBottomVector, middleToBottomVector, middleVertexLeft, texture, colorBuffer);
 }
 
-void tr::Rasterizer::fillBottomHeavyTriangle(const std::array<Vertex, 3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer)
+void tr::Rasterizer::fillBottomHeavyTriangle(const std::array<Vertex, 3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer)
 {
 	if (vertices[0].position.y != vertices[1].position.y)
 	{
@@ -234,35 +234,35 @@ void tr::Rasterizer::fillBottomHeavyTriangle(const std::array<Vertex, 3>& vertic
 
 		const size_t  targetY         = size_t(std::ceil(vertices[1].position.y));
 
-		fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, colorBuffer);
+		fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, texture, colorBuffer);
 	}
 }
 
-void tr::Rasterizer::fillTopHeavyTriangle(const std::array<Vertex, 3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer)
+void tr::Rasterizer::fillTopHeavyTriangle(const std::array<Vertex, 3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer)
 {
 	if (vertices[1].position.y != vertices[2].position.y)
 	{
-		const size_t  firstY             = size_t(std::ceil(vertices[1].position.y));
+		const size_t  firstY         = size_t(std::ceil(vertices[1].position.y));
 
-		const float   middleToFirstYDiff = float(firstY) - vertices[1].position.y;
-		const float   topToFirstYDiff    = float(firstY) - vertices[0].position.y;
+		const float   middleToFirstY = float(firstY) - vertices[1].position.y;
+		const float   topToFirstY    = float(firstY) - vertices[0].position.y;
 
-		const Vertex& leftVector         = middleVertexLeft ? middleToBottomVector : topToBottomVector;
-		const Vertex& rightVector        = middleVertexLeft ? topToBottomVector    : middleToBottomVector;
+		const Vertex& leftVector     = middleVertexLeft ? middleToBottomVector : topToBottomVector;
+		const Vertex& rightVector    = middleVertexLeft ? topToBottomVector    : middleToBottomVector;
 
-		const float   ratioLeft          = (middleVertexLeft ? middleToFirstYDiff : topToFirstYDiff   ) / leftVector.position.y;
-		const float   ratioRight         = (middleVertexLeft ? topToFirstYDiff    : middleToFirstYDiff) / rightVector.position.y;
+		const float   ratioLeft      = (middleVertexLeft ? middleToFirstY : topToFirstY   ) / leftVector.position.y;
+		const float   ratioRight     = (middleVertexLeft ? topToFirstY    : middleToFirstY) / rightVector.position.y;
 
-		const Vertex  startLeft          = (middleVertexLeft ? vertices[1] : vertices[0]) + leftVector  * ratioLeft;
-		const Vertex  startRight         = (middleVertexLeft ? vertices[0] : vertices[1]) + rightVector * ratioRight;
+		const Vertex  startLeft      = (middleVertexLeft ? vertices[1] : vertices[0]) + leftVector  * ratioLeft;
+		const Vertex  startRight     = (middleVertexLeft ? vertices[0] : vertices[1]) + rightVector * ratioRight;
 
-		const size_t  targetY            = size_t(std::ceil(vertices[2].position.y));
+		const size_t  targetY        = size_t(std::ceil(vertices[2].position.y));
 
-		fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, colorBuffer);
+		fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, texture, colorBuffer);
 	}
 }
 
-void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightVector, const size_t firstY, const size_t targetY, const Vertex& leftStart, const Vertex& rightStart, ColorBuffer& colorBuffer)
+void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightVector, const size_t firstY, const size_t targetY, const Vertex& leftStart, const Vertex& rightStart, const ColorBuffer& texture, ColorBuffer& colorBuffer)
 {
 	const Vertex leftChange   = leftVector  / leftVector.position.y;
 	const Vertex rightChange  = rightVector / rightVector.position.y;
@@ -272,14 +272,17 @@ void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightV
 
 	for (size_t currentY = firstY; currentY < targetY; ++currentY, currentLeft += leftChange, currentRight += rightChange)
 	{
-		const size_t firstX = size_t(std::ceil(currentLeft.position.x));
-		const size_t lastX  = size_t(std::ceil(currentRight.position.x));
+		const Vertex leftToRightVector = (currentRight - currentLeft).normalize();
+		const size_t firstX            = size_t(std::ceil(currentLeft.position.x));
+		const size_t lastX             = size_t(std::ceil(currentRight.position.x));
+		const float  leftToFirstX      = firstX - currentLeft.position.x;
+		const float  ratio             = leftToFirstX / (lastX - firstX);
+		Vertex       pixel             = currentLeft + leftToRightVector * ratio;
+		Color*       colorPointer      = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
 	
-		Color*       colorPointer = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
-	
-		for (size_t x = firstX; x < lastX; ++x, ++colorPointer)
+		for (size_t x = firstX; x < lastX; ++x, ++colorPointer, pixel += leftToRightVector)
 		{
-			*colorPointer = Color{ 255, 255, 255, 255};
+			*colorPointer = texture.getAt(size_t(pixel.textureCoord.x * (texture.getWidth() - 1)), size_t(pixel.textureCoord.y * (texture.getHeight() - 1)));
 		}
 	}
 }

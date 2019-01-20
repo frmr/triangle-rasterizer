@@ -30,9 +30,9 @@ namespace tr
 		static void    viewportTransformation(std::array<Vertex,3>& vertices, const float halfWidth, const float halfHeight);
 		static void    sortVertices(std::array<Vertex,3>& vertices);
 		static void    fillTriangle(const std::array<Vertex,3>& vertices, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
-		static void    fillBottomHeavyTriangle(const std::array<Vertex,3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer);
-		static void    fillTopHeavyTriangle(const std::array<Vertex,3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer);
-		static void    fillTriangle(const Vertex& leftVector, const Vertex& rightVector, const size_t firstY, const size_t targetY, const Vertex& leftStart, const Vertex& rightStart, ColorBuffer& colorBuffer);
+		static void    fillBottomHeavyTriangle(const std::array<Vertex,3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer);
+		static void    fillTopHeavyTriangle(const std::array<Vertex,3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer);
+		static void    fillTriangle(const Vertex& leftVector, const Vertex& rightVector, const size_t firstY, const size_t targetY, const Vertex& leftStart, const Vertex& rightStart, const ColorBuffer& texture, ColorBuffer& colorBuffer);
 
 		template<typename T>
 		static float   orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const T& point);
