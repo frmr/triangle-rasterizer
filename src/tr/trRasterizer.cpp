@@ -173,7 +173,12 @@ void tr::Rasterizer::perspectiveDivide(std::array<Vertex, 3>& vertices)
 {
 	for (Vertex& vertex : vertices)
 	{
-		vertex.position /= vertex.position.w;
+		vertex.inverseW      = 1.0f / vertex.position.w;
+
+		vertex.textureCoord /= vertex.position.w;
+		vertex.normal       /= vertex.position.w;
+		vertex.position     /= vertex.position.w;
+		
 	}
 }
 
@@ -282,7 +287,7 @@ void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightV
 	
 		for (size_t x = firstX; x < lastX; ++x, ++colorPointer, pixel += leftToRightVector)
 		{
-			*colorPointer = texture.getAt(size_t(pixel.textureCoord.x * (texture.getWidth() - 1)), size_t(pixel.textureCoord.y * (texture.getHeight() - 1)));
+			*colorPointer = texture.getAt(size_t((pixel.textureCoord.x / pixel.inverseW) * (texture.getWidth() - 1)), size_t((pixel.textureCoord.y /pixel.inverseW) * (texture.getHeight() - 1)));
 		}
 	}
 }
