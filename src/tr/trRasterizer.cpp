@@ -4,7 +4,14 @@
 #include "trVertexClipBitMasks.hpp"
 #include <cassert>
 
-void tr::Rasterizer::draw(std::vector<Vertex> vertices, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+tr::Rasterizer::Rasterizer() :
+	m_primitive(Primitive::Triangles),
+	m_matrix(),
+	m_depthMode(DepthMode::ReadWrite)
+{
+}
+
+void tr::Rasterizer::draw(std::vector<Vertex> vertices, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 {
 	if (colorBuffer.getWidth() == 0 || colorBuffer.getHeight() == 0)
 	{
@@ -19,18 +26,18 @@ void tr::Rasterizer::draw(std::vector<Vertex> vertices, const ColorBuffer& textu
 		vertex.position = m_matrix * vertex.position;
 	}
 
-	if (m_primitive == Primitive::TRIANGLES)
+	if (m_primitive == Primitive::Triangles)
 	{
 		for (std::vector<Vertex>::const_iterator it = vertices.begin(); it < vertices.end() - 2; it += 3)
 		{
 			clipAndDrawTriangle({ *it, *(it + 1), *(it + 2) }, texture, halfWidth, halfHeight, colorBuffer, depthBuffer);
 		}
 	}
-	else if (m_primitive == Primitive::TRIANGLE_STRIP)
+	else if (m_primitive == Primitive::TriangleStrip)
 	{
 
 	}
-	else if (m_primitive == Primitive::TRIANGLE_FAN)
+	else if (m_primitive == Primitive::TriangleFan)
 	{
 
 	}
@@ -46,7 +53,12 @@ void tr::Rasterizer::setMatrix(const Matrix4& matrix)
 	m_matrix = matrix;
 }
 
-tr::Vertex tr::Rasterizer::lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const tr::Axis axis, const bool negativeW)
+void tr::Rasterizer::setDepthMode(const DepthMode depthMode)
+{
+	m_depthMode = depthMode;
+}
+
+tr::Vertex tr::Rasterizer::lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const Axis axis, const bool negativeW)
 {
 	const float   alpha        = negativeW ?
 	                             (-lineStart.position.w  - lineStart.position[axis]) / (lineEnd.position[axis] - lineStart.position[axis] + lineEnd.position.w - lineStart.position.w) :
@@ -59,7 +71,7 @@ tr::Vertex tr::Rasterizer::lineFrustumIntersection(const Vertex& lineStart, cons
 	return { position, normal, textureCoord };
 }
 
-void tr::Rasterizer::drawTriangle(std::array<Vertex, 3> vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+void tr::Rasterizer::drawTriangle(std::array<Vertex, 3> vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 {
 	perspectiveDivide(vertices);
 
@@ -80,7 +92,7 @@ void tr::Rasterizer::drawTriangle(std::array<Vertex, 3> vertices, const ColorBuf
 	fillTriangle(vertices, texture, colorBuffer, depthBuffer);
 }
 
-void tr::Rasterizer::clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+void tr::Rasterizer::clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 {
 	std::array<unsigned char, 3> vertexClipBitFields     = { 0, 0, 0 };
 	std::array<unsigned char, 3> vertexEqualityBitFields = { 0, 0, 0 };
@@ -155,11 +167,6 @@ void tr::Rasterizer::clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, 
 	}
 }
 
-float tr::Rasterizer::interpolate(const float weight0, const float value0, const float weight1, const float value1, const float weight2, const float value2)
-{
-	return weight0 * value0 + weight1 * value1 + weight2 * value2;
-}
-
 void tr::Rasterizer::pixelShift(std::array<Vertex, 3>& vertices)
 {
 	for (Vertex& vertex : vertices)
@@ -208,7 +215,7 @@ void tr::Rasterizer::sortVertices(std::array<Vertex, 3>& vertices)
 	}
 }
 
-void tr::Rasterizer::fillTriangle(const std::array<Vertex, 3>& vertices, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+void tr::Rasterizer::fillTriangle(const std::array<Vertex, 3>& vertices, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 {
 	const Vertex topToMiddleVector    = (vertices[1] - vertices[0]).normalize();
 	const Vertex topToBottomVector    = (vertices[2] - vertices[0]).normalize();
@@ -220,7 +227,7 @@ void tr::Rasterizer::fillTriangle(const std::array<Vertex, 3>& vertices, const C
 	fillTopHeavyTriangle(   vertices, topToMiddleVector, topToBottomVector, middleToBottomVector, middleVertexLeft, texture, colorBuffer, depthBuffer);
 }
 
-void tr::Rasterizer::fillBottomHeavyTriangle(const std::array<Vertex, 3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+void tr::Rasterizer::fillBottomHeavyTriangle(const std::array<Vertex, 3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 {
 	if (vertices[0].position.y != vertices[1].position.y)
 	{
@@ -243,7 +250,7 @@ void tr::Rasterizer::fillBottomHeavyTriangle(const std::array<Vertex, 3>& vertic
 	}
 }
 
-void tr::Rasterizer::fillTopHeavyTriangle(const std::array<Vertex, 3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+void tr::Rasterizer::fillTopHeavyTriangle(const std::array<Vertex, 3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 {
 	if (vertices[1].position.y != vertices[2].position.y)
 	{
@@ -267,7 +274,7 @@ void tr::Rasterizer::fillTopHeavyTriangle(const std::array<Vertex, 3>& vertices,
 	}
 }
 
-void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightVector, const size_t firstY, const size_t targetY, const Vertex& leftStart, const Vertex& rightStart, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightVector, const size_t firstY, const size_t targetY, const Vertex& leftStart, const Vertex& rightStart, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 {
 	const Vertex leftChange   = leftVector  / leftVector.position.y;
 	const Vertex rightChange  = rightVector / rightVector.position.y;
@@ -288,17 +295,20 @@ void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightV
 	
 		for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer, pixel += leftToRightVector)
 		{
-			if (pixel.position.z < *depthPointer)
+			if (!(m_depthMode & DepthMode::Read) || pixel.position.z < *depthPointer)
 			{
 				*colorPointer = texture.getAt(size_t((pixel.textureCoord.x / pixel.inverseW) * (texture.getWidth() - 1)), size_t((pixel.textureCoord.y /pixel.inverseW) * (texture.getHeight() - 1)));
-				*depthPointer = pixel.position.z;
+
+				if (m_depthMode & DepthMode::Write)
+				{
+					*depthPointer = pixel.position.z;
+				}
 			}
 		}
 	}
 }
 
-template<typename T>
-float tr::Rasterizer::orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const T& point)
+float tr::Rasterizer::orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const Vector4& point)
 {
 	return (lineEnd.x - lineStart.x) * (point.y - lineStart.y) - (lineEnd.y - lineStart.y) * (point.x - lineStart.x);
 }

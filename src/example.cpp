@@ -203,7 +203,8 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	rasterizer.setPrimitive(tr::Primitive::TRIANGLES);
+	rasterizer.setPrimitive(tr::Primitive::Triangles);
+	rasterizer.setDepthMode(tr::DepthMode::ReadWrite);
 
 	while (running)
 	{
