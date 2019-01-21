@@ -216,11 +216,11 @@ void tr::Rasterizer::fillTriangle(const std::array<Vertex, 3>& vertices, const C
 
 	const bool   middleVertexLeft     =  topToMiddleVector.position.x <= topToBottomVector.position.x;
 
-	fillBottomHeavyTriangle(vertices, topToMiddleVector, topToBottomVector, middleToBottomVector, middleVertexLeft, texture, colorBuffer);
-	fillTopHeavyTriangle(   vertices, topToMiddleVector, topToBottomVector, middleToBottomVector, middleVertexLeft, texture, colorBuffer);
+	fillBottomHeavyTriangle(vertices, topToMiddleVector, topToBottomVector, middleToBottomVector, middleVertexLeft, texture, colorBuffer, depthBuffer);
+	fillTopHeavyTriangle(   vertices, topToMiddleVector, topToBottomVector, middleToBottomVector, middleVertexLeft, texture, colorBuffer, depthBuffer);
 }
 
-void tr::Rasterizer::fillBottomHeavyTriangle(const std::array<Vertex, 3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer)
+void tr::Rasterizer::fillBottomHeavyTriangle(const std::array<Vertex, 3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
 	if (vertices[0].position.y != vertices[1].position.y)
 	{
@@ -239,11 +239,11 @@ void tr::Rasterizer::fillBottomHeavyTriangle(const std::array<Vertex, 3>& vertic
 
 		const size_t  targetY         = size_t(std::ceil(vertices[1].position.y));
 
-		fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, texture, colorBuffer);
+		fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, texture, colorBuffer, depthBuffer);
 	}
 }
 
-void tr::Rasterizer::fillTopHeavyTriangle(const std::array<Vertex, 3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer)
+void tr::Rasterizer::fillTopHeavyTriangle(const std::array<Vertex, 3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
 	if (vertices[1].position.y != vertices[2].position.y)
 	{
@@ -263,11 +263,11 @@ void tr::Rasterizer::fillTopHeavyTriangle(const std::array<Vertex, 3>& vertices,
 
 		const size_t  targetY        = size_t(std::ceil(vertices[2].position.y));
 
-		fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, texture, colorBuffer);
+		fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, texture, colorBuffer, depthBuffer);
 	}
 }
 
-void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightVector, const size_t firstY, const size_t targetY, const Vertex& leftStart, const Vertex& rightStart, const ColorBuffer& texture, ColorBuffer& colorBuffer)
+void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightVector, const size_t firstY, const size_t targetY, const Vertex& leftStart, const Vertex& rightStart, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
 	const Vertex leftChange   = leftVector  / leftVector.position.y;
 	const Vertex rightChange  = rightVector / rightVector.position.y;
@@ -284,10 +284,12 @@ void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightV
 		const float  ratio             = leftToFirstX / (lastX - firstX);
 		Vertex       pixel             = currentLeft + leftToRightVector * ratio;
 		Color*       colorPointer      = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
+		float*       depthPointer      = depthBuffer.getData() + (currentY * depthBuffer.getWidth() + firstX);
 	
-		for (size_t x = firstX; x < lastX; ++x, ++colorPointer, pixel += leftToRightVector)
+		for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer, pixel += leftToRightVector)
 		{
 			*colorPointer = texture.getAt(size_t((pixel.textureCoord.x / pixel.inverseW) * (texture.getWidth() - 1)), size_t((pixel.textureCoord.y /pixel.inverseW) * (texture.getHeight() - 1)));
+			*depthPointer = pixel.position.z;
 		}
 	}
 }
