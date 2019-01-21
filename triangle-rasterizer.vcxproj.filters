@@ -81,6 +81,8 @@
     <ClCompile Include="src\lodepng\lodepng.cpp">
       <Filter>lodepng</Filter>
     </ClCompile>
-    <ClCompile Include="src\tr\trVertex.cpp" />
+    <ClCompile Include="src\tr\trVertex.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

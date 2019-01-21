@@ -288,8 +288,11 @@ void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightV
 	
 		for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer, pixel += leftToRightVector)
 		{
-			*colorPointer = texture.getAt(size_t((pixel.textureCoord.x / pixel.inverseW) * (texture.getWidth() - 1)), size_t((pixel.textureCoord.y /pixel.inverseW) * (texture.getHeight() - 1)));
-			*depthPointer = pixel.position.z;
+			if (pixel.position.z < *depthPointer)
+			{
+				*colorPointer = texture.getAt(size_t((pixel.textureCoord.x / pixel.inverseW) * (texture.getWidth() - 1)), size_t((pixel.textureCoord.y /pixel.inverseW) * (texture.getHeight() - 1)));
+				*depthPointer = pixel.position.z;
+			}
 		}
 	}
 }
