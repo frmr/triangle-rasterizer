@@ -297,7 +297,7 @@ void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightV
 		{
 			if (!(m_depthMode & DepthMode::Read) || pixel.position.z < *depthPointer)
 			{
-				*colorPointer = texture.getAt(size_t((pixel.textureCoord.x / pixel.inverseW) * (texture.getWidth() - 1)), size_t((pixel.textureCoord.y /pixel.inverseW) * (texture.getHeight() - 1)));
+				*colorPointer = texture.getAt(size_t((pixel.textureCoord.x / pixel.inverseW) * texture.getWidth()), size_t((pixel.textureCoord.y / pixel.inverseW) * texture.getHeight()));
 
 				if (m_depthMode & DepthMode::Write)
 				{
