@@ -45,15 +45,24 @@ namespace tr
 			return m_data[y * m_width + x];
 		}
 
-		T getAt(const float x, const float y, const bool filter) const
+		T getAt(float x, float y, const bool filter) const
 		{
-			int          xPoint       = int(x * m_floatWidth);
-			int          yPoint       = int(y * m_floatHeight);
+			float xInt, yInt;
 			
-			const size_t transformedX = (xPoint %= m_intWidth)  < 0 ? xPoint + m_intWidth  : xPoint;
-			const size_t transformedY = (yPoint %= m_intHeight) < 0 ? yPoint + m_intHeight : yPoint;
-
-			return getAt(transformedX, transformedY);
+			x = std::modff(x, &xInt);
+			y = std::modff(y, &yInt);
+			
+			if (x < 0.0f)
+			{
+				x += 1.0f;
+			}
+			
+			if (y < 0.0f)
+			{
+				y += 1.0f;
+			}
+			
+			return getAt(size_t(x * m_floatWidth), size_t(y * m_floatHeight));
 		}
 
 		T* getData()
