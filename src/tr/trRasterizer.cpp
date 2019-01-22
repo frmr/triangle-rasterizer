@@ -19,8 +19,8 @@ void tr::Rasterizer::draw(std::vector<Vertex> vertices, const ColorBuffer& textu
 		return;
 	}
 
-	const float halfWidth  = float(colorBuffer.getWidth())  / 2.0f - 0.0001f;
-	const float halfHeight = float(colorBuffer.getHeight()) / 2.0f - 0.0001f;
+	const float halfWidth  = float(colorBuffer.getWidth())  / 2.0f;
+	const float halfHeight = float(colorBuffer.getHeight()) / 2.0f;
 
 	for (auto& vertex : vertices)
 	{
@@ -305,9 +305,9 @@ void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightV
 		{
 			if (!(m_depthMode & DepthMode::Read) || pixel.position.z < *depthPointer)
 			{
-				const Vector2 textureCoord = (m_textureMode == TextureMode::Perspective) ? pixel.textureCoord / pixel.inverseW : pixel.textureCoord;
+				Vector2 textureCoord = (m_textureMode == TextureMode::Perspective) ? pixel.textureCoord / pixel.inverseW : pixel.textureCoord;
 
-				*colorPointer = texture.getAt(size_t(textureCoord.x * (texture.getWidth() - 1)), size_t(textureCoord.y * (texture.getHeight() - 1)));
+				*colorPointer = texture.getAt(textureCoord.x, textureCoord.y, false);
 
 				if (m_depthMode & DepthMode::Write)
 				{

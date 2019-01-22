@@ -78,13 +78,13 @@ std::vector<tr::Vertex> defineVertices()
 	return {
 		
 		// Front
-		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 0.0f) },
-		{ Vector4( 2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 1.0f) },
-		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 1.0f) },
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(2.0f, -1.0f) },
+		{ Vector4( 2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(2.0f, 2.0f) },
+		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(-1.0f, 2.0f) },
 
-		{ Vector4(-2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
-		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(1.0f, 0.0f) },
-		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 1.0f) },
+		{ Vector4(-2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(-1.0f, -1.0f) },
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(2.0f, -1.0f) },
+		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(-1.0f, 2.0f) },
 
 		// Top
 		{ Vector4(-2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
