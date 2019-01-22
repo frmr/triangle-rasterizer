@@ -7,7 +7,8 @@
 tr::Rasterizer::Rasterizer() :
 	m_primitive(Primitive::Triangles),
 	m_matrix(),
-	m_depthMode(DepthMode::ReadWrite)
+	m_depthMode(DepthMode::ReadWrite),
+	m_textureMode(TextureMode::Perspective)
 {
 }
 
@@ -56,6 +57,11 @@ void tr::Rasterizer::setMatrix(const Matrix4& matrix)
 void tr::Rasterizer::setDepthMode(const DepthMode depthMode)
 {
 	m_depthMode = depthMode;
+}
+
+void tr::Rasterizer::setTextureMode(const TextureMode textureMode)
+{
+	m_textureMode = textureMode;
 }
 
 tr::Vertex tr::Rasterizer::lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const Axis axis, const bool negativeW)
@@ -176,16 +182,18 @@ void tr::Rasterizer::pixelShift(std::array<Vertex, 3>& vertices)
 	}
 }
 
-void tr::Rasterizer::perspectiveDivide(std::array<Vertex, 3>& vertices)
+void tr::Rasterizer::perspectiveDivide(std::array<Vertex, 3>& vertices) const
 {
 	for (Vertex& vertex : vertices)
-	{
-		vertex.inverseW      = 1.0f / vertex.position.w;
+	{		
+		if (m_textureMode == TextureMode::Perspective)
+		{
+			vertex.textureCoord /= vertex.position.w;
+			vertex.inverseW      = 1.0f / vertex.position.w;
+		}
 
-		vertex.textureCoord /= vertex.position.w;
 		vertex.normal       /= vertex.position.w;
 		vertex.position     /= vertex.position.w;
-		
 	}
 }
 
@@ -297,7 +305,9 @@ void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightV
 		{
 			if (!(m_depthMode & DepthMode::Read) || pixel.position.z < *depthPointer)
 			{
-				*colorPointer = texture.getAt(size_t((pixel.textureCoord.x / pixel.inverseW) * (texture.getWidth() - 1)), size_t((pixel.textureCoord.y /pixel.inverseW) * (texture.getHeight() - 1)));
+				const Vector2 textureCoord = (m_textureMode == TextureMode::Perspective) ? pixel.textureCoord / pixel.inverseW : pixel.textureCoord;
+
+				*colorPointer = texture.getAt(size_t(textureCoord.x * (texture.getWidth() - 1)), size_t(textureCoord.y * (texture.getHeight() - 1)));
 
 				if (m_depthMode & DepthMode::Write)
 				{

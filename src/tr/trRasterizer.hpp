@@ -6,6 +6,7 @@
 #include "trDepthBuffer.hpp"
 #include "trDepthMode.hpp"
 #include "trPrimitive.hpp"
+#include "trTextureMode.hpp"
 #include "trVertex.hpp"
 #include "../matrix/Matrices.h"
 
@@ -23,13 +24,14 @@ namespace tr
 		void           setPrimitive(const Primitive primitive);
 		void           setMatrix(const Matrix4& matrix);
 		void           setDepthMode(const DepthMode depthMode);
+		void           setTextureMode(const TextureMode textureMode);
 
 	private:
 		static Vertex  lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const tr::Axis axis, const bool negativeW);
 		void           drawTriangle(std::array<Vertex, 3> vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
 		void           clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
 		static void    pixelShift(std::array<Vertex, 3>& vertices);
-		static void    perspectiveDivide(std::array<Vertex, 3>& vertices);
+		void           perspectiveDivide(std::array<Vertex, 3>& vertices) const;
 		static void    viewportTransformation(std::array<Vertex,3>& vertices, const float halfWidth, const float halfHeight);
 		static void    sortVertices(std::array<Vertex,3>& vertices);
 		void           fillTriangle(const std::array<Vertex,3>& vertices, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
@@ -43,5 +45,6 @@ namespace tr
 		Primitive      m_primitive;
 		Matrix4        m_matrix;
 		DepthMode      m_depthMode;
+		TextureMode    m_textureMode;
 	};
 }

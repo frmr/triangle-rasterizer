@@ -205,6 +205,7 @@ int main(int argc, char* argv[])
 
 	rasterizer.setPrimitive(tr::Primitive::Triangles);
 	rasterizer.setDepthMode(tr::DepthMode::ReadWrite);
+	rasterizer.setTextureMode(tr::TextureMode::Perspective);
 
 	while (running)
 	{
