@@ -56,12 +56,20 @@ namespace tr
 			{
 				x += 1.0f;
 			}
+			else if (x == 1.0f)
+			{
+				x = 0.0f;
+			}
 			
 			if (y < 0.0f)
 			{
 				y += 1.0f;
 			}
-			
+			else if (y == 1.0f)
+			{
+				y = 0.0f;
+			}
+
 			return getAt(size_t(x * m_floatWidth), size_t(y * m_floatHeight));
 		}
 
