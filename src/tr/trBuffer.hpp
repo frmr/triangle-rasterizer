@@ -12,8 +12,6 @@ namespace tr
 		Buffer(const size_t& width, const size_t& height) :
 			m_width(width),
 			m_height(height),
-			m_intWidth(int(width)),
-			m_intHeight(int(height)),
 			m_floatWidth(float(width)),
 			m_floatHeight(float(height))
 		{
@@ -47,28 +45,8 @@ namespace tr
 
 		T getAt(float x, float y, const bool filter) const
 		{
-			float xInt, yInt;
-			
-			x = std::modff(x, &xInt);
-			y = std::modff(y, &yInt);
-			
-			if (x < 0.0f)
-			{
-				x += 1.0f;
-			}
-			else if (x == 1.0f)
-			{
-				x = 0.0f;
-			}
-			
-			if (y < 0.0f)
-			{
-				y += 1.0f;
-			}
-			else if (y == 1.0f)
-			{
-				y = 0.0f;
-			}
+			x -= std::floorf(x);
+			y -= std::floorf(y);
 
 			return getAt(size_t(x * m_floatWidth), size_t(y * m_floatHeight));
 		}
@@ -91,8 +69,6 @@ namespace tr
 	private:
 		const size_t   m_width;
 		const size_t   m_height;
-		const int      m_intWidth;
-		const int      m_intHeight;
 		const float    m_floatWidth;
 		const float    m_floatHeight;
 		std::vector<T> m_data;
