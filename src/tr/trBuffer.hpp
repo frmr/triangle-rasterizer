@@ -1,7 +1,10 @@
 #pragma once
 
+#include <algorithm>
 #include <memory>
 #include <vector>
+
+#include "trTextureWrappingMode.hpp"
 
 namespace tr
 {
@@ -43,10 +46,20 @@ namespace tr
 			return m_data[y * m_width + x];
 		}
 
-		T getAt(float x, float y, const bool filter) const
+		T getAt(float x, float y, const bool filter, const TextureWrappingMode textureWrappingMode) const
 		{
-			x -= std::floorf(x);
-			y -= std::floorf(y);
+			if (textureWrappingMode == TextureWrappingMode::Clamp)
+			{
+				constexpr float upperLimit = 1.0f - std::numeric_limits<float>::epsilon();
+
+				x = std::clamp(x, 0.0f, upperLimit);
+				y = std::clamp(y, 0.0f, upperLimit);
+			}
+			else
+			{
+				x -= std::floorf(x);
+				y -= std::floorf(y);
+			}
 
 			return getAt(size_t(x * m_floatWidth), size_t(y * m_floatHeight));
 		}

@@ -7,6 +7,7 @@
 #include "trDepthMode.hpp"
 #include "trPrimitive.hpp"
 #include "trTextureMode.hpp"
+#include "trTextureWrappingMode.hpp"
 #include "trVertex.hpp"
 #include "../matrix/Matrices.h"
 
@@ -18,33 +19,35 @@ namespace tr
 	class Rasterizer
 	{
 	public:
-		               Rasterizer();
+		                    Rasterizer();
 
-		void           draw(std::vector<Vertex> vertices, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
-		void           setPrimitive(const Primitive primitive);
-		void           setMatrix(const Matrix4& matrix);
-		void           setDepthMode(const DepthMode depthMode);
-		void           setTextureMode(const TextureMode textureMode);
-
-	private:
-		static Vertex  lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const tr::Axis axis, const bool negativeW);
-		void           drawTriangle(std::array<Vertex, 3> vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
-		void           clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
-		static void    pixelShift(std::array<Vertex, 3>& vertices);
-		void           perspectiveDivide(std::array<Vertex, 3>& vertices) const;
-		static void    viewportTransformation(std::array<Vertex,3>& vertices, const float halfWidth, const float halfHeight);
-		static void    sortVertices(std::array<Vertex,3>& vertices);
-		void           fillTriangle(const std::array<Vertex,3>& vertices, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
-		void           fillBottomHeavyTriangle(const std::array<Vertex,3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
-		void           fillTopHeavyTriangle(const std::array<Vertex,3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
-		void           fillTriangle(const Vertex& leftVector, const Vertex& rightVector, const size_t firstY, const size_t targetY, const Vertex& leftStart, const Vertex& rightStart, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
-
-		static float   orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const Vector4& point);
+		void                draw(std::vector<Vertex> vertices, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
+		void                setPrimitive(const Primitive primitive);
+		void                setMatrix(const Matrix4& matrix);
+		void                setDepthMode(const DepthMode depthMode);
+		void                setTextureMode(const TextureMode textureMode);
+		void                setTextureWrappingMode(const TextureWrappingMode textureWrappingMode);
 
 	private:
-		Primitive      m_primitive;
-		Matrix4        m_matrix;
-		DepthMode      m_depthMode;
-		TextureMode    m_textureMode;
+		static Vertex       lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const tr::Axis axis, const bool negativeW);
+		void                drawTriangle(std::array<Vertex, 3> vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
+		void                clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, const ColorBuffer& texture, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
+		static void         pixelShift(std::array<Vertex, 3>& vertices);
+		void                perspectiveDivide(std::array<Vertex, 3>& vertices) const;
+		static void         viewportTransformation(std::array<Vertex,3>& vertices, const float halfWidth, const float halfHeight);
+		static void         sortVertices(std::array<Vertex,3>& vertices);
+		void                fillTriangle(const std::array<Vertex,3>& vertices, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
+		void                fillBottomHeavyTriangle(const std::array<Vertex,3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
+		void                fillTopHeavyTriangle(const std::array<Vertex,3>& vertices, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
+		void                fillTriangle(const Vertex& leftVector, const Vertex& rightVector, const size_t firstY, const size_t targetY, const Vertex& leftStart, const Vertex& rightStart, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const;
+
+		static float        orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const Vector4& point);
+
+	private:
+		Primitive           m_primitive;
+		Matrix4             m_matrix;
+		DepthMode           m_depthMode;
+		TextureMode         m_textureMode;
+		TextureWrappingMode	m_textureWrappingMode;
 	};
 }

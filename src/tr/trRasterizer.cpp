@@ -8,7 +8,8 @@ tr::Rasterizer::Rasterizer() :
 	m_primitive(Primitive::Triangles),
 	m_matrix(),
 	m_depthMode(DepthMode::ReadWrite),
-	m_textureMode(TextureMode::Perspective)
+	m_textureMode(TextureMode::Perspective),
+	m_textureWrappingMode(TextureWrappingMode::Repeat)
 {
 }
 
@@ -62,6 +63,11 @@ void tr::Rasterizer::setDepthMode(const DepthMode depthMode)
 void tr::Rasterizer::setTextureMode(const TextureMode textureMode)
 {
 	m_textureMode = textureMode;
+}
+
+void tr::Rasterizer::setTextureWrappingMode(const TextureWrappingMode textureWrappingMode)
+{
+	m_textureWrappingMode = textureWrappingMode;
 }
 
 tr::Vertex tr::Rasterizer::lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const Axis axis, const bool negativeW)
@@ -307,7 +313,7 @@ void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightV
 			{
 				Vector2 textureCoord = (m_textureMode == TextureMode::Perspective) ? pixel.textureCoord / pixel.inverseW : pixel.textureCoord;
 
-				*colorPointer = texture.getAt(textureCoord.x, textureCoord.y, false);
+				*colorPointer = texture.getAt(textureCoord.x, textureCoord.y, false, m_textureWrappingMode);
 
 				if (m_depthMode & DepthMode::Write)
 				{
