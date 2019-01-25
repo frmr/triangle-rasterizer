@@ -10,6 +10,15 @@
     <Filter Include="lodepng">
       <UniqueIdentifier>{f8c2e606-d648-4ff7-901c-e5b48e4c7ff2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sg14">
+      <UniqueIdentifier>{1c8969b7-5295-4a58-aacc-d539844a9774}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sg14\auxiliary">
+      <UniqueIdentifier>{1f441601-6839-4a75-ae11-c8dfd4f3703c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sg14\bits">
+      <UniqueIdentifier>{d8eeaa76-a535-4f56-ac3c-33fd4789be6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\tr\tr.hpp">
@@ -75,6 +84,93 @@
     <ClInclude Include="src\tr\trTextureWrappingMode.hpp">
       <Filter>tr</Filter>
     </ClInclude>
+    <ClInclude Include="src\sg14\fixed_point.h">
+      <Filter>sg14</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\num_traits.h">
+      <Filter>sg14</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\auxiliary\elastic_integer.h">
+      <Filter>sg14\auxiliary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\auxiliary\multiprecision.h">
+      <Filter>sg14\auxiliary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\auxiliary\numeric.h">
+      <Filter>sg14\auxiliary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\auxiliary\overflow.h">
+      <Filter>sg14\auxiliary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\auxiliary\precise_integer.h">
+      <Filter>sg14\auxiliary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\auxiliary\safe_integer.h">
+      <Filter>sg14\auxiliary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\auxiliary\boost.multiprecision.h">
+      <Filter>sg14\auxiliary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\auxiliary\boost.simd.h">
+      <Filter>sg14\auxiliary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\auxiliary\const_integer.h">
+      <Filter>sg14\auxiliary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\auxiliary\elastic_fixed_point.h">
+      <Filter>sg14\auxiliary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\bits\common.h">
+      <Filter>sg14\bits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\bits\config.h">
+      <Filter>sg14\bits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\bits\fixed_point_arithmetic.h">
+      <Filter>sg14\bits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\bits\fixed_point_common_type.h">
+      <Filter>sg14\bits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\bits\fixed_point_extras.h">
+      <Filter>sg14\bits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\bits\fixed_point_make.h">
+      <Filter>sg14\bits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\bits\fixed_point_math.h">
+      <Filter>sg14\bits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\bits\fixed_point_named.h">
+      <Filter>sg14\bits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\bits\fixed_point_operators.h">
+      <Filter>sg14\bits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\bits\fixed_point_type.h">
+      <Filter>sg14\bits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\bits\limits.h">
+      <Filter>sg14\bits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\bits\number_base.h">
+      <Filter>sg14\bits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sg14\bits\type_traits.h">
+      <Filter>sg14\bits</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trFixed.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trFixedVertex.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trFixedVector3.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trFixedVector2.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\matrix\Matrices.cpp">
@@ -91,6 +187,15 @@
       <Filter>lodepng</Filter>
     </ClCompile>
     <ClCompile Include="src\tr\trVertex.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tr\trFixedVector2.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tr\trFixedVector3.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tr\trFixedVertex.cpp">
       <Filter>tr</Filter>
     </ClCompile>
   </ItemGroup>

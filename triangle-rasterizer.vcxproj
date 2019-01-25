@@ -104,7 +104,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;C:\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -121,7 +121,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;C:\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -140,7 +140,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;C:\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -161,7 +161,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;C:\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -177,9 +177,38 @@
     <ClInclude Include="src\lodepng\lodepng.h" />
     <ClInclude Include="src\matrix\Matrices.h" />
     <ClInclude Include="src\matrix\Vectors.h" />
+    <ClInclude Include="src\sg14\auxiliary\boost.multiprecision.h" />
+    <ClInclude Include="src\sg14\auxiliary\boost.simd.h" />
+    <ClInclude Include="src\sg14\auxiliary\const_integer.h" />
+    <ClInclude Include="src\sg14\auxiliary\elastic_fixed_point.h" />
+    <ClInclude Include="src\sg14\auxiliary\elastic_integer.h" />
+    <ClInclude Include="src\sg14\auxiliary\multiprecision.h" />
+    <ClInclude Include="src\sg14\auxiliary\numeric.h" />
+    <ClInclude Include="src\sg14\auxiliary\overflow.h" />
+    <ClInclude Include="src\sg14\auxiliary\precise_integer.h" />
+    <ClInclude Include="src\sg14\auxiliary\safe_integer.h" />
+    <ClInclude Include="src\sg14\bits\common.h" />
+    <ClInclude Include="src\sg14\bits\config.h" />
+    <ClInclude Include="src\sg14\bits\fixed_point_arithmetic.h" />
+    <ClInclude Include="src\sg14\bits\fixed_point_common_type.h" />
+    <ClInclude Include="src\sg14\bits\fixed_point_extras.h" />
+    <ClInclude Include="src\sg14\bits\fixed_point_make.h" />
+    <ClInclude Include="src\sg14\bits\fixed_point_math.h" />
+    <ClInclude Include="src\sg14\bits\fixed_point_named.h" />
+    <ClInclude Include="src\sg14\bits\fixed_point_operators.h" />
+    <ClInclude Include="src\sg14\bits\fixed_point_type.h" />
+    <ClInclude Include="src\sg14\bits\limits.h" />
+    <ClInclude Include="src\sg14\bits\number_base.h" />
+    <ClInclude Include="src\sg14\bits\type_traits.h" />
+    <ClInclude Include="src\sg14\fixed_point.h" />
+    <ClInclude Include="src\sg14\num_traits.h" />
     <ClInclude Include="src\tr\trAxis.hpp" />
     <ClInclude Include="src\tr\trDepthMode.hpp" />
     <ClInclude Include="src\tr\trEdgeInfo.hpp" />
+    <ClInclude Include="src\tr\trFixed.hpp" />
+    <ClInclude Include="src\tr\trFixedVector2.hpp" />
+    <ClInclude Include="src\tr\trFixedVector3.hpp" />
+    <ClInclude Include="src\tr\trFixedVertex.hpp" />
     <ClInclude Include="src\tr\trPrimitive.hpp" />
     <ClInclude Include="src\tr\trRasterizer.hpp" />
     <ClInclude Include="src\tr\tr.hpp" />
@@ -200,6 +229,9 @@
     <ClCompile Include="src\example.cpp" />
     <ClCompile Include="src\lodepng\lodepng.cpp" />
     <ClCompile Include="src\matrix\Matrices.cpp" />
+    <ClCompile Include="src\tr\trFixedVector2.cpp" />
+    <ClCompile Include="src\tr\trFixedVector3.cpp" />
+    <ClCompile Include="src\tr\trFixedVertex.cpp" />
     <ClCompile Include="src\tr\trFunctions.cpp" />
     <ClCompile Include="src\tr\trRasterizer.cpp" />
     <ClCompile Include="src\tr\trVertex.cpp" />
