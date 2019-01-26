@@ -298,7 +298,7 @@ void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightV
 
 	for (size_t currentY = firstY; currentY < targetY; ++currentY, currentLeft += leftChange, currentRight += rightChange)
 	{
-		const Vertex leftToRightVector = (currentRight - currentLeft).normalize();
+		const Vertex leftToRightVector = (currentRight - currentLeft) / (currentRight.position.x - currentLeft.position.x);
 		const size_t firstX            = size_t(std::ceil(currentLeft.position.x));
 		const size_t lastX             = size_t(std::ceil(currentRight.position.x));
 		const float  leftToFirstX      = firstX - currentLeft.position.x;

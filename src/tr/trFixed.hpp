@@ -4,5 +4,5 @@
 
 namespace tr
 {
-	typedef sg14::fixed_point<int64_t, -28> Fixed;
+	typedef sg14::fixed_point<int32_t, -16> Fixed;
 }
