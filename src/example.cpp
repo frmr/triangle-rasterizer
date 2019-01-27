@@ -208,6 +208,9 @@ int main(int argc, char* argv[])
 	rasterizer.setTextureMode(tr::TextureMode::Perspective);
 	rasterizer.setTextureWrappingMode(tr::TextureWrappingMode::Repeat);
 
+	double cumulativeFrameTime = 0.0;
+	int    frameCount          = 0;
+
 	while (running)
 	{
 		const auto start = std::chrono::high_resolution_clock::now();
@@ -236,7 +239,17 @@ int main(int argc, char* argv[])
 		renderColorBufferToWindow(colorBuffer, sdlRenderer, sdlTexture);
 
 		const auto frameTime = std::chrono::high_resolution_clock::now() - start;
-		std::cout << std::chrono::duration<double, std::milli>(frameTime).count() << " ms" << std::endl;
+
+		cumulativeFrameTime += std::chrono::duration<double, std::milli>(frameTime).count();
+		++frameCount;
+
+		if (frameCount == 50)
+		{
+			std::cout << cumulativeFrameTime / frameCount << "ms" << std::endl;
+
+			cumulativeFrameTime = 0.0;
+			frameCount          = 0;
+		}
 	}
 
 	SDL_DestroyTexture(sdlTexture);
