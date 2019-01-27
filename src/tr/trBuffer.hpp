@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 
+#include "trFixed.hpp"
 #include "trTextureWrappingMode.hpp"
 
 namespace tr
@@ -46,22 +47,25 @@ namespace tr
 			return m_data[y * m_width + x];
 		}
 
-		T getAt(float x, float y, const bool filter, const TextureWrappingMode textureWrappingMode) const
+		T getAt(Fixed x, Fixed y, const bool filter, const TextureWrappingMode textureWrappingMode) const
 		{
-			if (textureWrappingMode == TextureWrappingMode::Clamp)
-			{
-				constexpr float upperLimit = 1.0f - std::numeric_limits<float>::epsilon();
+			//if (textureWrappingMode == TextureWrappingMode::Clamp)
+			//{
+			//	//constexpr float upperLimit = 1.0f - std::numeric_limits<float>::epsilon();
+			//	constexpr Fixed upperLimit(0.999f);
+			//
+			//	x = std::clamp(x, Fixed(0), upperLimit);
+			//	y = std::clamp(y, Fixed(0), upperLimit);
+			//}
+			//else
+			//{
+			//	//x -= std::floorf(x);
+			//	//y -= std::floorf(y);
+			//}
+			//
+			//return getAt(size_t(x * m_floatWidth), size_t(y * m_floatHeight));
 
-				x = std::clamp(x, 0.0f, upperLimit);
-				y = std::clamp(y, 0.0f, upperLimit);
-			}
-			else
-			{
-				x -= std::floorf(x);
-				y -= std::floorf(y);
-			}
-
-			return getAt(size_t(x * m_floatWidth), size_t(y * m_floatHeight));
+			return getAt(0, 0);
 		}
 
 		T* getData()

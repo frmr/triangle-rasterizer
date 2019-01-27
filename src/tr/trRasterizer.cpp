@@ -1,6 +1,7 @@
 #include "trRasterizer.hpp"
 #include "trCoord.hpp"
 #include "trEdgeInfo.hpp"
+#include "trFixedVertex.hpp"
 #include "trVertexClipBitMasks.hpp"
 #include <cassert>
 
@@ -290,34 +291,40 @@ void tr::Rasterizer::fillTopHeavyTriangle(const std::array<Vertex, 3>& vertices,
 
 void tr::Rasterizer::fillTriangle(const Vertex& leftVector, const Vertex& rightVector, const size_t firstY, const size_t targetY, const Vertex& leftStart, const Vertex& rightStart, const ColorBuffer& texture, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 {
-	const Vertex leftChange   = leftVector  / leftVector.position.y;
-	const Vertex rightChange  = rightVector / rightVector.position.y;
+	FixedVertex fixedLeftVector(leftVector);
 
-	Vertex       currentLeft  = leftStart;
-	Vertex       currentRight = rightStart;
+	const FixedVertex leftChange   = leftVector.operator/(leftVector.position.y);
+	const FixedVertex rightChange  = rightVector.operator/(rightVector.position.y);
+
+	FixedVertex       currentLeft  = leftStart;
+	FixedVertex       currentRight = rightStart;
 
 	for (size_t currentY = firstY; currentY < targetY; ++currentY, currentLeft += leftChange, currentRight += rightChange)
 	{
-		const Vertex leftToRightVector = (currentRight - currentLeft) / (currentRight.position.x - currentLeft.position.x);
-		const size_t firstX            = size_t(std::ceil(currentLeft.position.x));
-		const size_t lastX             = size_t(std::ceil(currentRight.position.x));
-		const float  leftToFirstX      = firstX - currentLeft.position.x;
-		const float  ratio             = leftToFirstX / (lastX - firstX);
-		Vertex       pixel             = currentLeft + leftToRightVector * ratio;
+		const FixedVertex leftToRightVector = (currentRight - currentLeft).operator/(currentRight.position.x - currentLeft.position.x);
+		const size_t firstX            = size_t(currentLeft.position.x) + 1;
+		const size_t lastX             = size_t(currentRight.position.x) + 1;
+
+		if (firstX == lastX)
+			continue;
+
+		const Fixed  leftToFirstX      = firstX - currentLeft.position.x;
+		const Fixed  ratio             = sg14::divide(leftToFirstX, (lastX - firstX));
+		FixedVertex  pixel             = currentLeft + leftToRightVector * ratio;
 		Color*       colorPointer      = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
 		float*       depthPointer      = depthBuffer.getData() + (currentY * depthBuffer.getWidth() + firstX);
 	
 		for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer, pixel += leftToRightVector)
 		{
-			if (!(m_depthMode & DepthMode::Read) || pixel.position.z < *depthPointer)
+			//if (!(m_depthMode & DepthMode::Read) || pixel.position.z < *depthPointer)
 			{
-				Vector2 textureCoord = (m_textureMode == TextureMode::Perspective) ? pixel.textureCoord / pixel.inverseW : pixel.textureCoord;
+				FixedVector2 textureCoord = (m_textureMode == TextureMode::Perspective) ? pixel.textureCoord.operator/(pixel.inverseW) : pixel.textureCoord;
 
 				*colorPointer = texture.getAt(textureCoord.x, textureCoord.y, false, m_textureWrappingMode);
 
 				if (m_depthMode & DepthMode::Write)
 				{
-					*depthPointer = pixel.position.z;
+					*depthPointer = float(pixel.position.z);
 				}
 			}
 		}
