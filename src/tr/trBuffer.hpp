@@ -46,6 +46,12 @@ namespace tr
 			return m_data[y * m_width + x];
 		}
 
+		float fastFloor(const float x) const
+		{
+			const int xi = int(x);
+			return float(x < xi ? xi - 1 : xi);
+		}
+
 		T getAt(float x, float y, const bool filter, const TextureWrappingMode textureWrappingMode) const
 		{
 			if (textureWrappingMode == TextureWrappingMode::Clamp)
@@ -57,8 +63,8 @@ namespace tr
 			}
 			else
 			{
-				x -= std::floorf(x);
-				y -= std::floorf(y);
+				x -= fastFloor(x);
+				y -= fastFloor(y);
 			}
 
 			return getAt(size_t(x * m_floatWidth), size_t(y * m_floatHeight));
