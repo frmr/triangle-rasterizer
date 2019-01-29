@@ -87,20 +87,20 @@ namespace tr
 
 				if (x0 == m_maxSize)
 				{
-					x0 = m_width - 1;
+					x0 = (textureWrappingMode == TextureWrappingMode::Clamp) ? 0 : m_width - 1;
 				}
 				else if (x1 == m_width)
 				{
-					x1 = 0;
+					x1 = (textureWrappingMode == TextureWrappingMode::Clamp) ? x0 : 0;
 				}
 
 				if (y0 == m_maxSize)
 				{
-					y0 = m_height - 1;
+					y0 = (textureWrappingMode == TextureWrappingMode::Clamp) ? 0 : m_height - 1;
 				}
 				else if (y1 == m_height)
 				{
-					y1 = 0;
+					y1 = (textureWrappingMode == TextureWrappingMode::Clamp) ? y0 : 0;
 				}
 
 				const Vector4 topLeft     = (m_data.data() + (y0 * m_width + x0))->ToVector();
@@ -115,8 +115,6 @@ namespace tr
 			{
 				return getAt(size_t(u), size_t(v));
 			}
-
-			
 		}
 
 		T* getData()
