@@ -207,6 +207,7 @@ int main(int argc, char* argv[])
 	rasterizer.setPrimitive(tr::Primitive::Triangles);
 	rasterizer.setDepthMode(tr::DepthMode::ReadWrite);
 	rasterizer.setTextureMode(tr::TextureMode::Perspective);
+	rasterizer.setCullFaceMode(tr::CullFaceMode::Back);
 
 	shader.setTexture(&texture);
 	shader.setTextureWrappingMode(tr::TextureWrappingMode::Repeat);

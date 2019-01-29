@@ -190,6 +190,7 @@
     <ClInclude Include="src\matrix\Matrices.h" />
     <ClInclude Include="src\matrix\Vectors.h" />
     <ClInclude Include="src\tr\trAxis.hpp" />
+    <ClInclude Include="src\tr\trCullFaceMode.hpp" />
     <ClInclude Include="src\tr\trDefaultShader.hpp" />
     <ClInclude Include="src\tr\trDepthMode.hpp" />
     <ClInclude Include="src\tr\trDepthShader.hpp" />

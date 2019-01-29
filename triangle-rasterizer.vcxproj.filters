@@ -84,6 +84,9 @@
     <ClInclude Include="src\tr\trDefaultShader.hpp">
       <Filter>tr\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="src\tr\trCullFaceMode.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\matrix\Matrices.cpp">

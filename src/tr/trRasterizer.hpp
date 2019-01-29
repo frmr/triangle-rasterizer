@@ -3,6 +3,7 @@
 #include "trAxis.hpp"
 #include "trColorBuffer.hpp"
 #include "trCoord.hpp"
+#include "trCullFaceMode.hpp"
 #include "trDepthBuffer.hpp"
 #include "trDepthMode.hpp"
 #include "trEdgeInfo.hpp"
@@ -26,7 +27,8 @@ namespace tr
 			m_primitive(Primitive::Triangles),
 			m_matrix(),
 			m_depthMode(DepthMode::ReadWrite),
-			m_textureMode(TextureMode::Perspective)
+			m_textureMode(TextureMode::Perspective),
+			m_cullFaceMode(CullFaceMode::Back)
 		{
 		}
 
@@ -82,10 +84,15 @@ namespace tr
 			m_textureMode = textureMode;
 		}
 
+		void setCullFaceMode(const CullFaceMode cullFaceMode)
+		{
+			m_cullFaceMode = cullFaceMode;
+		}
+
 	private:
 		static Vertex lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const tr::Axis axis, const bool negativeW)
 		{
-			const float   alpha        = negativeW ?
+			const float   alpha = negativeW ?
 	                             (-lineStart.position.w  - lineStart.position[axis]) / (lineEnd.position[axis] - lineStart.position[axis] + lineEnd.position.w - lineStart.position.w) :
 	                             ( lineStart.position.w  - lineStart.position[axis]) / (lineEnd.position[axis] - lineStart.position[axis] - lineEnd.position.w + lineStart.position.w);
 
@@ -100,10 +107,17 @@ namespace tr
 		{
 			perspectiveDivide(vertices);
 
-			if (orientPoint(vertices[0].position, vertices[1].position, vertices[2].position) >= 0.0f)
+			const float pointValue = orientPoint(vertices[0].position, vertices[1].position, vertices[2].position);
+
+			if (m_cullFaceMode != CullFaceMode::None)
 			{
-				return;
+				if ((m_cullFaceMode == CullFaceMode::Back  && pointValue >= 0.0f) ||
+					(m_cullFaceMode == CullFaceMode::Front && pointValue <  0.0f))
+				{
+					return;
+				}
 			}
+			
 
 			viewportTransformation(vertices, halfWidth, halfHeight);
 
@@ -342,5 +356,6 @@ namespace tr
 		Matrix4             m_matrix;
 		DepthMode           m_depthMode;
 		TextureMode         m_textureMode;
+		CullFaceMode        m_cullFaceMode;
 	};
 }
