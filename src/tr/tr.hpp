@@ -9,3 +9,4 @@
 
 #include "trRasterizer.hpp"
 #include "trFunctions.hpp"
+#include "trDefaultShader.hpp"

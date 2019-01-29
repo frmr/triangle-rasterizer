@@ -190,6 +190,7 @@
     <ClInclude Include="src\matrix\Matrices.h" />
     <ClInclude Include="src\matrix\Vectors.h" />
     <ClInclude Include="src\tr\trAxis.hpp" />
+    <ClInclude Include="src\tr\trDefaultShader.hpp" />
     <ClInclude Include="src\tr\trDepthMode.hpp" />
     <ClInclude Include="src\tr\trEdgeInfo.hpp" />
     <ClInclude Include="src\tr\trPrimitive.hpp" />
@@ -212,8 +213,8 @@
     <ClCompile Include="src\example.cpp" />
     <ClCompile Include="src\lodepng\lodepng.cpp" />
     <ClCompile Include="src\matrix\Matrices.cpp" />
+    <ClCompile Include="src\tr\trDefaultShader.cpp" />
     <ClCompile Include="src\tr\trFunctions.cpp" />
-    <ClCompile Include="src\tr\trRasterizer.cpp" />
     <ClCompile Include="src\tr\trVertex.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

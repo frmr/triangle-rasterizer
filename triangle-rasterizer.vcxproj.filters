@@ -75,6 +75,9 @@
     <ClInclude Include="src\tr\trTextureWrappingMode.hpp">
       <Filter>tr</Filter>
     </ClInclude>
+    <ClInclude Include="src\tr\trDefaultShader.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\matrix\Matrices.cpp">
@@ -84,13 +87,13 @@
     <ClCompile Include="src\tr\trFunctions.cpp">
       <Filter>tr</Filter>
     </ClCompile>
-    <ClCompile Include="src\tr\trRasterizer.cpp">
-      <Filter>tr</Filter>
-    </ClCompile>
     <ClCompile Include="src\lodepng\lodepng.cpp">
       <Filter>lodepng</Filter>
     </ClCompile>
     <ClCompile Include="src\tr\trVertex.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tr\trDefaultShader.cpp">
       <Filter>tr</Filter>
     </ClCompile>
   </ItemGroup>

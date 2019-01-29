@@ -78,13 +78,13 @@ std::vector<tr::Vertex> defineVertices()
 	return {
 		
 		// Front
-		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(2.0f, -1.0f) },
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(2.0f, 0.0f) },
 		{ Vector4( 2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(2.0f, 2.0f) },
-		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(-1.0f, 2.0f) },
+		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 2.0f) },
 
-		{ Vector4(-2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(-1.0f, -1.0f) },
-		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(2.0f, -1.0f) },
-		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(-1.0f, 2.0f) },
+		{ Vector4(-2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
+		{ Vector4( 2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(2.0f, 0.0f) },
+		{ Vector4(-2.0f, -2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 2.0f) },
 
 		// Top
 		{ Vector4(-2.0f,  2.0f, -50.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f) },
@@ -162,26 +162,27 @@ void updateInputs(bool& running, Vector4& position, Vector4& rotation)
 
 int main(int argc, char* argv[])
 {
-	constexpr int                 screenWidth      = 1920;
-	constexpr int                 screenHeight     = 1080;
-	bool                          running          = true;
-	SDL_Window*                   sdlWindow        = nullptr;
-	SDL_Renderer*                 sdlRenderer      = nullptr;
-	SDL_Texture*                  sdlTexture       = nullptr;
-	const std::vector<tr::Vertex> vertices         = defineVertices();
-	const tr::ColorBuffer         texture          = tr::loadTexture("data/udon.png");
-	const float                   aspectRatio      = float(screenWidth) / float(screenHeight);
-	const Matrix4                 projectionMatrix = createPerspectiveProjectionMatrix(-aspectRatio, aspectRatio, -1.0f, 1.0f, 1.0f, 100.0f);
-	tr::ColorBuffer               colorBuffer(screenWidth, screenHeight);
-	tr::DepthBuffer               depthBuffer(screenWidth, screenHeight);
+	constexpr int                     screenWidth      = 1920;
+	constexpr int                     screenHeight     = 1080;
+	bool                              running          = true;
+	SDL_Window*                       sdlWindow        = nullptr;
+	SDL_Renderer*                     sdlRenderer      = nullptr;
+	SDL_Texture*                      sdlTexture       = nullptr;
+	const std::vector<tr::Vertex>     vertices         = defineVertices();
+	const tr::ColorBuffer             texture          = tr::loadTexture("data/udon.png");
+	const float                       aspectRatio      = float(screenWidth) / float(screenHeight);
+	const Matrix4                     projectionMatrix = createPerspectiveProjectionMatrix(-aspectRatio, aspectRatio, -1.0f, 1.0f, 1.0f, 100.0f);
+	tr::ColorBuffer                   colorBuffer(screenWidth, screenHeight);
+	tr::DepthBuffer                   depthBuffer(screenWidth, screenHeight);
+	tr::DefaultShader                 shader;
 
-	Vector4                       cameraRotation(0.0f, 0.0f, 0.0f, 1.0f);
-	Vector4                       cameraPosition(10.0f, 0.0f, -45.0f, 1.0f);
+	Vector4                           cameraRotation(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector4                           cameraPosition(10.0f, 0.0f, -45.0f, 1.0f);
 
-	Vector4                       modelRotation(0.0f, 0.0f, 0.0f, 1.0f);
-	Vector4                       modelPosition(10.0f, 0.0f, 0.0f, 1.0f);
+	Vector4                           modelRotation(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector4                           modelPosition(10.0f, 0.0f, 0.0f, 1.0f);
 
-	tr::Rasterizer                rasterizer;
+	tr::Rasterizer<tr::DefaultShader> rasterizer;
 
 	if (screenWidth <= 0 || screenHeight <= 0)
 	{
@@ -206,7 +207,10 @@ int main(int argc, char* argv[])
 	rasterizer.setPrimitive(tr::Primitive::Triangles);
 	rasterizer.setDepthMode(tr::DepthMode::ReadWrite);
 	rasterizer.setTextureMode(tr::TextureMode::Perspective);
-	rasterizer.setTextureWrappingMode(tr::TextureWrappingMode::Repeat);
+
+	shader.setTexture(&texture);
+	shader.setTextureWrappingMode(tr::TextureWrappingMode::Repeat);
+	shader.setTextureFiltering(false);
 
 	double cumulativeFrameTime = 0.0;
 	int    frameCount          = 0;
@@ -234,7 +238,7 @@ int main(int argc, char* argv[])
 		viewMatrix.rotateX(-cameraRotation.x);
 		
 		rasterizer.setMatrix(projectionMatrix * viewMatrix * modelMatrix);
-		rasterizer.draw(vertices, texture, colorBuffer, depthBuffer);
+		rasterizer.draw(vertices, shader, colorBuffer, depthBuffer);
 
 		renderColorBufferToWindow(colorBuffer, sdlRenderer, sdlTexture);
 
