@@ -69,9 +69,6 @@
     <ClInclude Include="src\lodepng\lodepng.h">
       <Filter>lodepng</Filter>
     </ClInclude>
-    <ClInclude Include="src\tr\trDepthMode.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
     <ClInclude Include="src\tr\trTextureMode.hpp">
       <Filter>tr</Filter>
     </ClInclude>

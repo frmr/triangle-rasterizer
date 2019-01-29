@@ -5,7 +5,6 @@
 #include "trCoord.hpp"
 #include "trCullFaceMode.hpp"
 #include "trDepthBuffer.hpp"
-#include "trDepthMode.hpp"
 #include "trEdgeInfo.hpp"
 #include "trPrimitive.hpp"
 #include "trTextureMode.hpp"
@@ -26,7 +25,7 @@ namespace tr
 		Rasterizer() :
 			m_primitive(Primitive::Triangles),
 			m_matrix(),
-			m_depthMode(DepthMode::ReadWrite),
+			m_depthTest(true),
 			m_textureMode(TextureMode::Perspective),
 			m_cullFaceMode(CullFaceMode::Back)
 		{
@@ -74,9 +73,9 @@ namespace tr
 			m_matrix = matrix;
 		}
 
-		void setDepthMode(const DepthMode depthMode)
+		void setDepthTest(const bool depthTest)
 		{
-			m_depthMode = depthMode;
+			m_depthTest = depthTest;
 		}
 
 		void setTextureMode(const TextureMode textureMode)
@@ -336,7 +335,7 @@ namespace tr
 	
 				for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer, pixel += leftToRightVector)
 				{
-					if (!(m_depthMode & DepthMode::Read) || pixel.position.z < *depthPointer)
+					if (!m_depthTest || pixel.position.z < *depthPointer)
 					{
 						const Vector2 textureCoord = (m_textureMode == TextureMode::Perspective) ? pixel.textureCoord / pixel.inverseW : pixel.textureCoord;
 
@@ -352,10 +351,10 @@ namespace tr
 		}
 
 	private:
-		Primitive           m_primitive;
-		Matrix4             m_matrix;
-		DepthMode           m_depthMode;
-		TextureMode         m_textureMode;
-		CullFaceMode        m_cullFaceMode;
+		Primitive    m_primitive;
+		Matrix4      m_matrix;
+		bool         m_depthTest;
+		TextureMode  m_textureMode;
+		CullFaceMode m_cullFaceMode;
 	};
 }
