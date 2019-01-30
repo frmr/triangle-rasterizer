@@ -43,7 +43,7 @@ namespace tr
 
 			for (auto& vertex : vertices)
 			{
-				vertex.position = m_matrix * vertex.position;
+				vertex.position = m_matrix * vertex.worldPosition;
 			}
 
 			if (m_primitive == Primitive::Triangles)
@@ -95,11 +95,12 @@ namespace tr
 	                             (-lineStart.position.w  - lineStart.position[axis]) / (lineEnd.position[axis] - lineStart.position[axis] + lineEnd.position.w - lineStart.position.w) :
 	                             ( lineStart.position.w  - lineStart.position[axis]) / (lineEnd.position[axis] - lineStart.position[axis] - lineEnd.position.w + lineStart.position.w);
 
-			const Vector4 position     = lineStart.position     + (lineEnd.position     - lineStart.position)     * alpha;
-			const Vector3 normal       = lineStart.normal       + (lineEnd.normal       - lineStart.normal)       * alpha;
-			const Vector2 textureCoord = lineStart.textureCoord + (lineEnd.textureCoord - lineStart.textureCoord) * alpha;
+			const Vector4 worldPosition	= lineStart.worldPosition + (lineEnd.worldPosition - lineStart.worldPosition) * alpha;
+			const Vector4 position      = lineStart.position      + (lineEnd.position      - lineStart.position)      * alpha;
+			const Vector3 normal        = lineStart.normal        + (lineEnd.normal        - lineStart.normal)        * alpha;
+			const Vector2 textureCoord  = lineStart.textureCoord  + (lineEnd.textureCoord  - lineStart.textureCoord)  * alpha;
 	
-			return { position, normal, textureCoord };
+			return Vertex(worldPosition, position, normal, textureCoord);
 		}
 
 		void drawTriangle(std::array<Vertex, 3> vertices, const TShader& shader, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
@@ -117,7 +118,6 @@ namespace tr
 				}
 			}
 			
-
 			viewportTransformation(vertices, halfWidth, halfHeight);
 
 			const uint16_t minX = std::min({ uint16_t(vertices[0].position.x), uint16_t(vertices[1].position.x), uint16_t(vertices[2].position.x) });
@@ -220,12 +220,13 @@ namespace tr
 			{		
 				if (m_textureMode == TextureMode::Perspective)
 				{
-					vertex.textureCoord /= vertex.position.w;
-					vertex.inverseW      = 1.0f / vertex.position.w;
+					vertex.normal        /= vertex.position.w;
+					vertex.textureCoord  /= vertex.position.w;
+					vertex.inverseW       = 1.0f / vertex.position.w;
 				}
 
-				vertex.normal       /= vertex.position.w;
-				vertex.position     /= vertex.position.w;
+				vertex.worldPosition /= vertex.position.w;
+				vertex.position      /= vertex.position.w;
 			}
 		}
 
@@ -339,7 +340,7 @@ namespace tr
 					{
 						const Vector2 textureCoord = (m_textureMode == TextureMode::Perspective) ? pixel.textureCoord / pixel.inverseW : pixel.textureCoord;
 
-						shader.draw(pixel.position, pixel.normal, textureCoord, colorPointer, depthPointer);
+						shader.draw(pixel.position, pixel.worldPosition / pixel.inverseW, pixel.normal, textureCoord, colorPointer, depthPointer);
 					}
 				}
 			}
