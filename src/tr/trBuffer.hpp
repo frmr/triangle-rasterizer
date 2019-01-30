@@ -12,7 +12,11 @@ namespace tr
 	class Buffer
 	{
 	public:
-		Buffer()
+		Buffer() :
+			m_width(0),
+			m_height(0),
+			m_floatWidth(0.0f),
+			m_floatHeight(0.0f)
 		{
 		}
 
@@ -38,11 +42,7 @@ namespace tr
 
 		void fill(const T& value)
 		{
-			//TODO: optimize
-			for (auto& element : m_data)
-			{
-				element = value;
-			}
+			std::fill(m_data.begin(), m_data.end(), value);
 		}
 
 		T getAt(const size_t& x, const size_t& y) const
