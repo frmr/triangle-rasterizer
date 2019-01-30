@@ -55,11 +55,25 @@ namespace tr
 			}
 			else if (m_primitive == Primitive::TriangleStrip)
 			{
+				bool   reverse    = false;
+				size_t lastIndex  = 0;
+				size_t firstIndex = 1;
 
+				for (size_t newIndex = 2; newIndex < vertices.size(); ++newIndex)
+				{
+					clipAndDrawTriangle({ vertices[reverse ? newIndex : lastIndex], vertices[firstIndex], vertices[reverse ? lastIndex : newIndex] }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+
+					firstIndex = lastIndex;
+					lastIndex  = newIndex;
+					reverse    = !reverse;
+				}
 			}
 			else if (m_primitive == Primitive::TriangleFan)
 			{
-
+				for (std::vector<Vertex>::const_iterator it = vertices.begin() + 1; it < vertices.end() - 1; it += 1)
+				{
+					clipAndDrawTriangle({ vertices.front(), *it, *(it + 1) }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+				}
 			}
 		}
 
