@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
 	SDL_Renderer*                     sdlRenderer      = nullptr;
 	SDL_Texture*                      sdlTexture       = nullptr;
 	const std::vector<tr::Vertex>     vertices         = defineVertices();
-	const tr::ColorBuffer             texture          = tr::loadTexture("data/udon.png");
+	const tr::ColorBuffer             texture          = tr::loadTexture("data/udon-translucent.png");
 	const float                       aspectRatio      = float(screenWidth) / float(screenHeight);
 	const Matrix4                     projectionMatrix = createPerspectiveProjectionMatrix(-aspectRatio, aspectRatio, -1.0f, 1.0f, 1.0f, 100.0f);
 	tr::ColorBuffer                   colorBuffer(screenWidth, screenHeight);
@@ -178,9 +178,6 @@ int main(int argc, char* argv[])
 
 	Vector4                           cameraRotation(0.0f, 0.0f, 0.0f, 1.0f);
 	Vector4                           cameraPosition(0.0f, 0.0f, 10.0f, 1.0f);
-
-	//Vector4                           modelRotation(0.0f, 0.0f, 0.0f, 1.0f);
-	//Vector4                           modelPosition(0.0f, 0.0f, 0.0f, 1.0f);
 
 	tr::Rasterizer<tr::DefaultShader> rasterizer;
 
@@ -207,11 +204,12 @@ int main(int argc, char* argv[])
 	rasterizer.setPrimitive(tr::Primitive::Triangles);
 	rasterizer.setDepthTest(true);
 	rasterizer.setTextureMode(tr::TextureMode::Perspective);
-	rasterizer.setCullFaceMode(tr::CullFaceMode::Back);
+	rasterizer.setCullFaceMode(tr::CullFaceMode::None);
 
 	shader.setTexture(&texture);
 	shader.setTextureWrappingMode(tr::TextureWrappingMode::Repeat);
 	shader.setTextureFiltering(false);
+	shader.setBlendMode(tr::BlendMode::None);
 
 	double cumulativeFrameTime = 0.0;
 	int    frameCount          = 0;
@@ -219,26 +217,19 @@ int main(int argc, char* argv[])
 	while (running)
 	{
 		const auto start = std::chrono::high_resolution_clock::now();
-		//Matrix4    modelMatrix;
 		Matrix4    viewMatrix;
 		
 		updateInputs(running, cameraPosition, cameraRotation);
 
-		colorBuffer.fill(tr::Color(0, 0, 0, 0));
+		colorBuffer.fill(tr::Color(0, 0, 0, 255));
 		depthBuffer.fill(1.0f);
-
-		//modelMatrix.identity();
-		//modelMatrix.translate(modelPosition.x, modelPosition.y, modelPosition.z);
-		//modelMatrix.rotateX(modelRotation.x);
-		//modelMatrix.rotateY(modelRotation.y);
-		//modelMatrix.rotateZ(modelRotation.z);
 		
 		viewMatrix.identity();
 		viewMatrix.translate(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
 		viewMatrix.rotateY(-cameraRotation.y);
 		viewMatrix.rotateX(-cameraRotation.x);
 		
-		rasterizer.setMatrix(projectionMatrix * viewMatrix/* * modelMatrix*/);
+		rasterizer.setMatrix(projectionMatrix * viewMatrix);
 		rasterizer.draw(vertices, shader, colorBuffer, depthBuffer);
 
 		renderColorBufferToWindow(colorBuffer, sdlRenderer, sdlTexture);

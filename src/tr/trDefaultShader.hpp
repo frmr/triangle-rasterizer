@@ -1,6 +1,7 @@
 #pragma once
 
 #include "trColorBuffer.hpp"
+#include "trBlendMode.hpp"
 
 namespace tr
 {
@@ -14,10 +15,12 @@ namespace tr
 		void                setTexture(const ColorBuffer* const texture);
 		void                setTextureWrappingMode(const TextureWrappingMode textureWrappingMode);
 		void                setTextureFiltering(const bool textureFiltering);
+		void                setBlendMode(const BlendMode blendMode);
 
 	private:
 		const ColorBuffer*  m_texture;
 		TextureWrappingMode	m_textureWrappingMode;
 		bool                m_textureFiltering;
+		BlendMode           m_blendMode;
 	};
 }

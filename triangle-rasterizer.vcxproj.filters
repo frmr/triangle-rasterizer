@@ -13,6 +13,9 @@
     <Filter Include="tr\Shaders">
       <UniqueIdentifier>{3c6b0fe3-1779-448f-9a98-5e6750273e83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tr\Enums">
+      <UniqueIdentifier>{6e2bda87-6acd-463a-8129-10e7b2bc820f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\tr\tr.hpp">
@@ -60,20 +63,11 @@
     <ClInclude Include="src\tr\trEdgeInfo.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="src\tr\trAxis.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
     <ClInclude Include="src\tr\trVertexClipBitMasks.hpp">
       <Filter>tr</Filter>
     </ClInclude>
     <ClInclude Include="src\lodepng\lodepng.h">
       <Filter>lodepng</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tr\trTextureMode.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tr\trTextureWrappingMode.hpp">
-      <Filter>tr</Filter>
     </ClInclude>
     <ClInclude Include="src\tr\trDepthShader.hpp">
       <Filter>tr\Shaders</Filter>
@@ -81,8 +75,20 @@
     <ClInclude Include="src\tr\trDefaultShader.hpp">
       <Filter>tr\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="src\tr\trAxis.hpp">
+      <Filter>tr\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trBlendMode.hpp">
+      <Filter>tr\Enums</Filter>
+    </ClInclude>
     <ClInclude Include="src\tr\trCullFaceMode.hpp">
-      <Filter>tr</Filter>
+      <Filter>tr\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trTextureMode.hpp">
+      <Filter>tr\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trTextureWrappingMode.hpp">
+      <Filter>tr\Enums</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
