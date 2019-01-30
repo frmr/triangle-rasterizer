@@ -220,12 +220,12 @@ namespace tr
 			{		
 				if (m_textureMode == TextureMode::Perspective)
 				{
-					vertex.normal        /= vertex.position.w;
 					vertex.textureCoord  /= vertex.position.w;
-					vertex.inverseW       = 1.0f / vertex.position.w;
 				}
 
+				vertex.inverseW       = 1.0f / vertex.position.w;
 				vertex.worldPosition /= vertex.position.w;
+				vertex.normal        /= vertex.position.w;
 				vertex.position      /= vertex.position.w;
 			}
 		}
@@ -340,7 +340,7 @@ namespace tr
 					{
 						const Vector2 textureCoord = (m_textureMode == TextureMode::Perspective) ? pixel.textureCoord / pixel.inverseW : pixel.textureCoord;
 
-						shader.draw(pixel.position, pixel.worldPosition / pixel.inverseW, pixel.normal, textureCoord, colorPointer, depthPointer);
+						shader.draw(pixel.position, pixel.worldPosition / pixel.inverseW, pixel.normal / pixel.inverseW, textureCoord, colorPointer, depthPointer);
 					}
 				}
 			}
