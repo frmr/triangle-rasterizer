@@ -25,10 +25,10 @@ tr::ColorBuffer::ColorBuffer(const std::string& filename) :
 			Color&         color     = at(x, y);
 			unsigned char* pixelData = &decodedData[i];
 	
-			color.red   = *(pixelData    );
-			color.green = *(pixelData + 1);
-			color.blue  = *(pixelData + 2);
-			color.alpha = *(pixelData + 3);
+			color.r = *(pixelData    );
+			color.g = *(pixelData + 1);
+			color.b = *(pixelData + 2);
+			color.a = *(pixelData + 3);
 		}
 	}
 }

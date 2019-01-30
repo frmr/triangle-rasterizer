@@ -11,10 +11,10 @@ namespace tr
 		Vector4 ToVector() const
 		{
 			return Vector4(
-				float(blue),
-				float(green),
-				float(red),
-				float(alpha)
+				float(b),
+				float(g),
+				float(r),
+				float(a)
 			);
 		}
 
@@ -22,26 +22,26 @@ namespace tr
 		{
 		}
 
-		Color(const unsigned char blue, const unsigned char green, const unsigned char red, const unsigned char alpha) :
-			blue(blue),
-			green(green),
-			red(red),
-			alpha(alpha)
+		Color(const unsigned char b, const unsigned char g, const unsigned char r, const unsigned char a) :
+			b(b),
+			g(g),
+			r(r),
+			a(a)
 		{
 		}
 
 		Color(const Vector4& vector) :
-			blue((unsigned char)vector[0]),
-			green((unsigned char)vector[1]),
-			red((unsigned char)vector[2]),
-			alpha((unsigned char)vector[3])
+			b((unsigned char)vector[0]),
+			g((unsigned char)vector[1]),
+			r((unsigned char)vector[2]),
+			a((unsigned char)vector[3])
 		{
 		}
 
-		unsigned char blue;
-		unsigned char green;
-		unsigned char red;
-		unsigned char alpha;
+		unsigned char b;
+		unsigned char g;
+		unsigned char r;
+		unsigned char a;
 	};
 
 #pragma pack(pop)
