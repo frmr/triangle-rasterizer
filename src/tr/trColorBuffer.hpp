@@ -5,5 +5,11 @@
 
 namespace tr
 {
-	typedef Buffer<Color> ColorBuffer;
+	class ColorBuffer : public Buffer<Color>
+	{
+	public:
+		using Buffer<Color>::Buffer;
+
+		ColorBuffer(const std::string& filename);
+	};
 }

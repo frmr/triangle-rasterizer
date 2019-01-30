@@ -38,6 +38,11 @@ namespace tr
 				return;
 			}
 
+			if (colorBuffer.getWidth() != depthBuffer.getWidth() && colorBuffer.getHeight() != depthBuffer.getHeight())
+			{
+				return;
+			}
+
 			const float halfWidth  = float(colorBuffer.getWidth())  / 2.0f;
 			const float halfHeight = float(colorBuffer.getHeight()) / 2.0f;
 

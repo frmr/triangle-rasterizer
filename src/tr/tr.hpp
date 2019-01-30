@@ -8,6 +8,5 @@
 #include <vector>
 
 #include "trRasterizer.hpp"
-#include "trFunctions.hpp"
 #include "trDefaultShader.hpp"
 #include "trDepthShader.hpp"

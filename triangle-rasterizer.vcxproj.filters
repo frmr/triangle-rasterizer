@@ -16,12 +16,12 @@
     <Filter Include="tr\Enums">
       <UniqueIdentifier>{6e2bda87-6acd-463a-8129-10e7b2bc820f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tr\Buffers">
+      <UniqueIdentifier>{68f10596-3e84-4957-80fd-5eb6d4b74136}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\tr\tr.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tr\trBuffer.hpp">
       <Filter>tr</Filter>
     </ClInclude>
     <ClInclude Include="src\tr\trColor.hpp">
@@ -34,15 +34,6 @@
       <Filter>matrix</Filter>
     </ClInclude>
     <ClInclude Include="src\tr\trCoord.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tr\trDepthBuffer.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tr\trColorBuffer.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tr\trFunctions.hpp">
       <Filter>tr</Filter>
     </ClInclude>
     <ClInclude Include="src\tr\trException.hpp">
@@ -90,15 +81,21 @@
     <ClInclude Include="src\tr\trTextureWrappingMode.hpp">
       <Filter>tr\Enums</Filter>
     </ClInclude>
+    <ClInclude Include="src\tr\trBuffer.hpp">
+      <Filter>tr\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trColorBuffer.hpp">
+      <Filter>tr\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trDepthBuffer.hpp">
+      <Filter>tr\Buffers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\matrix\Matrices.cpp">
       <Filter>matrix</Filter>
     </ClCompile>
     <ClCompile Include="src\example.cpp" />
-    <ClCompile Include="src\tr\trFunctions.cpp">
-      <Filter>tr</Filter>
-    </ClCompile>
     <ClCompile Include="src\lodepng\lodepng.cpp">
       <Filter>lodepng</Filter>
     </ClCompile>
@@ -110,6 +107,9 @@
     </ClCompile>
     <ClCompile Include="src\tr\trDepthShader.cpp">
       <Filter>tr\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tr\trColorBuffer.cpp">
+      <Filter>tr\Buffers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

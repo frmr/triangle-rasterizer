@@ -12,25 +12,28 @@ namespace tr
 	class Buffer
 	{
 	public:
-		Buffer(const size_t& width, const size_t& height) :
-			m_width(width),
-			m_height(height),
-			m_floatWidth(float(width)),
-			m_floatHeight(float(height)),
-			m_maxSize(std::numeric_limits<size_t>::max())
+		Buffer()
 		{
+		}
+
+		Buffer(const size_t& width, const size_t& height)
+		{
+			init(width, height);
+		}
+
+		void init(const size_t& width, const size_t& height)
+		{
+			m_width       = width;
+			m_height      = height;
+			m_floatWidth  = float(width);
+			m_floatHeight = float(height);
+
 			m_data.resize(width * height, T());
 		}
 
 		T& at(const size_t x, const size_t y)
 		{
 			return m_data.at(y * m_width + x);
-		}
-
-		T& at(const double x, const double y, const bool filter)
-		{
-			//TODO: interpolate
-			return m_data.at(0);
 		}
 
 		void fill(const T& value)
@@ -85,7 +88,7 @@ namespace tr
 				size_t       x1        = x0 + 1;
 				size_t       y1        = y0 + 1;
 
-				if (x0 == m_maxSize)
+				if (x0 == s_maxSize)
 				{
 					x0 = (textureWrappingMode == TextureWrappingMode::Clamp) ? 0 : m_width - 1;
 				}
@@ -94,7 +97,7 @@ namespace tr
 					x1 = (textureWrappingMode == TextureWrappingMode::Clamp) ? x0 : 0;
 				}
 
-				if (y0 == m_maxSize)
+				if (y0 == s_maxSize)
 				{
 					y0 = (textureWrappingMode == TextureWrappingMode::Clamp) ? 0 : m_height - 1;
 				}
@@ -132,19 +135,19 @@ namespace tr
 			return m_height;
 		}
 
-	private:
+	protected:
 		float fastFloor(const float x) const
 		{
 			const int xi = int(x);
 			return float(x < xi ? xi - 1 : xi);
 		}
 
-	private:
-		const size_t   m_width;
-		const size_t   m_height;
-		const float    m_floatWidth;
-		const float    m_floatHeight;
-		const size_t   m_maxSize;
-		std::vector<T> m_data;
+	protected:
+		static constexpr size_t s_maxSize = std::numeric_limits<size_t>::max();
+		size_t                  m_width;
+		size_t                  m_height;
+		float                   m_floatWidth;
+		float                   m_floatHeight;
+		std::vector<T>          m_data;
 	};
 }

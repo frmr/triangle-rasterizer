@@ -1,9 +1,9 @@
-#include "trFunctions.hpp"
-#include "trFileException.hpp"
+#include "trColorBuffer.hpp"
 
 #include "../lodepng/lodepng.h"
 
-tr::ColorBuffer tr::loadTexture(const std::string& filename)
+tr::ColorBuffer::ColorBuffer(const std::string& filename) :
+	Buffer<Color>()
 {
 	std::vector<unsigned char> encodedData;
 	std::vector<unsigned char> decodedData;
@@ -16,13 +16,13 @@ tr::ColorBuffer tr::loadTexture(const std::string& filename)
 	lodepng::load_file(encodedData, filename);
 	lodepng::decode(decodedData, width, height, state, encodedData);
 
-	ColorBuffer colorBuffer(width, height);
+	init(width, height);
 
 	for (unsigned int y = 0, i = 0; y < height; ++y)
 	{
 		for (unsigned int x = 0; x < width; ++x, i += 4)
 		{
-			Color&         color     = colorBuffer.at(x, y);
+			Color&         color     = at(x, y);
 			unsigned char* pixelData = &decodedData[i];
 	
 			color.red   = *(pixelData    );
@@ -31,6 +31,4 @@ tr::ColorBuffer tr::loadTexture(const std::string& filename)
 			color.alpha = *(pixelData + 3);
 		}
 	}
-
-	return colorBuffer;
 }

@@ -169,9 +169,9 @@ int main(int argc, char* argv[])
 	SDL_Renderer*                     sdlRenderer      = nullptr;
 	SDL_Texture*                      sdlTexture       = nullptr;
 	const std::vector<tr::Vertex>     vertices         = defineVertices();
-	const tr::ColorBuffer             texture          = tr::loadTexture("data/udon-translucent.png");
 	const float                       aspectRatio      = float(screenWidth) / float(screenHeight);
 	const Matrix4                     projectionMatrix = createPerspectiveProjectionMatrix(-aspectRatio, aspectRatio, -1.0f, 1.0f, 1.0f, 100.0f);
+	const tr::ColorBuffer             texture("data/udon-translucent.png");
 	tr::ColorBuffer                   colorBuffer(screenWidth, screenHeight);
 	tr::DepthBuffer                   depthBuffer(screenWidth, screenHeight);
 	tr::DefaultShader                 shader;
