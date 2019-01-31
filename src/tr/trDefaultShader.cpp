@@ -22,6 +22,10 @@ void tr::DefaultShader::draw(const Vector4& position, const Vector4& worldPositi
 		{
 			*color = textureColor;
 		}
+		else if (textureColor.a == 0)
+		{
+			return;
+		}
 		else
 		{
 			const Color    bufferColor = *color;
