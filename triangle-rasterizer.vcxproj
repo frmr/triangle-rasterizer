@@ -195,6 +195,7 @@
     <ClInclude Include="src\tr\trDefaultShader.hpp" />
     <ClInclude Include="src\tr\trDepthShader.hpp" />
     <ClInclude Include="src\tr\trEdgeInfo.hpp" />
+    <ClInclude Include="src\tr\trError.hpp" />
     <ClInclude Include="src\tr\trPrimitive.hpp" />
     <ClInclude Include="src\tr\trRasterizer.hpp" />
     <ClInclude Include="src\tr\tr.hpp" />
@@ -203,8 +204,6 @@
     <ClInclude Include="src\tr\trColorBuffer.hpp" />
     <ClInclude Include="src\tr\trCoord.hpp" />
     <ClInclude Include="src\tr\trDepthBuffer.hpp" />
-    <ClInclude Include="src\tr\trException.hpp" />
-    <ClInclude Include="src\tr\trFileException.hpp" />
     <ClInclude Include="src\tr\trTextureMode.hpp" />
     <ClInclude Include="src\tr\trTextureWrappingMode.hpp" />
     <ClInclude Include="src\tr\trVertex.hpp" />

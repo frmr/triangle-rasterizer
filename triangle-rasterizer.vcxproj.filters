@@ -36,12 +36,6 @@
     <ClInclude Include="src\tr\trCoord.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="src\tr\trException.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tr\trFileException.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
     <ClInclude Include="src\tr\trVertex.hpp">
       <Filter>tr</Filter>
     </ClInclude>
@@ -89,6 +83,9 @@
     </ClInclude>
     <ClInclude Include="src\tr\trDepthBuffer.hpp">
       <Filter>tr\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tr\trError.hpp">
+      <Filter>tr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@
 #include "trCullFaceMode.hpp"
 #include "trDepthBuffer.hpp"
 #include "trEdgeInfo.hpp"
+#include "trError.hpp"
 #include "trPrimitive.hpp"
 #include "trTextureMode.hpp"
 #include "trTextureWrappingMode.hpp"
@@ -31,16 +32,16 @@ namespace tr
 		{
 		}
 
-		void draw(std::vector<Vertex> vertices, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		Error draw(std::vector<Vertex> vertices, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
 			if (colorBuffer.getWidth() == 0 || colorBuffer.getHeight() == 0)
 			{
-				return;
+				return Error::InvalidBufferSize;
 			}
 
 			if (colorBuffer.getWidth() != depthBuffer.getWidth() && colorBuffer.getHeight() != depthBuffer.getHeight())
 			{
-				return;
+				return Error::BufferSizeMismatch;
 			}
 
 			const float halfWidth  = float(colorBuffer.getWidth())  / 2.0f;
@@ -80,6 +81,8 @@ namespace tr
 					clipAndDrawTriangle({ vertices.front(), *it, *(it + 1) }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
 				}
 			}
+
+			return Error::Success;
 		}
 
 		void setPrimitive(const Primitive primitive)
