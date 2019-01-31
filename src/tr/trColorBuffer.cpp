@@ -20,13 +20,8 @@ tr::ColorBuffer::ColorBuffer(const std::string& filename) :
 		{
 			init(width, height);
 			copyTextureData(decodedData);
-
-			return;
 		}
 	}
-	
-	init(8, 8);
-	generatePlaceholder();
 }
 
 void tr::ColorBuffer::copyTextureData(const std::vector<unsigned char>& decodedData)
@@ -42,24 +37,6 @@ void tr::ColorBuffer::copyTextureData(const std::vector<unsigned char>& decodedD
 				*(pixelData + 1),
 				*(pixelData + 0),
 				*(pixelData + 3)
-			);
-		}
-	}
-}
-
-void tr::ColorBuffer::generatePlaceholder()
-{
-	bool purple = false;
-
-	for (unsigned int y = 0; y < m_height; ++y, purple = !purple)
-	{
-		for (unsigned int x = 0; x < m_width; ++x, purple = !purple)
-		{
-			at(x, y) = Color(
-				purple ? 255 : 0,
-				0,
-				purple ? 255 : 0,
-				255
 			);
 		}
 	}

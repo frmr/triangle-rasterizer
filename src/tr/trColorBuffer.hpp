@@ -14,6 +14,5 @@ namespace tr
 
 	private:
 		void copyTextureData(const std::vector<unsigned char>& decodedData);
-		void generatePlaceholder();
 	};
 }
