@@ -160,7 +160,7 @@ namespace tr
 			for (size_t vertexIndex = 0; vertexIndex < 3; ++vertexIndex)
 			{
 				const Vertex&   vertex           = vertices[vertexIndex];
-				constexpr float margin           = 0.0001f;
+				constexpr float margin           = 0.000001f;
 				const float     wLessMargin      = vertex.position.w - margin;
 				const float     wPlusMargin      = vertex.position.w + margin;
 				unsigned char&  clipBitField     = vertexClipBitFields[vertexIndex];
@@ -345,7 +345,9 @@ namespace tr
 			Vertex       currentLeft  = leftStart;
 			Vertex       currentRight = rightStart;
 
-			for (size_t currentY = firstY; currentY < targetY; ++currentY, currentLeft += leftChange, currentRight += rightChange)
+			float        rowCount = 0.0f;
+
+			for (size_t currentY = firstY; currentY < targetY; ++currentY, currentLeft = leftStart + leftChange * rowCount, currentRight = rightStart + rightChange * rowCount, ++rowCount)
 			{
 				const Vertex leftToRightVector = (currentRight - currentLeft).normalize();
 				const size_t firstX            = size_t(std::ceil(currentLeft.position.x));
@@ -355,8 +357,9 @@ namespace tr
 				Vertex       pixel             = currentLeft + leftToRightVector * ratio;
 				Color*       colorPointer      = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
 				float*       depthPointer      = depthBuffer.getData() + (currentY * depthBuffer.getWidth() + firstX);
+				float        columnCount       = 0.0f;
 	
-				for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer, pixel += leftToRightVector)
+				for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer, pixel = currentLeft + leftToRightVector * columnCount, ++columnCount)
 				{
 					if (!m_depthTest || pixel.position.z < *depthPointer)
 					{
