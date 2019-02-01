@@ -348,13 +348,15 @@ namespace tr
 				const size_t lastX             = size_t(std::ceil(currentRight.position.x));
 				const float  leftToFirstX      = firstX - currentLeft.position.x;
 				const float  ratio             = leftToFirstX / (lastX - firstX);
-				Vertex       pixel             = currentLeft + leftToRightVector * ratio;
+				const Vertex firstPixel        = currentLeft + leftToRightVector * ratio;
 				Color*       colorPointer      = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
 				float*       depthPointer      = depthBuffer.getData() + (currentY * depthBuffer.getWidth() + firstX);
 				float        columnCount       = 0.0f;
-	
-				for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer, pixel = currentLeft + leftToRightVector * columnCount, ++columnCount)
+
+				for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer, ++columnCount)
 				{
+					const Vertex pixel = firstPixel + leftToRightVector * columnCount;
+
 					if (!m_depthTest || pixel.position.z < *depthPointer)
 					{
 						const Vector2 textureCoord = (m_textureMode == TextureMode::Perspective) ? pixel.textureCoord / pixel.inverseW : pixel.textureCoord;
