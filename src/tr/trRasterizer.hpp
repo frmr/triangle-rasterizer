@@ -141,12 +141,6 @@ namespace tr
 			}
 			
 			viewportTransformation(vertices, halfWidth, halfHeight);
-
-			const uint16_t minX = std::min({ uint16_t(vertices[0].position.x), uint16_t(vertices[1].position.x), uint16_t(vertices[2].position.x) });
-			const uint16_t minY = std::min({ uint16_t(vertices[0].position.y), uint16_t(vertices[1].position.y), uint16_t(vertices[2].position.y) });
-			const uint16_t maxX = std::max({ uint16_t(vertices[0].position.x), uint16_t(vertices[1].position.x), uint16_t(vertices[2].position.x) });
-			const uint16_t maxY = std::max({ uint16_t(vertices[0].position.y), uint16_t(vertices[1].position.y), uint16_t(vertices[2].position.y) });
-
 			pixelShift(vertices);
 			sortVertices(vertices);
 			fillTriangle(vertices, shader, colorBuffer, depthBuffer);
