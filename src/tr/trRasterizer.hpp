@@ -280,11 +280,11 @@ namespace tr
 
 			const bool   middleVertexLeft     =  topToMiddleVector.position.x <= topToBottomVector.position.x;
 
-			fillBottomHeavyTriangle(vertices, shader, topToMiddleVector, topToBottomVector, middleToBottomVector, middleVertexLeft, colorBuffer, depthBuffer);
-			fillTopHeavyTriangle(   vertices, shader, topToMiddleVector, topToBottomVector, middleToBottomVector, middleVertexLeft, colorBuffer, depthBuffer);
+			fillBottomHeavyTriangle(vertices, shader, topToMiddleVector, topToBottomVector, middleVertexLeft, colorBuffer, depthBuffer);
+			fillTopHeavyTriangle(   vertices, shader, topToBottomVector, middleToBottomVector, middleVertexLeft, colorBuffer, depthBuffer);
 		}
 
-		void fillBottomHeavyTriangle(const std::array<Vertex,3>& vertices, const TShader& shader, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		void fillBottomHeavyTriangle(const std::array<Vertex,3>& vertices, const TShader& shader, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
 			if (vertices[0].position.y != vertices[1].position.y)
 			{
@@ -307,7 +307,7 @@ namespace tr
 			}
 		}
 
-		void fillTopHeavyTriangle(const std::array<Vertex,3>& vertices, const TShader& shader, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		void fillTopHeavyTriangle(const std::array<Vertex,3>& vertices, const TShader& shader, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
 			if (vertices[1].position.y != vertices[2].position.y)
 			{
