@@ -44,8 +44,8 @@ namespace tr
 				return Error::BufferSizeMismatch;
 			}
 
-			const float halfWidth  = float(colorBuffer.getWidth())  / 2.0f;
-			const float halfHeight = float(colorBuffer.getHeight()) / 2.0f;
+			const double halfWidth  = double(colorBuffer.getWidth())  / 2.0f;
+			const double halfHeight = double(colorBuffer.getHeight()) / 2.0f;
 
 			for (auto& vertex : vertices)
 			{
@@ -113,9 +113,9 @@ namespace tr
 	private:
 		static Vertex lineFrustumIntersection(const Vertex& lineStart, const Vertex& lineEnd, const tr::Axis axis, const bool negativeW)
 		{
-			const float   alpha = negativeW ?
-	                             (-lineStart.position.w  - lineStart.position[axis]) / (lineEnd.position[axis] - lineStart.position[axis] + lineEnd.position.w - lineStart.position.w) :
-	                             ( lineStart.position.w  - lineStart.position[axis]) / (lineEnd.position[axis] - lineStart.position[axis] - lineEnd.position.w + lineStart.position.w);
+			const double  alpha = negativeW ?
+	                            (-lineStart.position.w  - lineStart.position[axis]) / (lineEnd.position[axis] - lineStart.position[axis] + lineEnd.position.w - lineStart.position.w) :
+	                            ( lineStart.position.w  - lineStart.position[axis]) / (lineEnd.position[axis] - lineStart.position[axis] - lineEnd.position.w + lineStart.position.w);
 
 			const Vector4 worldPosition	= lineStart.worldPosition + (lineEnd.worldPosition - lineStart.worldPosition) * alpha;
 			const Vector4 position      = lineStart.position      + (lineEnd.position      - lineStart.position)      * alpha;
@@ -125,11 +125,11 @@ namespace tr
 			return Vertex(worldPosition, position, normal, textureCoord);
 		}
 
-		void drawTriangle(std::array<Vertex, 3> vertices, const TShader& shader, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		void drawTriangle(std::array<Vertex, 3> vertices, const TShader& shader, const double halfWidth, const double halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
 			perspectiveDivide(vertices);
 
-			const float pointValue = orientPoint(vertices[0].position, vertices[1].position, vertices[2].position);
+			const double pointValue = orientPoint(vertices[0].position, vertices[1].position, vertices[2].position);
 
 			if (m_cullFaceMode != CullFaceMode::None)
 			{
@@ -146,19 +146,19 @@ namespace tr
 			fillTriangle(vertices, shader, colorBuffer, depthBuffer);
 		}
 
-		void clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, const TShader& shader, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		void clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, const TShader& shader, const double halfWidth, const double halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
 			std::array<unsigned char, 3> vertexClipBitFields     = { 0, 0, 0 };
 			std::array<unsigned char, 3> vertexEqualityBitFields = { 0, 0, 0 };
 
 			for (size_t vertexIndex = 0; vertexIndex < 3; ++vertexIndex)
 			{
-				const Vertex&   vertex           = vertices[vertexIndex];
-				constexpr float margin           = 0.000001f;
-				const float     wLessMargin      = vertex.position.w - margin;
-				const float     wPlusMargin      = vertex.position.w + margin;
-				unsigned char&  clipBitField     = vertexClipBitFields[vertexIndex];
-				unsigned char&  equalityBitField = vertexEqualityBitFields[vertexIndex];
+				const Vertex&    vertex           = vertices[vertexIndex];
+				constexpr double margin           = 0.000001f;
+				const double     wLessMargin      = vertex.position.w - margin;
+				const double     wPlusMargin      = vertex.position.w + margin;
+				unsigned char&   clipBitField     = vertexClipBitFields[vertexIndex];
+				unsigned char&   equalityBitField = vertexEqualityBitFields[vertexIndex];
 
 				if (vertex.position.x <  -wPlusMargin) { clipBitField     |= leftBitMask;                     }
 				if (vertex.position.x >   wPlusMargin) { clipBitField     |= rightBitMask;                    }
@@ -246,7 +246,7 @@ namespace tr
 			}
 		}
 
-		static void viewportTransformation(std::array<Vertex,3>& vertices, const float halfWidth, const float halfHeight)
+		static void viewportTransformation(std::array<Vertex,3>& vertices, const double halfWidth, const double halfHeight)
 		{
 			for (Vertex& vertex : vertices)
 			{
@@ -290,13 +290,13 @@ namespace tr
 			{
 				const size_t  firstY          = size_t(std::ceil(vertices[0].position.y));
 
-				const float   topToFirstYDiff = float(firstY) - vertices[0].position.y;
+				const double  topToFirstYDiff = double(firstY) - vertices[0].position.y;
 
 				const Vertex& leftVector      = middleVertexLeft ? topToMiddleVector : topToBottomVector;
 				const Vertex& rightVector     = middleVertexLeft ? topToBottomVector : topToMiddleVector;
 
-				const float   leftRatio       = topToFirstYDiff / leftVector.position.y;
-				const float   rightRatio      = topToFirstYDiff / rightVector.position.y;
+				const double  leftRatio       = topToFirstYDiff / leftVector.position.y;
+				const double  rightRatio      = topToFirstYDiff / rightVector.position.y;
 
 				const Vertex  startLeft       = vertices[0] + leftVector  * leftRatio;
 				const Vertex  startRight      = vertices[0] + rightVector * rightRatio;
@@ -311,21 +311,21 @@ namespace tr
 		{
 			if (vertices[1].position.y != vertices[2].position.y)
 			{
-				const size_t  firstY         = size_t(std::ceil(vertices[1].position.y));
+				const size_t  firstY          = size_t(std::ceil(vertices[1].position.y));
 
-				const float   middleToFirstY = float(firstY) - vertices[1].position.y;
-				const float   topToFirstY    = float(firstY) - vertices[0].position.y;
+				const double   middleToFirstY = double(firstY) - vertices[1].position.y;
+				const double   topToFirstY    = double(firstY) - vertices[0].position.y;
 
-				const Vertex& leftVector     = middleVertexLeft ? middleToBottomVector : topToBottomVector;
-				const Vertex& rightVector    = middleVertexLeft ? topToBottomVector    : middleToBottomVector;
+				const Vertex& leftVector      = middleVertexLeft ? middleToBottomVector : topToBottomVector;
+				const Vertex& rightVector     = middleVertexLeft ? topToBottomVector    : middleToBottomVector;
 
-				const float   ratioLeft      = (middleVertexLeft ? middleToFirstY : topToFirstY   ) / leftVector.position.y;
-				const float   ratioRight     = (middleVertexLeft ? topToFirstY    : middleToFirstY) / rightVector.position.y;
+				const double   ratioLeft      = (middleVertexLeft ? middleToFirstY : topToFirstY   ) / leftVector.position.y;
+				const double   ratioRight     = (middleVertexLeft ? topToFirstY    : middleToFirstY) / rightVector.position.y;
 
-				const Vertex  startLeft      = (middleVertexLeft ? vertices[1] : vertices[0]) + leftVector  * ratioLeft;
-				const Vertex  startRight     = (middleVertexLeft ? vertices[0] : vertices[1]) + rightVector * ratioRight;
+				const Vertex  startLeft       = (middleVertexLeft ? vertices[1] : vertices[0]) + leftVector  * ratioLeft;
+				const Vertex  startRight      = (middleVertexLeft ? vertices[0] : vertices[1]) + rightVector * ratioRight;
 
-				const size_t  targetY        = size_t(std::ceil(vertices[2].position.y));
+				const size_t  targetY         = size_t(std::ceil(vertices[2].position.y));
 
 				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
 			}
@@ -339,19 +339,19 @@ namespace tr
 			Vertex       currentLeft  = leftStart;
 			Vertex       currentRight = rightStart;
 
-			float        rowCount = 0.0f;
+			double       rowCount = 0.0f;
 
 			for (size_t currentY = firstY; currentY < targetY; ++currentY, currentLeft = leftStart + leftChange * rowCount, currentRight = rightStart + rightChange * rowCount, ++rowCount)
 			{
 				const Vertex leftToRightVector = (currentRight - currentLeft) / (currentRight.position.x - currentLeft.position.x);
 				const size_t firstX            = size_t(std::ceil(currentLeft.position.x));
 				const size_t lastX             = size_t(std::ceil(currentRight.position.x));
-				const float  leftToFirstX      = firstX - currentLeft.position.x;
-				const float  ratio             = leftToFirstX / (lastX - firstX);
+				const double leftToFirstX      = firstX - currentLeft.position.x;
+				const double ratio             = leftToFirstX / (lastX - firstX);
 				const Vertex firstPixel        = currentLeft + leftToRightVector * ratio;
 				Color*       colorPointer      = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
-				float*       depthPointer      = depthBuffer.getData() + (currentY * depthBuffer.getWidth() + firstX);
-				float        columnCount       = 0.0f;
+				double*      depthPointer      = depthBuffer.getData() + (currentY * depthBuffer.getWidth() + firstX);
+				double       columnCount       = 0.0f;
 
 				for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer, ++columnCount)
 				{
@@ -367,7 +367,7 @@ namespace tr
 			}
 		}
 
-		static float orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const Vector4& point)
+		static double orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const Vector4& point)
 		{
 			return (lineEnd.x - lineStart.x) * (point.y - lineStart.y) - (lineEnd.y - lineStart.y) * (point.x - lineStart.x);
 		}

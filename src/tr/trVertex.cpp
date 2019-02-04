@@ -19,7 +19,7 @@ tr::Vertex::Vertex(const Vector4& worldPosition, const Vector4& position, const 
 {
 }
 
-tr::Vertex::Vertex(const Vector4& worldPosition, const Vector4& position, const Vector3& normal, const Vector2& textureCoord, const float inverseW) :
+tr::Vertex::Vertex(const Vector4& worldPosition, const Vector4& position, const Vector3& normal, const Vector2& textureCoord, const double inverseW) :
 	worldPosition(worldPosition),
 	position(position),
 	normal(normal),
@@ -72,7 +72,7 @@ tr::Vertex tr::Vertex::operator-(const Vertex& rhs) const
 	);
 }
 
-tr::Vertex tr::Vertex::operator*(const float& rhs) const
+tr::Vertex tr::Vertex::operator*(const double& rhs) const
 {
 	return Vertex(
 		worldPosition * rhs,
@@ -83,7 +83,7 @@ tr::Vertex tr::Vertex::operator*(const float& rhs) const
 	);
 }
 
-tr::Vertex tr::Vertex::operator/(const float& rhs) const
+tr::Vertex tr::Vertex::operator/(const double& rhs) const
 {
 	return Vertex(
 		worldPosition / rhs,
@@ -96,19 +96,19 @@ tr::Vertex tr::Vertex::operator/(const float& rhs) const
 
 tr::Vertex& tr::Vertex::normalize()
 {
-	const float length = std::sqrt(position.x * position.x + position.y * position.y + position.z * position.z);
+	const double length = std::sqrt(position.x * position.x + position.y * position.y + position.z * position.z);
 
-	worldPosition.x   /= length;
-	worldPosition.y   /= length;
-	worldPosition.z   /= length;
+	worldPosition.x    /= length;
+	worldPosition.y    /= length;
+	worldPosition.z    /= length;
 
-	position.x        /= length;
-	position.y        /= length;
-	position.z        /= length;
+	position.x         /= length;
+	position.y         /= length;
+	position.z         /= length;
 
-	normal            /= length;
-	textureCoord      /= length;
-	inverseW          /= length;
+	normal             /= length;
+	textureCoord       /= length;
+	inverseW           /= length;
 
 	return *this;
 }

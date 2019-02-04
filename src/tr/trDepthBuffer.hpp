@@ -4,5 +4,5 @@
 
 namespace tr
 {
-	typedef Buffer<float> DepthBuffer;
+	typedef Buffer<double> DepthBuffer;
 }

@@ -11,10 +11,10 @@ namespace tr
 		Vector4 ToVector() const
 		{
 			return Vector4(
-				float(b),
-				float(g),
-				float(r),
-				float(a)
+				double(b),
+				double(g),
+				double(r),
+				double(a)
 			);
 		}
 

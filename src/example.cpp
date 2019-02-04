@@ -162,8 +162,8 @@ void updateInputs(bool& running, Vector4& position, Vector4& rotation)
 
 int main(int argc, char* argv[])
 {
-	constexpr int                     screenWidth      = 1920;
-	constexpr int                     screenHeight     = 1080;
+	constexpr int                     screenWidth      = 800;
+	constexpr int                     screenHeight     = 600;
 	bool                              running          = true;
 	SDL_Window*                       sdlWindow        = nullptr;
 	SDL_Renderer*                     sdlRenderer      = nullptr;
@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
 	const std::vector<tr::Vertex>     vertices         = defineVertices();
 	const float                       aspectRatio      = float(screenWidth) / float(screenHeight);
 	const Matrix4                     projectionMatrix = createPerspectiveProjectionMatrix(-aspectRatio, aspectRatio, -1.0f, 1.0f, 1.0f, 100.0f);
-	const tr::ColorBuffer             texture("data/udon-translucent.png");
+	const tr::ColorBuffer             texture("data/grid.png");
 	tr::ColorBuffer                   colorBuffer(screenWidth, screenHeight);
 	tr::DepthBuffer                   depthBuffer(screenWidth, screenHeight);
 	tr::DefaultShader                 shader;
