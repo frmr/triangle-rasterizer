@@ -286,49 +286,43 @@ namespace tr
 
 		void fillBottomHeavyTriangle(const std::array<Vertex,3>& vertices, const TShader& shader, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			if (vertices[0].position.y != vertices[1].position.y)
-			{
-				const size_t  firstY          = size_t(std::ceil(vertices[0].position.y));
+			const size_t  firstY          = size_t(std::ceil(vertices[0].position.y));
 
-				const double  topToFirstYDiff = double(firstY) - vertices[0].position.y;
+			const double  topToFirstYDiff = double(firstY) - vertices[0].position.y;
 
-				const Vertex& leftVector      = middleVertexLeft ? topToMiddleVector : topToBottomVector;
-				const Vertex& rightVector     = middleVertexLeft ? topToBottomVector : topToMiddleVector;
+			const Vertex& leftVector      = middleVertexLeft ? topToMiddleVector : topToBottomVector;
+			const Vertex& rightVector     = middleVertexLeft ? topToBottomVector : topToMiddleVector;
 
-				const double  leftRatio       = topToFirstYDiff / leftVector.position.y;
-				const double  rightRatio      = topToFirstYDiff / rightVector.position.y;
+			const double  leftRatio       = topToFirstYDiff / leftVector.position.y;
+			const double  rightRatio      = topToFirstYDiff / rightVector.position.y;
 
-				const Vertex  startLeft       = vertices[0] + leftVector  * leftRatio;
-				const Vertex  startRight      = vertices[0] + rightVector * rightRatio;
+			const Vertex  startLeft       = vertices[0] + leftVector  * leftRatio;
+			const Vertex  startRight      = vertices[0] + rightVector * rightRatio;
 
-				const size_t  targetY         = size_t(std::ceil(vertices[1].position.y));
+			const size_t  targetY         = size_t(std::ceil(vertices[1].position.y));
 
-				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
-			}
+			fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
 		}
 
 		void fillTopHeavyTriangle(const std::array<Vertex,3>& vertices, const TShader& shader, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			if (vertices[1].position.y != vertices[2].position.y)
-			{
-				const size_t  firstY          = size_t(std::ceil(vertices[1].position.y));
+			const size_t  firstY          = size_t(std::ceil(vertices[1].position.y));
 
-				const double   middleToFirstY = double(firstY) - vertices[1].position.y;
-				const double   topToFirstY    = double(firstY) - vertices[0].position.y;
+			const double   middleToFirstY = double(firstY) - vertices[1].position.y;
+			const double   topToFirstY    = double(firstY) - vertices[0].position.y;
 
-				const Vertex& leftVector      = middleVertexLeft ? middleToBottomVector : topToBottomVector;
-				const Vertex& rightVector     = middleVertexLeft ? topToBottomVector    : middleToBottomVector;
+			const Vertex& leftVector      = middleVertexLeft ? middleToBottomVector : topToBottomVector;
+			const Vertex& rightVector     = middleVertexLeft ? topToBottomVector    : middleToBottomVector;
 
-				const double   ratioLeft      = (middleVertexLeft ? middleToFirstY : topToFirstY   ) / leftVector.position.y;
-				const double   ratioRight     = (middleVertexLeft ? topToFirstY    : middleToFirstY) / rightVector.position.y;
+			const double   ratioLeft      = (middleVertexLeft ? middleToFirstY : topToFirstY   ) / leftVector.position.y;
+			const double   ratioRight     = (middleVertexLeft ? topToFirstY    : middleToFirstY) / rightVector.position.y;
 
-				const Vertex  startLeft       = (middleVertexLeft ? vertices[1] : vertices[0]) + leftVector  * ratioLeft;
-				const Vertex  startRight      = (middleVertexLeft ? vertices[0] : vertices[1]) + rightVector * ratioRight;
+			const Vertex  startLeft       = (middleVertexLeft ? vertices[1] : vertices[0]) + leftVector  * ratioLeft;
+			const Vertex  startRight      = (middleVertexLeft ? vertices[0] : vertices[1]) + rightVector * ratioRight;
 
-				const size_t  targetY         = size_t(std::ceil(vertices[2].position.y));
+			const size_t  targetY         = size_t(std::ceil(vertices[2].position.y));
 
-				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
-			}
+			fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
 		}
 
 		void fillTriangle(const Vertex& leftVector, const Vertex& rightVector, const size_t firstY, const size_t targetY, const Vertex& leftStart, const Vertex& rightStart, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
@@ -341,13 +335,13 @@ namespace tr
 
 			double       rowCount = 0.0f;
 
-			for (size_t currentY = firstY; currentY < targetY; ++currentY, currentLeft = leftStart + leftChange * rowCount, currentRight = rightStart + rightChange * rowCount, ++rowCount)
+			for (size_t currentY = firstY; currentY < targetY; ++rowCount, ++currentY, currentLeft = leftStart + leftChange * rowCount, currentRight = rightStart + rightChange * rowCount)
 			{
 				const Vertex leftToRightVector = (currentRight - currentLeft) / (currentRight.position.x - currentLeft.position.x);
 				const size_t firstX            = size_t(std::ceil(currentLeft.position.x));
 				const size_t lastX             = size_t(std::ceil(currentRight.position.x));
-				const double leftToFirstX      = firstX - currentLeft.position.x;
-				const double ratio             = leftToFirstX / (lastX - firstX);
+				const double leftToFirstX      = double(firstX) - currentLeft.position.x;
+				const double ratio             = leftToFirstX / (currentRight.position.x - currentLeft.position.x);
 				const Vertex firstPixel        = currentLeft + leftToRightVector * ratio;
 				Color*       colorPointer      = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
 				double*      depthPointer      = depthBuffer.getData() + (currentY * depthBuffer.getWidth() + firstX);
