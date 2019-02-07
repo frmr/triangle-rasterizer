@@ -29,8 +29,8 @@ namespace tr
 		{
 			m_width       = width;
 			m_height      = height;
-			m_floatWidth  = double(width);
-			m_floatHeight = double(height);
+			m_floatWidth  = float(width);
+			m_floatHeight = float(height);
 
 			m_data.resize(width * height, T());
 		}
@@ -50,14 +50,14 @@ namespace tr
 			return m_data[y * m_width + x];
 		}
 
-		T getAt(double u, double v, const bool filter, const TextureWrappingMode textureWrappingMode) const
+		T getAt(float u, float v, const bool filter, const TextureWrappingMode textureWrappingMode) const
 		{
 			if (textureWrappingMode == TextureWrappingMode::Clamp)
 			{
-				constexpr double upperLimit = 1.0f - std::numeric_limits<double>::epsilon();
+				constexpr float upperLimit = 1.0f - std::numeric_limits<float>::epsilon();
 
-				u = std::clamp(u, 0.0, upperLimit);
-				v = std::clamp(v, 0.0, upperLimit);
+				u = std::clamp(u, 0.0f, upperLimit);
+				v = std::clamp(v, 0.0f, upperLimit);
 			}
 			else
 			{
@@ -73,17 +73,17 @@ namespace tr
 				u -= 0.5f;
 				v -= 0.5f;
 
-				const double uFloor    = std::floor(u);
-				const double vFloor    = std::floor(v);
+				const float  uFloor    = std::floor(u);
+				const float  vFloor    = std::floor(v);
 
 				size_t       x0        = size_t(uFloor);
 				size_t       y0        = size_t(vFloor);
 
-				const double uDiff     = u - uFloor;
-				const double vDiff     = v - vFloor;
+				const float  uDiff     = u - uFloor;
+				const float  vDiff     = v - vFloor;
 
-				const double uOpposite = 1.0f - uDiff;
-				const double vOpposite = 1.0f - vDiff;
+				const float  uOpposite = 1.0f - uDiff;
+				const float  vOpposite = 1.0f - vDiff;
 
 				size_t       x1        = x0 + 1;
 				size_t       y1        = y0 + 1;
@@ -136,18 +136,18 @@ namespace tr
 		}
 
 	protected:
-		double fastFloor(const double x) const
+		float fastFloor(const float x) const
 		{
 			const int xi = int(x);
-			return double(x < xi ? xi - 1 : xi);
+			return float(x < xi ? xi - 1 : xi);
 		}
 
 	protected:
 		static constexpr size_t s_maxSize = std::numeric_limits<size_t>::max();
 		size_t                  m_width;
 		size_t                  m_height;
-		double                  m_floatWidth;
-		double                  m_floatHeight;
+		float                   m_floatWidth;
+		float                   m_floatHeight;
 		std::vector<T>          m_data;
 	};
 }
