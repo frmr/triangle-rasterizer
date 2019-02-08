@@ -205,6 +205,7 @@ int main(int argc, char* argv[])
 	rasterizer.setDepthTest(true);
 	rasterizer.setTextureMode(tr::TextureMode::Perspective);
 	rasterizer.setCullFaceMode(tr::CullFaceMode::None);
+	rasterizer.setInterlace(0, 4);
 
 	shader.setTexture(&texture);
 	shader.setTextureWrappingMode(tr::TextureWrappingMode::Repeat);

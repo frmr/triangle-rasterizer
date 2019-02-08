@@ -6,6 +6,7 @@ namespace tr
 	{
 		Success,
 		InvalidBufferSize,
-		BufferSizeMismatch
+		BufferSizeMismatch,
+		InvalidInterlaceGap
 	};
 }

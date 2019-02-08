@@ -28,7 +28,9 @@ namespace tr
 			m_matrix(),
 			m_depthTest(true),
 			m_textureMode(TextureMode::Perspective),
-			m_cullFaceMode(CullFaceMode::Back)
+			m_cullFaceMode(CullFaceMode::Back),
+			m_interlaceOffset(0),
+			m_interlaceGap(1)
 		{
 		}
 
@@ -108,6 +110,17 @@ namespace tr
 		void setCullFaceMode(const CullFaceMode cullFaceMode)
 		{
 			m_cullFaceMode = cullFaceMode;
+		}
+
+		Error setInterlace(const size_t offset, const size_t gap)
+		{
+			if (gap == 0)
+			{
+				return Error::InvalidInterlaceGap;
+			}
+
+			m_interlaceOffset = offset;
+			m_interlaceGap    = gap;
 		}
 
 	private:
@@ -286,56 +299,63 @@ namespace tr
 
 		void fillBottomHeavyTriangle(const std::array<Vertex,3>& vertices, const TShader& shader, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			const size_t  firstY          = size_t(std::ceil(vertices[0].position.y));
+			if (vertices[0].position.y != vertices[1].position.y)
+			{
+				const size_t  firstY          = size_t(std::ceil(vertices[0].position.y));
 
-			const float   topToFirstYDiff = float(firstY) - vertices[0].position.y;
+				const float   topToFirstYDiff = float(firstY) - vertices[0].position.y;
 
-			const Vertex& leftVector      = middleVertexLeft ? topToMiddleVector : topToBottomVector;
-			const Vertex& rightVector     = middleVertexLeft ? topToBottomVector : topToMiddleVector;
+				const Vertex& leftVector      = middleVertexLeft ? topToMiddleVector : topToBottomVector;
+				const Vertex& rightVector     = middleVertexLeft ? topToBottomVector : topToMiddleVector;
 
-			const float   leftRatio       = topToFirstYDiff / leftVector.position.y;
-			const float   rightRatio      = topToFirstYDiff / rightVector.position.y;
+				const float   leftRatio       = topToFirstYDiff / leftVector.position.y;
+				const float   rightRatio      = topToFirstYDiff / rightVector.position.y;
 
-			const Vertex  startLeft       = vertices[0] + leftVector  * leftRatio;
-			const Vertex  startRight      = vertices[0] + rightVector * rightRatio;
+				const Vertex  startLeft       = vertices[0] + leftVector  * leftRatio;
+				const Vertex  startRight      = vertices[0] + rightVector * rightRatio;
 
-			const size_t  targetY         = size_t(std::ceil(vertices[1].position.y));
+				const size_t  targetY         = size_t(std::ceil(vertices[1].position.y));
 
-			fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
+				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
+				}
 		}
 
 		void fillTopHeavyTriangle(const std::array<Vertex,3>& vertices, const TShader& shader, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			const size_t  firstY         = size_t(std::ceil(vertices[1].position.y));
+			if (vertices[1].position.y != vertices[2].position.y)
+			{
+				const size_t  firstY         = size_t(std::ceil(vertices[1].position.y));
 
-			const float   middleToFirstY = float(firstY) - vertices[1].position.y;
-			const float   topToFirstY    = float(firstY) - vertices[0].position.y;
+				const float   middleToFirstY = float(firstY) - vertices[1].position.y;
+				const float   topToFirstY    = float(firstY) - vertices[0].position.y;
 
-			const Vertex& leftVector     = middleVertexLeft ? middleToBottomVector : topToBottomVector;
-			const Vertex& rightVector    = middleVertexLeft ? topToBottomVector    : middleToBottomVector;
+				const Vertex& leftVector     = middleVertexLeft ? middleToBottomVector : topToBottomVector;
+				const Vertex& rightVector    = middleVertexLeft ? topToBottomVector    : middleToBottomVector;
 
-			const float   ratioLeft      = (middleVertexLeft ? middleToFirstY : topToFirstY   ) / leftVector.position.y;
-			const float   ratioRight     = (middleVertexLeft ? topToFirstY    : middleToFirstY) / rightVector.position.y;
+				const float   ratioLeft      = (middleVertexLeft ? middleToFirstY : topToFirstY   ) / leftVector.position.y;
+				const float   ratioRight     = (middleVertexLeft ? topToFirstY    : middleToFirstY) / rightVector.position.y;
 
-			const Vertex  startLeft      = (middleVertexLeft ? vertices[1] : vertices[0]) + leftVector  * ratioLeft;
-			const Vertex  startRight     = (middleVertexLeft ? vertices[0] : vertices[1]) + rightVector * ratioRight;
+				const Vertex  startLeft      = (middleVertexLeft ? vertices[1] : vertices[0]) + leftVector  * ratioLeft;
+				const Vertex  startRight     = (middleVertexLeft ? vertices[0] : vertices[1]) + rightVector * ratioRight;
 
-			const size_t  targetY        = size_t(std::ceil(vertices[2].position.y));
+				const size_t  targetY        = size_t(std::ceil(vertices[2].position.y));
 
-			fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
+				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
+			}
 		}
 
 		void fillTriangle(const Vertex& leftVector, const Vertex& rightVector, const size_t firstY, const size_t targetY, const Vertex& leftStart, const Vertex& rightStart, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			const Vertex leftChange   = leftVector  / leftVector.position.y;
-			const Vertex rightChange  = rightVector / rightVector.position.y;
+			const Vertex leftChange       = leftVector  / leftVector.position.y;
+			const Vertex rightChange      = rightVector / rightVector.position.y;
 
-			Vertex       currentLeft  = leftStart;
-			Vertex       currentRight = rightStart;
+			Vertex       currentLeft      = leftStart;
+			Vertex       currentRight     = rightStart;
 
-			float        rowCount = 0.0f;
+			size_t       interlacedFirstY = m_interlaceOffset + size_t((double(firstY) / double(m_interlaceGap)) * double(m_interlaceGap));
+			size_t       rowCount         = interlacedFirstY - firstY;
 
-			for (size_t currentY = firstY; currentY < targetY; ++rowCount, ++currentY, currentLeft = leftStart + leftChange * rowCount, currentRight = rightStart + rightChange * rowCount)
+			for (size_t currentY = interlacedFirstY; currentY < targetY; rowCount += m_interlaceGap, currentY += m_interlaceGap, currentLeft = leftStart + leftChange * float(rowCount), currentRight = rightStart + rightChange * float(rowCount))
 			{
 				const Vertex leftToRightVector = (currentRight - currentLeft) / (currentRight.position.x - currentLeft.position.x);
 				const size_t firstX            = size_t(std::ceil(currentLeft.position.x));
@@ -345,11 +365,11 @@ namespace tr
 				const Vertex firstPixel        = currentLeft + leftToRightVector * ratio;
 				Color*       colorPointer      = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
 				float*       depthPointer      = depthBuffer.getData() + (currentY * depthBuffer.getWidth() + firstX);
-				float        columnCount       = 0.0f;
+				size_t       columnCount       = 0;
 
 				for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer, ++columnCount)
 				{
-					const Vertex pixel = firstPixel + leftToRightVector * columnCount;
+					const Vertex pixel = firstPixel + leftToRightVector * float(columnCount);
 
 					if (!m_depthTest || pixel.position.z < *depthPointer)
 					{
@@ -372,5 +392,7 @@ namespace tr
 		bool         m_depthTest;
 		TextureMode  m_textureMode;
 		CullFaceMode m_cullFaceMode;
+		size_t       m_interlaceOffset;
+		size_t       m_interlaceGap;
 	};
 }
