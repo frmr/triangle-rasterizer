@@ -171,6 +171,8 @@ int main(int argc, char* argv[])
 	const std::vector<tr::Vertex>     vertices         = defineVertices();
 	const float                       aspectRatio      = float(screenWidth) / float(screenHeight);
 	const Matrix4                     projectionMatrix = createPerspectiveProjectionMatrix(-aspectRatio, aspectRatio, -1.0f, 1.0f, 1.0f, 100.0f);
+	const size_t                      interlaceGap     = 1;
+	size_t                            interlaceOffset  = 0;
 	const tr::ColorBuffer             texture("data/udon.png");
 	tr::ColorBuffer                   colorBuffer(screenWidth, screenHeight);
 	tr::DepthBuffer                   depthBuffer(screenWidth, screenHeight);
@@ -205,7 +207,7 @@ int main(int argc, char* argv[])
 	rasterizer.setDepthTest(true);
 	rasterizer.setTextureMode(tr::TextureMode::Perspective);
 	rasterizer.setCullFaceMode(tr::CullFaceMode::None);
-	rasterizer.setInterlace(0, 4);
+	rasterizer.setInterlace(interlaceOffset, interlaceGap);
 
 	shader.setTexture(&texture);
 	shader.setTextureWrappingMode(tr::TextureWrappingMode::Repeat);
@@ -229,6 +231,13 @@ int main(int argc, char* argv[])
 		viewMatrix.translate(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
 		viewMatrix.rotateY(-cameraRotation.y);
 		viewMatrix.rotateX(-cameraRotation.x);
+		
+		rasterizer.setInterlace(interlaceOffset, interlaceGap);
+
+		if (++interlaceOffset == interlaceGap)
+		{
+			interlaceOffset = 0;
+		}
 		
 		rasterizer.setMatrix(projectionMatrix * viewMatrix);
 		rasterizer.draw(vertices, shader, colorBuffer, depthBuffer);

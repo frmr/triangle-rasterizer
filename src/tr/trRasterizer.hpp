@@ -121,6 +121,8 @@ namespace tr
 
 			m_interlaceOffset = offset;
 			m_interlaceGap    = gap;
+
+			return Error::Success;
 		}
 
 	private:
