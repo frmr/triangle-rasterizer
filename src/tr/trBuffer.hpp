@@ -73,8 +73,8 @@ namespace tr
 				u -= 0.5f;
 				v -= 0.5f;
 
-				const float  uFloor    = std::floor(u);
-				const float  vFloor    = std::floor(v);
+				const float  uFloor    = std::floorf(u);
+				const float  vFloor    = std::floorf(v);
 
 				size_t       x0        = size_t(uFloor);
 				size_t       y0        = size_t(vFloor);

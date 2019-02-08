@@ -303,7 +303,7 @@ namespace tr
 		{
 			if (vertices[0].position.y != vertices[1].position.y)
 			{
-				const size_t  firstY          = size_t(std::ceil(vertices[0].position.y));
+				const size_t  firstY          = size_t(std::ceilf(vertices[0].position.y));
 
 				const float   topToFirstYDiff = float(firstY) - vertices[0].position.y;
 
@@ -316,7 +316,7 @@ namespace tr
 				const Vertex  startLeft       = vertices[0] + leftVector  * leftRatio;
 				const Vertex  startRight      = vertices[0] + rightVector * rightRatio;
 
-				const size_t  targetY         = size_t(std::ceil(vertices[1].position.y));
+				const size_t  targetY         = size_t(std::ceilf(vertices[1].position.y));
 
 				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
 				}
@@ -326,7 +326,7 @@ namespace tr
 		{
 			if (vertices[1].position.y != vertices[2].position.y)
 			{
-				const size_t  firstY         = size_t(std::ceil(vertices[1].position.y));
+				const size_t  firstY         = size_t(std::ceilf(vertices[1].position.y));
 
 				const float   middleToFirstY = float(firstY) - vertices[1].position.y;
 				const float   topToFirstY    = float(firstY) - vertices[0].position.y;
@@ -340,7 +340,7 @@ namespace tr
 				const Vertex  startLeft      = (middleVertexLeft ? vertices[1] : vertices[0]) + leftVector  * ratioLeft;
 				const Vertex  startRight     = (middleVertexLeft ? vertices[0] : vertices[1]) + rightVector * ratioRight;
 
-				const size_t  targetY        = size_t(std::ceil(vertices[2].position.y));
+				const size_t  targetY        = size_t(std::ceilf(vertices[2].position.y));
 
 				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
 			}
@@ -361,8 +361,8 @@ namespace tr
 			for (size_t currentY = interlacedFirstY; currentY < targetY; rowCount += m_interlaceStep, currentY += m_interlaceStep, currentLeft = leftStart + leftChange * float(rowCount), currentRight = rightStart + rightChange * float(rowCount))
 			{
 				const Vertex leftToRightVector = (currentRight - currentLeft) / (currentRight.position.x - currentLeft.position.x);
-				const size_t firstX            = size_t(std::ceil(currentLeft.position.x));
-				const size_t lastX             = size_t(std::ceil(currentRight.position.x));
+				const size_t firstX            = size_t(std::ceilf(currentLeft.position.x));
+				const size_t lastX             = size_t(std::ceilf(currentRight.position.x));
 				const float  leftToFirstX      = float(firstX) - currentLeft.position.x;
 				const float  ratio             = leftToFirstX / (currentRight.position.x - currentLeft.position.x);
 				const Vertex firstPixel        = currentLeft + leftToRightVector * ratio;
