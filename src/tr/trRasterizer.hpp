@@ -30,7 +30,7 @@ namespace tr
 			m_textureMode(TextureMode::Perspective),
 			m_cullFaceMode(CullFaceMode::Back),
 			m_interlaceOffset(0),
-			m_interlaceGap(1)
+			m_interlaceStep(1)
 		{
 		}
 
@@ -112,15 +112,15 @@ namespace tr
 			m_cullFaceMode = cullFaceMode;
 		}
 
-		Error setInterlace(const size_t offset, const size_t gap)
+		Error setInterlace(const size_t offset, const size_t step)
 		{
-			if (gap == 0)
+			if (step == 0)
 			{
-				return Error::InvalidInterlaceGap;
+				return Error::InvalidInterlaceStep;
 			}
 
 			m_interlaceOffset = offset;
-			m_interlaceGap    = gap;
+			m_interlaceStep   = step;
 
 			return Error::Success;
 		}
@@ -351,14 +351,14 @@ namespace tr
 			const Vertex leftChange       = leftVector  / leftVector.position.y;
 			const Vertex rightChange      = rightVector / rightVector.position.y;
 
-			const size_t interlacedFirstY = firstY + m_interlaceOffset - (firstY % m_interlaceGap);
+			const size_t interlacedFirstY = firstY + m_interlaceOffset - (firstY % m_interlaceStep);
 
 			Vertex       currentLeft      = leftStart;
 			Vertex       currentRight     = rightStart;
 			
 			size_t       rowCount         = interlacedFirstY - firstY;
 
-			for (size_t currentY = interlacedFirstY; currentY < targetY; rowCount += m_interlaceGap, currentY += m_interlaceGap, currentLeft = leftStart + leftChange * float(rowCount), currentRight = rightStart + rightChange * float(rowCount))
+			for (size_t currentY = interlacedFirstY; currentY < targetY; rowCount += m_interlaceStep, currentY += m_interlaceStep, currentLeft = leftStart + leftChange * float(rowCount), currentRight = rightStart + rightChange * float(rowCount))
 			{
 				const Vertex leftToRightVector = (currentRight - currentLeft) / (currentRight.position.x - currentLeft.position.x);
 				const size_t firstX            = size_t(std::ceil(currentLeft.position.x));
@@ -396,6 +396,6 @@ namespace tr
 		TextureMode  m_textureMode;
 		CullFaceMode m_cullFaceMode;
 		size_t       m_interlaceOffset;
-		size_t       m_interlaceGap;
+		size_t       m_interlaceStep;
 	};
 }

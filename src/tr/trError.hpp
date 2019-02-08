@@ -7,6 +7,6 @@ namespace tr
 		Success,
 		InvalidBufferSize,
 		BufferSizeMismatch,
-		InvalidInterlaceGap
+		InvalidInterlaceStep
 	};
 }
