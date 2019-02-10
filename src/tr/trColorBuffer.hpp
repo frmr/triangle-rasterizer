@@ -1,7 +1,7 @@
 #pragma once
 
-#include "trBuffer.hpp"
-#include "trColor.hpp"
+#include "trError.hpp"
+#include "trMipBuffer.hpp"
 
 namespace tr
 {
@@ -10,9 +10,14 @@ namespace tr
 	public:
 		using Buffer<Color>::Buffer;
 
-		ColorBuffer(const std::string& filename);
+		                       ColorBuffer(const std::string& filename);
+		Error                  GenerateMipmaps();
 
 	private:
-		void copyTextureData(const std::vector<unsigned char>& decodedData);
+		void                   copyTextureData(const std::vector<unsigned char>& decodedData);
+		static bool            isPowerOfTwo(const size_t x);
+
+	private:
+		std::vector<MipBuffer> m_mipLevels;
 	};
 }

@@ -196,6 +196,7 @@
     <ClInclude Include="src\tr\trDepthShader.hpp" />
     <ClInclude Include="src\tr\trEdgeInfo.hpp" />
     <ClInclude Include="src\tr\trError.hpp" />
+    <ClInclude Include="src\tr\trMipBuffer.hpp" />
     <ClInclude Include="src\tr\trPrimitive.hpp" />
     <ClInclude Include="src\tr\trRasterizer.hpp" />
     <ClInclude Include="src\tr\tr.hpp" />
