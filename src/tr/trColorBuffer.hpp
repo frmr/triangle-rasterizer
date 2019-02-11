@@ -2,6 +2,7 @@
 
 #include "trError.hpp"
 #include "trMipBuffer.hpp"
+#include <cstdint>
 
 namespace tr
 {
@@ -14,7 +15,7 @@ namespace tr
 		Error                  GenerateMipmaps();
 
 	private:
-		void                   copyTextureData(const std::vector<unsigned char>& decodedData);
+		void                   copyTextureData(const std::vector<uint8_t>& decodedData);
 		static bool            isPowerOfTwo(const size_t x);
 
 	private:

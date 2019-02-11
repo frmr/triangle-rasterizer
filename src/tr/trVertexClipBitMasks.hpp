@@ -1,12 +1,14 @@
 #pragma once
 
+#include <cstdint>
+
 namespace tr
 {
-	constexpr unsigned char leftBitMask   = 1;
-	constexpr unsigned char rightBitMask  = 2;
-	constexpr unsigned char topBitMask    = 4;
-	constexpr unsigned char bottomBitMask = 8;
-	constexpr unsigned char nearBitMask   = 16;
-	constexpr unsigned char farBitMask    = 32;
-	constexpr unsigned char wBitMask      = 64;
+	constexpr uint8_t leftBitMask   = 1;
+	constexpr uint8_t rightBitMask  = 2;
+	constexpr uint8_t topBitMask    = 4;
+	constexpr uint8_t bottomBitMask = 8;
+	constexpr uint8_t nearBitMask   = 16;
+	constexpr uint8_t farBitMask    = 32;
+	constexpr uint8_t wBitMask      = 64;
 }

@@ -1,19 +1,18 @@
 #include "trColorBuffer.hpp"
-#include <cstdint>
 
 #include "../lodepng/lodepng.h"
 
 tr::ColorBuffer::ColorBuffer(const std::string& filename) :
 	Buffer<Color>()
 {
-	std::vector<unsigned char> encodedData;
+	std::vector<uint8_t> encodedData;
 
 	if (!lodepng::load_file(encodedData, filename))
 	{
-		unsigned int               width;
-		unsigned int               height;
-		lodepng::State             state;
-		std::vector<unsigned char> decodedData;
+		uint32_t             width;
+		uint32_t             height;
+		lodepng::State       state;
+		std::vector<uint8_t> decodedData;
 
 		state.info_raw.colortype = LodePNGColorType::LCT_RGBA;
 
@@ -64,13 +63,13 @@ tr::Error tr::ColorBuffer::GenerateMipmaps()
 	
 }
 
-void tr::ColorBuffer::copyTextureData(const std::vector<unsigned char>& decodedData)
+void tr::ColorBuffer::copyTextureData(const std::vector<uint8_t>& decodedData)
 {
-	for (unsigned int y = 0, i = 0; y < m_height; ++y)
+	for (size_t y = 0, i = 0; y < m_height; ++y)
 	{
-		for (unsigned int x = 0; x < m_width; ++x, i += 4)
+		for (size_t x = 0; x < m_width; ++x, i += 4)
 		{
-			const unsigned char* const pixelData = &decodedData[i];
+			const uint8_t* const pixelData = &decodedData[i];
 
 			at(x, y) = Color(
 				*(pixelData + 2),

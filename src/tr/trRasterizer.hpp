@@ -163,8 +163,8 @@ namespace tr
 
 		void clipAndDrawTriangle(const std::array<Vertex, 3>& vertices, const TShader& shader, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			std::array<unsigned char, 3> vertexClipBitFields     = { 0, 0, 0 };
-			std::array<unsigned char, 3> vertexEqualityBitFields = { 0, 0, 0 };
+			std::array<uint8_t, 3> vertexClipBitFields     = { 0, 0, 0 };
+			std::array<uint8_t, 3> vertexEqualityBitFields = { 0, 0, 0 };
 
 			for (size_t vertexIndex = 0; vertexIndex < 3; ++vertexIndex)
 			{
@@ -172,8 +172,8 @@ namespace tr
 				constexpr float margin           = 0.000001f;
 				const float     wLessMargin      = vertex.position.w - margin;
 				const float     wPlusMargin      = vertex.position.w + margin;
-				unsigned char&  clipBitField     = vertexClipBitFields[vertexIndex];
-				unsigned char&  equalityBitField = vertexEqualityBitFields[vertexIndex];
+				uint8_t&        clipBitField     = vertexClipBitFields[vertexIndex];
+				uint8_t&        equalityBitField = vertexEqualityBitFields[vertexIndex];
 
 				if (vertex.position.x <  -wPlusMargin) { clipBitField     |= leftBitMask;                     }
 				if (vertex.position.x >   wPlusMargin) { clipBitField     |= rightBitMask;                    }
@@ -206,11 +206,10 @@ namespace tr
 
 				for (const EdgeInfo& edge : edges)
 				{
-					const Vertex firstVertex    = vertices[edge.firstVertexIndex];
-					const Vertex secondVertex   = vertices[edge.secondVertexIndex];
-					const Vertex oppositeVertex = vertices[edge.oppositeVertexIndex];
-
-					const unsigned char combinedField = (vertexClipBitFields[edge.firstVertexIndex] ^ vertexClipBitFields[edge.secondVertexIndex]) & ~(vertexEqualityBitFields[edge.firstVertexIndex] | vertexEqualityBitFields[edge.secondVertexIndex]);
+					const Vertex  firstVertex    = vertices[edge.firstVertexIndex];
+					const Vertex  secondVertex   = vertices[edge.secondVertexIndex];
+					const Vertex  oppositeVertex = vertices[edge.oppositeVertexIndex];
+					const uint8_t combinedField  = (vertexClipBitFields[edge.firstVertexIndex] ^ vertexClipBitFields[edge.secondVertexIndex]) & ~(vertexEqualityBitFields[edge.firstVertexIndex] | vertexEqualityBitFields[edge.secondVertexIndex]);
 
 					if (combinedField)
 					{
@@ -272,13 +271,13 @@ namespace tr
 
 		static void sortVertices(std::array<Vertex,3>& vertices)
 		{
-			for (int iteration = 0; iteration < 2; ++iteration)
+			for (uint8_t iteration = 0; iteration < 2; ++iteration)
 			{
 				for (size_t vertexIndex = 0; vertexIndex < 2; ++vertexIndex)
 				{
 					if (vertices[vertexIndex].position.y > vertices[vertexIndex+1].position.y)
 					{
-						Vertex temp = vertices[vertexIndex];
+						const Vertex temp = vertices[vertexIndex];
 
 						vertices[vertexIndex]   = vertices[vertexIndex+1];
 						vertices[vertexIndex+1] = temp;

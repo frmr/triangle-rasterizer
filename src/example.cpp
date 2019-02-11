@@ -17,9 +17,9 @@ bool initSdl()
 	return true;
 }
 
-bool initWindow(SDL_Window** window, SDL_Renderer** renderer, SDL_Texture** texture, const int screenWidth, const int screenHeight, const bool fullscreen)
+bool initWindow(SDL_Window** window, SDL_Renderer** renderer, SDL_Texture** texture, const size_t screenWidth, const size_t screenHeight, const bool fullscreen)
 {
-	*window = SDL_CreateWindow("Space Raster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
+	*window = SDL_CreateWindow("Space Raster", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, int(screenWidth), int(screenHeight), SDL_WINDOW_SHOWN | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
 
 	if (!window)
 	{
@@ -34,7 +34,7 @@ bool initWindow(SDL_Window** window, SDL_Renderer** renderer, SDL_Texture** text
 		std::cerr << "InitWindow() in src/main.cpp: Failed to initialise SDL renderer." << std::endl;
 	}
 
-	*texture = SDL_CreateTexture(*renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, screenWidth, screenHeight);
+	*texture = SDL_CreateTexture(*renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, int(screenWidth), int(screenHeight));
 
 	if (!texture)
 	{
@@ -162,8 +162,8 @@ void updateInputs(bool& running, Vector4& position, Vector4& rotation)
 
 int main(int argc, char* argv[])
 {
-	constexpr int                     screenWidth      = 1920;
-	constexpr int                     screenHeight     = 1080;
+	constexpr size_t                  screenWidth      = 1920;
+	constexpr size_t                  screenHeight     = 1080;
 	bool                              running          = true;
 	SDL_Window*                       sdlWindow        = nullptr;
 	SDL_Renderer*                     sdlRenderer      = nullptr;

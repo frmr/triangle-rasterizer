@@ -22,7 +22,7 @@ namespace tr
 		{
 		}
 
-		Color(const unsigned char b, const unsigned char g, const unsigned char r, const unsigned char a) :
+		Color(const uint8_t b, const uint8_t g, const uint8_t r, const uint8_t a) :
 			b(b),
 			g(g),
 			r(r),
@@ -31,17 +31,17 @@ namespace tr
 		}
 
 		Color(const Vector4& vector) :
-			b((unsigned char)vector[0]),
-			g((unsigned char)vector[1]),
-			r((unsigned char)vector[2]),
-			a((unsigned char)vector[3])
+			b((uint8_t)vector[0]),
+			g((uint8_t)vector[1]),
+			r((uint8_t)vector[2]),
+			a((uint8_t)vector[3])
 		{
 		}
 
-		unsigned char b;
-		unsigned char g;
-		unsigned char r;
-		unsigned char a;
+		uint8_t b;
+		uint8_t g;
+		uint8_t r;
+		uint8_t a;
 	};
 
 #pragma pack(pop)

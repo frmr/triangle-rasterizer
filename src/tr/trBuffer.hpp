@@ -138,7 +138,7 @@ namespace tr
 	protected:
 		float fastFloor(const float x) const
 		{
-			const int xi = int(x);
+			const int32_t xi = int32_t(x);
 			return float(x < xi ? xi - 1 : xi);
 		}
 

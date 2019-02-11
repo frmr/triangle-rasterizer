@@ -37,10 +37,10 @@ void tr::DefaultShader::draw(const Vector4& position, const Vector4& worldPositi
 			}
 
 			*color = Color(
-				(unsigned char)((uint32_t(textureColor.b) * uint32_t(textureColor.a) + uint32_t(bufferColor.b) * uint32_t(bufferColor.a)) / totalAlpha),
-				(unsigned char)((uint32_t(textureColor.g) * uint32_t(textureColor.a) + uint32_t(bufferColor.g) * uint32_t(bufferColor.a)) / totalAlpha),
-				(unsigned char)((uint32_t(textureColor.r) * uint32_t(textureColor.a) + uint32_t(bufferColor.r) * uint32_t(bufferColor.a)) / totalAlpha),
-				(unsigned char)(std::min(totalAlpha, uint16_t(255)))
+				(uint8_t)((uint32_t(textureColor.b) * uint32_t(textureColor.a) + uint32_t(bufferColor.b) * uint32_t(bufferColor.a)) / totalAlpha),
+				(uint8_t)((uint32_t(textureColor.g) * uint32_t(textureColor.a) + uint32_t(bufferColor.g) * uint32_t(bufferColor.a)) / totalAlpha),
+				(uint8_t)((uint32_t(textureColor.r) * uint32_t(textureColor.a) + uint32_t(bufferColor.r) * uint32_t(bufferColor.a)) / totalAlpha),
+				(uint8_t)(std::min(totalAlpha, uint16_t(255)))
 			);
 		}
 	}
