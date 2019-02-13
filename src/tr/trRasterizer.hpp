@@ -300,7 +300,7 @@ namespace tr
 
 		void fillBottomHeavyTriangle(const std::array<Vertex,3>& vertices, const TShader& shader, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			if (vertices[0].position.y != vertices[1].position.y)
+			if (vertices[1].position.y - vertices[0].position.y >= 1.0f)
 			{
 				const size_t  firstY          = size_t(std::ceilf(vertices[0].position.y));
 
@@ -318,12 +318,12 @@ namespace tr
 				const size_t  targetY         = size_t(std::ceilf(vertices[1].position.y));
 
 				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
-				}
+			}
 		}
 
 		void fillTopHeavyTriangle(const std::array<Vertex,3>& vertices, const TShader& shader, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			if (vertices[1].position.y != vertices[2].position.y)
+			if (vertices[2].position.y - vertices[1].position.y >= 1.0f)
 			{
 				const size_t  firstY         = size_t(std::ceilf(vertices[1].position.y));
 
@@ -349,12 +349,9 @@ namespace tr
 		{
 			const Vertex leftChange       = leftVector  / leftVector.position.y;
 			const Vertex rightChange      = rightVector / rightVector.position.y;
-
 			const size_t interlacedFirstY = firstY + m_interlaceOffset - (firstY % m_interlaceStep);
-
 			Vertex       currentLeft      = leftStart;
 			Vertex       currentRight     = rightStart;
-			
 			size_t       rowCount         = interlacedFirstY - firstY;
 
 			for (size_t currentY = interlacedFirstY; currentY < targetY; rowCount += m_interlaceStep, currentY += m_interlaceStep, currentLeft = leftStart + leftChange * float(rowCount), currentRight = rightStart + rightChange * float(rowCount))
