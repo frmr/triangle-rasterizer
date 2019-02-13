@@ -87,7 +87,7 @@
     <ClInclude Include="src\tr\trError.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="src\tr\trMipBuffer.hpp">
+    <ClInclude Include="src\tr\trTexture.hpp">
       <Filter>tr</Filter>
     </ClInclude>
   </ItemGroup>
@@ -108,8 +108,6 @@
     <ClCompile Include="src\tr\trDepthShader.cpp">
       <Filter>tr\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="src\tr\trColorBuffer.cpp">
-      <Filter>tr\Buffers</Filter>
-    </ClCompile>
+    <ClCompile Include="src\tr\trTexture.cpp" />
   </ItemGroup>
 </Project>

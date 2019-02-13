@@ -52,7 +52,7 @@ void tr::DefaultShader::draw(const Vector4& position, const Vector4& worldPositi
 	*depth = position.z;
 }
 
-void tr::DefaultShader::setTexture(const ColorBuffer* const texture)
+void tr::DefaultShader::setTexture(const Texture* const texture)
 {
 	m_texture = texture;
 }

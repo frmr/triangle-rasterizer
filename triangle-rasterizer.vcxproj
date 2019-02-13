@@ -196,7 +196,6 @@
     <ClInclude Include="src\tr\trDepthShader.hpp" />
     <ClInclude Include="src\tr\trEdgeInfo.hpp" />
     <ClInclude Include="src\tr\trError.hpp" />
-    <ClInclude Include="src\tr\trMipBuffer.hpp" />
     <ClInclude Include="src\tr\trPrimitive.hpp" />
     <ClInclude Include="src\tr\trRasterizer.hpp" />
     <ClInclude Include="src\tr\tr.hpp" />
@@ -205,6 +204,7 @@
     <ClInclude Include="src\tr\trColorBuffer.hpp" />
     <ClInclude Include="src\tr\trCoord.hpp" />
     <ClInclude Include="src\tr\trDepthBuffer.hpp" />
+    <ClInclude Include="src\tr\trTexture.hpp" />
     <ClInclude Include="src\tr\trTextureMode.hpp" />
     <ClInclude Include="src\tr\trTextureWrappingMode.hpp" />
     <ClInclude Include="src\tr\trVertex.hpp" />
@@ -214,9 +214,9 @@
     <ClCompile Include="src\example.cpp" />
     <ClCompile Include="src\lodepng\lodepng.cpp" />
     <ClCompile Include="src\matrix\Matrices.cpp" />
-    <ClCompile Include="src\tr\trColorBuffer.cpp" />
     <ClCompile Include="src\tr\trDefaultShader.cpp" />
     <ClCompile Include="src\tr\trDepthShader.cpp" />
+    <ClCompile Include="src\tr\trTexture.cpp" />
     <ClCompile Include="src\tr\trVertex.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

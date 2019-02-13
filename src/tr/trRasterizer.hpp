@@ -1,7 +1,7 @@
 #pragma once
 
 #include "trAxis.hpp"
-#include "trColorBuffer.hpp"
+#include "trTexture.hpp"
 #include "trCoord.hpp"
 #include "trCullFaceMode.hpp"
 #include "trDepthBuffer.hpp"

@@ -20,18 +20,12 @@ namespace tr
 		{
 		}
 
-		Buffer(const size_t& width, const size_t& height)
+		Buffer(const size_t& width, const size_t& height) :
+			m_width(width),
+			m_height(height),
+			m_floatWidth(float(width)),
+			m_floatHeight(float(height))
 		{
-			init(width, height);
-		}
-
-		void init(const size_t& width, const size_t& height)
-		{
-			m_width       = width;
-			m_height      = height;
-			m_floatWidth  = float(width);
-			m_floatHeight = float(height);
-
 			m_data.resize(width * height, T());
 		}
 
@@ -144,10 +138,10 @@ namespace tr
 
 	protected:
 		static constexpr size_t s_maxSize = std::numeric_limits<size_t>::max();
-		size_t                  m_width;
-		size_t                  m_height;
-		float                   m_floatWidth;
-		float                   m_floatHeight;
+		const size_t            m_width;
+		const size_t            m_height;
+		const float             m_floatWidth;
+		const float             m_floatHeight;
 		std::vector<T>          m_data;
 	};
 }
