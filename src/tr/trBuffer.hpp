@@ -129,6 +129,16 @@ namespace tr
 			return m_height;
 		}
 
+		float getFloatWidth() const
+		{
+			return m_floatWidth;
+		}
+
+		float getFloatHeight() const
+		{
+			return m_floatHeight;
+		}
+
 	protected:
 		float fastFloor(const float x) const
 		{

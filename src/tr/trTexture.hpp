@@ -18,6 +18,7 @@ namespace tr
 		const ColorBuffer&       getConstMipLevel(const size_t mipLevel) const;
 		size_t                   getNumMipLevels() const;
 		Color                    getAt(float u, float v, const bool filter, const TextureWrappingMode textureWrappingMode) const;
+		Color                    getAt(float u, float v, const bool filter, const TextureWrappingMode textureWrappingMode, const float du, const float dv, const bool interpolateMipmapLevels) const;
 
 	private:
 		void                     init(const size_t width, const size_t height);
@@ -26,6 +27,7 @@ namespace tr
 
 	private:
 		std::vector<ColorBuffer> m_mipLevels;
+		size_t                   m_maxMipLevelIndex;
 		ColorBuffer*             m_baseLevel;
 	};
 }

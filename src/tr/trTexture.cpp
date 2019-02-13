@@ -66,6 +66,8 @@ tr::Error tr::Texture::generateMipmaps()
 		source = &m_mipLevels.back();
 	}
 	while (source->getWidth() > 1 && source->getHeight() > 1);
+
+	m_maxMipLevelIndex = m_mipLevels.size() - 1;
 }
 
 size_t tr::Texture::getWidth() const
@@ -98,10 +100,37 @@ tr::Color tr::Texture::getAt(float u, float v, const bool filter, const TextureW
 	return m_baseLevel->getAt(u, v, filter, textureWrappingMode);
 }
 
+tr::Color tr::Texture::getAt(float u, float v, const bool filter, const TextureWrappingMode textureWrappingMode, const float du, const float dv, const bool interpolateMipmapLevels) const
+{
+	const float dx       = du * m_baseLevel->getFloatWidth();
+	const float dy       = dv * m_baseLevel->getFloatHeight();
+	const float mipLevel = std::log2(std::max(dx, dy));
+
+	if (interpolateMipmapLevels)
+	{
+		const size_t  floor      = std::min(size_t(mipLevel), m_maxMipLevelIndex);
+		const size_t  ceil       = std::min(floor + 1,        m_maxMipLevelIndex);
+
+		const float   ceilRatio  = mipLevel - float(floor);
+		const float   floorRatio = 1.0f - ceilRatio;
+
+		const Vector4 floorColor = m_mipLevels[floor].getAt(u, v, filter, textureWrappingMode).ToVector();
+		const Vector4 ceilColor  = m_mipLevels[ceil].getAt(u, v, filter, textureWrappingMode).ToVector();
+
+		return Color(floorColor * floorRatio + ceilColor * ceilRatio);
+	}
+	else
+	{
+		return m_mipLevels[std::min(size_t(std::lroundf(mipLevel)), m_mipLevels.size() - 1)].getAt(u, v, filter, textureWrappingMode);
+	}
+}
+
 void tr::Texture::init(const size_t width, const size_t height)
 {
 	m_mipLevels.push_back(ColorBuffer(width, height));
-	m_baseLevel = m_mipLevels.data();
+
+	m_maxMipLevelIndex = m_mipLevels.size() - 1;
+	m_baseLevel        = m_mipLevels.data();
 }
 
 void tr::Texture::copyImageDataToBaseLevel(const std::vector<uint8_t>& decodedData)
