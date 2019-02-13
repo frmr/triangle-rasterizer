@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
 	const std::vector<tr::Vertex>     vertices         = defineVertices();
 	const float                       aspectRatio      = float(screenWidth) / float(screenHeight);
 	const Matrix4                     projectionMatrix = createPerspectiveProjectionMatrix(-aspectRatio, aspectRatio, -1.0f, 1.0f, 1.0f, 100.0f);
-	const tr::Texture                 texture("data/udon.png");
+	tr::Texture                       texture("data/udon.png");
 	tr::ColorBuffer                   colorBuffer(screenWidth, screenHeight);
 	tr::DepthBuffer                   depthBuffer(screenWidth, screenHeight);
 	tr::DefaultShader                 shader;
@@ -180,6 +180,8 @@ int main(int argc, char* argv[])
 	Vector4                           cameraPosition(0.0f, 0.0f, 10.0f, 1.0f);
 
 	tr::Rasterizer<tr::DefaultShader> rasterizer;
+
+	texture.generateMipmaps();
 
 	if (screenWidth <= 0 || screenHeight <= 0)
 	{

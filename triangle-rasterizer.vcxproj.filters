@@ -108,6 +108,8 @@
     <ClCompile Include="src\tr\trDepthShader.cpp">
       <Filter>tr\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="src\tr\trTexture.cpp" />
+    <ClCompile Include="src\tr\trTexture.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

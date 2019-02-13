@@ -15,6 +15,8 @@ namespace tr
 		size_t                   getWidth() const;
 		size_t                   getHeight() const;
 		ColorBuffer&             getMipLevel(const size_t mipLevel);
+		const ColorBuffer&       getConstMipLevel(const size_t mipLevel) const;
+		size_t                   getNumMipLevels() const;
 		Color                    getAt(float u, float v, const bool filter, const TextureWrappingMode textureWrappingMode) const;
 
 	private:

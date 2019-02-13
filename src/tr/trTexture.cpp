@@ -37,7 +37,7 @@ tr::Error tr::Texture::generateMipmaps()
 			return Error::InvalidBufferSize;
 		}
 
-		m_mipLevels.reserve(std::max(size_t(std::log2(m_baseLevel->getWidth())), size_t(std::log2(m_baseLevel->getHeight()))));
+		m_mipLevels.reserve(std::max(size_t(std::log2(m_baseLevel->getWidth())), size_t(std::log2(m_baseLevel->getHeight()))) + 1);
 		m_baseLevel = m_mipLevels.data();
 	}
 
@@ -45,7 +45,7 @@ tr::Error tr::Texture::generateMipmaps()
 
 	do
 	{
-		m_mipLevels.emplace_back(source->getHeight() / 2, source->getHeight() / 2);
+		m_mipLevels.emplace_back(source->getWidth() / 2, source->getHeight() / 2);
 
 		for (size_t sourceY = 0, destY = 0; sourceY < source->getHeight(); sourceY += 2, ++destY)
 		{
@@ -81,6 +81,16 @@ size_t tr::Texture::getHeight() const
 tr::ColorBuffer& tr::Texture::getMipLevel(const size_t mipLevel)
 {
 	return m_mipLevels[mipLevel];
+}
+
+const tr::ColorBuffer& tr::Texture::getConstMipLevel(const size_t mipLevel) const
+{
+	return m_mipLevels[mipLevel];
+}
+
+size_t tr::Texture::getNumMipLevels() const
+{
+	return m_mipLevels.size();
 }
 
 tr::Color tr::Texture::getAt(float u, float v, const bool filter, const TextureWrappingMode textureWrappingMode) const
