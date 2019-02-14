@@ -372,7 +372,10 @@ namespace tr
 
 					if (!m_depthTest || pixel.position.z < *depthPointer)
 					{
-						const Vector2 textureCoord = (m_textureMode == TextureMode::Perspective) ? pixel.textureCoord / pixel.inverseW : pixel.textureCoord;
+						Vector2 textureCoord = pixel.textureCoord;
+
+						if (m_textureMode == TextureMode::Perspective)
+							textureCoord /= pixel.inverseW;
 
 						shader.draw(pixel.position, pixel.worldPosition / pixel.inverseW, pixel.normal / pixel.inverseW, textureCoord, colorPointer, depthPointer);
 					}

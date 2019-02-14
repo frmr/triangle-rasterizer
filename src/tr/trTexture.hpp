@@ -17,8 +17,8 @@ namespace tr
 		ColorBuffer&             getMipLevel(const size_t mipLevel);
 		const ColorBuffer&       getConstMipLevel(const size_t mipLevel) const;
 		size_t                   getNumMipLevels() const;
-		Color                    getAt(float u, float v, const bool filter, const TextureWrappingMode textureWrappingMode) const;
-		Color                    getAt(float u, float v, const bool filter, const TextureWrappingMode textureWrappingMode, const float du, const float dv, const bool interpolateMipmapLevels) const;
+		Color                    getAt(const float u, const float v, const bool filter, const TextureWrappingMode textureWrappingMode) const;
+		Color                    getAt(const float u, const float v, const bool filter, const TextureWrappingMode textureWrappingMode, const float du, const float dv, const bool interpolateMipmapLevels) const;
 
 	private:
 		void                     init(const size_t width, const size_t height);

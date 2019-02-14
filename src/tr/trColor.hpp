@@ -31,10 +31,10 @@ namespace tr
 		}
 
 		Color(const Vector4& vector) :
-			b((uint8_t)vector[0]),
-			g((uint8_t)vector[1]),
-			r((uint8_t)vector[2]),
-			a((uint8_t)vector[3])
+			b(uint8_t(vector[0])),
+			g(uint8_t(vector[1])),
+			r(uint8_t(vector[2])),
+			a(uint8_t(vector[3]))
 		{
 		}
 

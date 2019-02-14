@@ -97,12 +97,12 @@ size_t tr::Texture::getNumMipLevels() const
 	return m_mipLevels.size();
 }
 
-tr::Color tr::Texture::getAt(float u, float v, const bool filter, const TextureWrappingMode textureWrappingMode) const
+tr::Color tr::Texture::getAt(const float u, const float v, const bool filter, const TextureWrappingMode textureWrappingMode) const
 {
 	return m_baseLevel->getAt(u, v, filter, textureWrappingMode);
 }
 
-tr::Color tr::Texture::getAt(float u, float v, const bool filter, const TextureWrappingMode textureWrappingMode, const float du, const float dv, const bool interpolateMipmapLevels) const
+tr::Color tr::Texture::getAt(const float u, const float v, const bool filter, const TextureWrappingMode textureWrappingMode, const float du, const float dv, const bool interpolateMipmapLevels) const
 {
 	const float dx       = du * m_baseLevel->getFloatWidth();
 	const float dy       = dv * m_baseLevel->getFloatHeight();
