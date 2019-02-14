@@ -68,6 +68,8 @@ tr::Error tr::Texture::generateMipmaps()
 	while (source->getWidth() > 1 && source->getHeight() > 1);
 
 	m_maxMipLevelIndex = m_mipLevels.size() - 1;
+
+	return Error::Success;
 }
 
 size_t tr::Texture::getWidth() const
@@ -104,7 +106,7 @@ tr::Color tr::Texture::getAt(float u, float v, const bool filter, const TextureW
 {
 	const float dx       = du * m_baseLevel->getFloatWidth();
 	const float dy       = dv * m_baseLevel->getFloatHeight();
-	const float mipLevel = std::log2(std::max(dx, dy));
+	const float mipLevel = fastLog2(std::max(dx, dy));
 
 	if (interpolateMipmapLevels)
 	{
@@ -154,4 +156,11 @@ void tr::Texture::copyImageDataToBaseLevel(const std::vector<uint8_t>& decodedDa
 bool tr::Texture::isPowerOfTwo(const size_t x)
 {
 	return (x != 0) && ((x & (x - 1)) == 0);
+}
+
+float tr::Texture::fastLog2(const float x)
+{
+	union { float f; uint32_t i; } vx = { x };
+
+	return vx.i * 1.1920928955078125e-7f - 126.94269504f;
 }

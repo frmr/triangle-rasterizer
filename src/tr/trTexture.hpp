@@ -24,6 +24,7 @@ namespace tr
 		void                     init(const size_t width, const size_t height);
 		void                     copyImageDataToBaseLevel(const std::vector<uint8_t>& decodedData);
 		static bool              isPowerOfTwo(const size_t x);
+		static float             fastLog2(const float x);
 
 	private:
 		std::vector<ColorBuffer> m_mipLevels;
