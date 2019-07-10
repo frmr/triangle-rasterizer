@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "trTextureWrappingMode.hpp"
+#include "..//matrix/Vectors.h"
 
 namespace tr
 {
