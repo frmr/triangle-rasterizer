@@ -300,7 +300,7 @@ namespace tr
 
 		void fillBottomHeavyTriangle(const std::array<Vertex,3>& vertices, const TShader& shader, const Vertex& topToMiddleVector, const Vertex& topToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			if (vertices[1].position.y - vertices[0].position.y >= 1.0f)
+			if (vertices[1].position.y != vertices[0].position.y)
 			{
 				const size_t  firstY          = size_t(std::ceilf(vertices[0].position.y));
 
@@ -323,7 +323,7 @@ namespace tr
 
 		void fillTopHeavyTriangle(const std::array<Vertex,3>& vertices, const TShader& shader, const Vertex& topToBottomVector, const Vertex& middleToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			if (vertices[2].position.y - vertices[1].position.y >= 1.0f)
+			if (vertices[2].position.y != vertices[1].position.y)
 			{
 				const size_t  firstY         = size_t(std::ceilf(vertices[1].position.y));
 
