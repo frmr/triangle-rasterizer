@@ -149,10 +149,10 @@ namespace tr
 
 	protected:
 		static constexpr size_t s_maxSize = std::numeric_limits<size_t>::max();
-		const size_t            m_width;
-		const size_t            m_height;
-		const float             m_floatWidth;
-		const float             m_floatHeight;
+		size_t                  m_width;
+		size_t                  m_height;
+		float                   m_floatWidth;
+		float                   m_floatHeight;
 		std::vector<T>          m_data;
 	};
 }
