@@ -11,6 +11,7 @@ namespace tr
 		                         Texture(const size_t width, const size_t height);
 		                         Texture(const std::string& filename);
 
+		bool                     isInitialized() const;
 		Error                    generateMipmaps();
 		size_t                   getWidth() const;
 		size_t                   getHeight() const;

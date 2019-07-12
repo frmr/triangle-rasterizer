@@ -7,7 +7,9 @@ tr::Texture::Texture(const size_t width, const size_t height)
 	init(width, height);
 }
 
-tr::Texture::Texture(const std::string& filename)
+tr::Texture::Texture(const std::string& filename) :
+	m_maxMipLevelIndex(0),
+	m_baseLevel(nullptr)
 {
 	std::vector<uint8_t> encodedData;
 
@@ -26,6 +28,11 @@ tr::Texture::Texture(const std::string& filename)
 			copyImageDataToBaseLevel(decodedData);
 		}
 	}
+}
+
+bool tr::Texture::isInitialized() const
+{
+	return !m_mipLevels.empty();
 }
 
 tr::Error tr::Texture::generateMipmaps()
