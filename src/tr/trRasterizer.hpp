@@ -16,6 +16,7 @@
 
 #include <vector>
 #include <array>
+#include <cassert>
 
 namespace tr
 {
