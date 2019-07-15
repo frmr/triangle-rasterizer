@@ -350,7 +350,7 @@ namespace tr
 		{
 			const Vertex leftChange       = leftVector  / leftVector.position.y;
 			const Vertex rightChange      = rightVector / rightVector.position.y;
-			const size_t interlacedFirstY = firstY + (m_interlaceStep - (firstY % m_interlaceStep));
+			const size_t interlacedFirstY = firstY + ((m_interlaceOffset - (firstY % m_interlaceStep)) + m_interlaceStep) % m_interlaceStep;
 			size_t       rowCount         = interlacedFirstY - firstY;
 			Vertex       currentLeft      = leftStart + leftChange * float(rowCount);
 			Vertex       currentRight     = rightStart + rightChange * float(rowCount);
