@@ -378,7 +378,7 @@ namespace tr
 						if (m_textureMode == TextureMode::Perspective)
 							textureCoord /= pixel.inverseW;
 
-						shader.draw(pixel.position, pixel.worldPosition / pixel.inverseW, pixel.normal / pixel.inverseW, textureCoord, colorPointer, depthPointer);
+						shader.draw(pixel.position, pixel.worldPosition / pixel.inverseW, pixel.normal / pixel.inverseW, textureCoord, *colorPointer, *depthPointer);
 					}
 				}
 			}

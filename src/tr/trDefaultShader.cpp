@@ -8,7 +8,7 @@ tr::DefaultShader::DefaultShader() :
 {
 }
 
-void tr::DefaultShader::draw(const Vector4& position, const Vector4& worldPosition, const Vector3& normal, const Vector2& textureCoord, Color* const color, float* const depth) const
+void tr::DefaultShader::draw(const Vector4& position, const Vector4& worldPosition, const Vector3& normal, const Vector2& textureCoord, Color& color, float& depth) const
 {
 	//const Color textureColor = m_texture->getAt(textureCoord.x, textureCoord.y, m_textureFiltering, m_textureWrappingMode, 0.105f, 0.105f, true);
 	const Color textureColor = m_texture->getAt(textureCoord.x, textureCoord.y, m_textureFiltering, m_textureWrappingMode);
@@ -21,7 +21,7 @@ void tr::DefaultShader::draw(const Vector4& position, const Vector4& worldPositi
 	{
 		if (textureColor.a == 255)
 		{
-			*color = textureColor;
+			color = textureColor;
 		}
 		else if (textureColor.a == 0)
 		{
@@ -29,7 +29,7 @@ void tr::DefaultShader::draw(const Vector4& position, const Vector4& worldPositi
 		}
 		else
 		{
-			const Color    bufferColor = *color;
+			const Color    bufferColor = color;
 			const uint16_t totalAlpha  = textureColor.a + bufferColor.a;
 
 			if (totalAlpha == 0)
@@ -37,7 +37,7 @@ void tr::DefaultShader::draw(const Vector4& position, const Vector4& worldPositi
 				return;
 			}
 
-			*color = Color(
+			color = Color(
 				uint8_t(((uint32_t(textureColor.b) * uint32_t(textureColor.a) + uint32_t(bufferColor.b) * uint32_t(bufferColor.a)) / totalAlpha)),
 				uint8_t(((uint32_t(textureColor.g) * uint32_t(textureColor.a) + uint32_t(bufferColor.g) * uint32_t(bufferColor.a)) / totalAlpha)),
 				uint8_t(((uint32_t(textureColor.r) * uint32_t(textureColor.a) + uint32_t(bufferColor.r) * uint32_t(bufferColor.a)) / totalAlpha)),
@@ -47,10 +47,10 @@ void tr::DefaultShader::draw(const Vector4& position, const Vector4& worldPositi
 	}
 	else
 	{
-		*color = textureColor;
+		color = textureColor;
 	}
 
-	*depth = position.z;
+	depth = position.z;
 }
 
 void tr::DefaultShader::setTexture(const Texture* const texture)
