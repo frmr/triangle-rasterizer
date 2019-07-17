@@ -28,6 +28,7 @@ namespace tr
 			m_primitive(Primitive::Triangles),
 			m_projectionViewMatrix(),
 			m_modelMatrix(),
+			m_modelNormalRotationMatrix(),
 			m_depthTest(true),
 			m_textureMode(TextureMode::Perspective),
 			m_cullFaceMode(CullFaceMode::Back),
@@ -54,7 +55,7 @@ namespace tr
 			for (auto& vertex : vertices)
 			{
 				vertex.position = m_projectionViewMatrix * m_modelMatrix * vertex.worldPosition;
-				vertex.normal   = m_modelMatrix * vertex.normal;
+				vertex.normal   = (m_modelNormalRotationMatrix * vertex.normal).normalize();
 			}
 
 			if (m_primitive == Primitive::Triangles)
@@ -103,6 +104,20 @@ namespace tr
 		void setModelMatrix(const Matrix4& matrix)
 		{
 			m_modelMatrix = matrix;
+
+			m_modelNormalRotationMatrix.set(
+				m_modelMatrix.get()[0],
+				m_modelMatrix.get()[1],
+				m_modelMatrix.get()[2],
+				m_modelMatrix.get()[4],
+				m_modelMatrix.get()[5],
+				m_modelMatrix.get()[6],
+				m_modelMatrix.get()[8],
+				m_modelMatrix.get()[9],
+				m_modelMatrix.get()[10]
+			);
+
+			m_modelNormalRotationMatrix.invert().transpose();
 		}
 
 		void setDepthTest(const bool depthTest)
@@ -400,6 +415,7 @@ namespace tr
 		Primitive    m_primitive;
 		Matrix4      m_projectionViewMatrix;
 		Matrix4      m_modelMatrix;
+		Matrix3      m_modelNormalRotationMatrix;
 		bool         m_depthTest;
 		TextureMode  m_textureMode;
 		CullFaceMode m_cullFaceMode;
