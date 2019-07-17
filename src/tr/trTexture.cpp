@@ -123,8 +123,8 @@ tr::Color tr::Texture::getAt(const float u, const float v, const bool filter, co
 		const float   ceilRatio  = mipLevel - float(floor);
 		const float   floorRatio = 1.0f - ceilRatio;
 
-		const Vector4 floorColor = m_mipLevels[floor].getAt(u, v, filter, textureWrappingMode).ToVector();
-		const Vector4 ceilColor  = m_mipLevels[ceil].getAt(u, v, filter, textureWrappingMode).ToVector();
+		const Vector4 floorColor = m_mipLevels[floor].getAt(u, v, filter, textureWrappingMode).toVector();
+		const Vector4 ceilColor  = m_mipLevels[ceil].getAt(u, v, filter, textureWrappingMode).toVector();
 
 		return Color(floorColor * floorRatio + ceilColor * ceilRatio);
 	}

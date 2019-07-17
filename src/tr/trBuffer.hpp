@@ -101,10 +101,10 @@ namespace tr
 					y1 = (textureWrappingMode == TextureWrappingMode::Clamp) ? y0 : 0;
 				}
 
-				const Vector4 topLeft     = (m_data.data() + (y0 * m_width + x0))->ToVector();
-				const Vector4 topRight    = (m_data.data() + (y0 * m_width + x1))->ToVector();
-				const Vector4 bottomLeft  = (m_data.data() + (y1 * m_width + x0))->ToVector();
-				const Vector4 bottomRight = (m_data.data() + (y1 * m_width + x1))->ToVector();
+				const Vector4 topLeft     = (m_data.data() + (y0 * m_width + x0))->toVector();
+				const Vector4 topRight    = (m_data.data() + (y0 * m_width + x1))->toVector();
+				const Vector4 bottomLeft  = (m_data.data() + (y1 * m_width + x0))->toVector();
+				const Vector4 bottomRight = (m_data.data() + (y1 * m_width + x1))->toVector();
 
 				return (topLeft    * uOpposite + topRight    * uDiff) * vOpposite +
 				       (bottomLeft * uOpposite + bottomRight * uDiff) * vDiff;

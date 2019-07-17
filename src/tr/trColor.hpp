@@ -8,7 +8,7 @@ namespace tr
 
 	struct Color
 	{
-		Vector4 ToVector() const
+		Vector4 toVector() const
 		{
 			return Vector4(
 				float(b),
@@ -18,7 +18,11 @@ namespace tr
 			);
 		}
 
-		Color()
+		Color() :
+			b(0),
+			g(0),
+			r(0),
+			a(0)
 		{
 		}
 
