@@ -26,7 +26,8 @@ namespace tr
 	public:
 		Rasterizer() :
 			m_primitive(Primitive::Triangles),
-			m_matrix(),
+			m_projectionViewMatrix(),
+			m_modelMatrix(),
 			m_depthTest(true),
 			m_textureMode(TextureMode::Perspective),
 			m_cullFaceMode(CullFaceMode::Back),
@@ -52,7 +53,8 @@ namespace tr
 
 			for (auto& vertex : vertices)
 			{
-				vertex.position = m_matrix * vertex.worldPosition;
+				vertex.position = m_projectionViewMatrix * m_modelMatrix * vertex.worldPosition;
+				vertex.normal   = m_modelMatrix * vertex.normal;
 			}
 
 			if (m_primitive == Primitive::Triangles)
@@ -93,9 +95,14 @@ namespace tr
 			m_primitive = primitive;
 		}
 
-		void setMatrix(const Matrix4& matrix)
+		void setProjectionViewMatrix(const Matrix4& matrix)
 		{
-			m_matrix = matrix;
+			m_projectionViewMatrix = matrix;
+		}
+
+		void setModelMatrix(const Matrix4& matrix)
+		{
+			m_modelMatrix = matrix;
 		}
 
 		void setDepthTest(const bool depthTest)
@@ -391,7 +398,8 @@ namespace tr
 
 	private:
 		Primitive    m_primitive;
-		Matrix4      m_matrix;
+		Matrix4      m_projectionViewMatrix;
+		Matrix4      m_modelMatrix;
 		bool         m_depthTest;
 		TextureMode  m_textureMode;
 		CullFaceMode m_cullFaceMode;
