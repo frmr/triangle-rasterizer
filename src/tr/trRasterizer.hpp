@@ -192,7 +192,7 @@ namespace tr
 			for (size_t vertexIndex = 0; vertexIndex < 3; ++vertexIndex)
 			{
 				const Vertex&   vertex           = vertices[vertexIndex];
-				constexpr float margin           = 0.000001f;
+				constexpr float margin           = 0.0001f;
 				const float     wLessMargin      = vertex.position.w - margin;
 				const float     wPlusMargin      = vertex.position.w + margin;
 				uint8_t&        clipBitField     = vertexClipBitFields[vertexIndex];
