@@ -374,17 +374,16 @@ namespace tr
 			const Vertex rightChange      = rightVector / rightVector.position.y;
 			const size_t interlacedFirstY = firstY + ((m_interlaceOffset - (firstY % m_interlaceStep)) + m_interlaceStep) % m_interlaceStep;
 			size_t       rowCount         = interlacedFirstY - firstY;
-			Vertex       currentLeft      = leftStart + leftChange * float(rowCount);
-			Vertex       currentRight     = rightStart + rightChange * float(rowCount);
 
-			for (size_t currentY = interlacedFirstY; currentY < targetY; rowCount += m_interlaceStep, currentY += m_interlaceStep, currentLeft = leftStart + leftChange * float(rowCount), currentRight = rightStart + rightChange * float(rowCount))
+			for (size_t currentY = interlacedFirstY; currentY < targetY; rowCount += m_interlaceStep, currentY += m_interlaceStep)
 			{
+				const Vertex currentLeft       = leftStart + leftChange * float(rowCount);
+				const Vertex currentRight      = rightStart + rightChange * float(rowCount);
 				const Vertex leftToRightVector = (currentRight - currentLeft) / (currentRight.position.x - currentLeft.position.x);
 				const size_t firstX            = size_t(std::ceilf(currentLeft.position.x));
 				const size_t lastX             = size_t(std::ceilf(currentRight.position.x));
 				const float  leftToFirstX      = float(firstX) - currentLeft.position.x;
-				const float  ratio             = leftToFirstX / (currentRight.position.x - currentLeft.position.x);
-				const Vertex firstPixel        = currentLeft + leftToRightVector * ratio;
+				const Vertex firstPixel        = currentLeft + leftToRightVector * leftToFirstX;
 				Color*       colorPointer      = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
 				float*       depthPointer      = depthBuffer.getData() + (currentY * depthBuffer.getWidth() + firstX);
 				size_t       columnCount       = 0;
