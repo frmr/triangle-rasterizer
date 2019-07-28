@@ -21,7 +21,7 @@ namespace tr
 		{
 		}
 
-		Buffer(const size_t& width, const size_t& height) :
+		Buffer(const size_t width, const size_t height) :
 			m_width(width),
 			m_height(height),
 			m_floatWidth(float(width)),
@@ -40,7 +40,7 @@ namespace tr
 			std::fill(m_data.begin(), m_data.end(), value);
 		}
 
-		T getAt(const size_t& x, const size_t& y) const
+		T getAt(const size_t x, const size_t y) const
 		{
 			return m_data[y * m_width + x];
 		}
