@@ -5577,7 +5577,7 @@ static unsigned preProcessScanlines(unsigned char** out, size_t* outsize, const 
         {
           unsigned char* padded = (unsigned char*)lodepng_malloc(padded_passstart[i + 1] - padded_passstart[i]);
           if(!padded) ERROR_BREAK(83); /*alloc fail*/
-          addPaddingBits(padded, adam7 ? &adam7[passstart[i]] : 0,
+          addPaddingBits(padded, adam7 ? &adam7[passstart[i]] : nullptr,
                          (((size_t)passw[i] * (size_t)bpp + 7) / 8) * 8, (size_t)passw[i] * (size_t)bpp, passh[i]);
           error = filter(&(*out)[filter_passstart[i]], padded,
                          passw[i], passh[i], &info_png->color, settings);
@@ -5585,7 +5585,7 @@ static unsigned preProcessScanlines(unsigned char** out, size_t* outsize, const 
         }
         else
         {
-          error = filter(&(*out)[filter_passstart[i]], adam7 ? &adam7[padded_passstart[i]] : 0,
+          error = filter(&(*out)[filter_passstart[i]], adam7 ? &adam7[padded_passstart[i]] : nullptr,
                          passw[i], passh[i], &info_png->color, settings);
         }
 
