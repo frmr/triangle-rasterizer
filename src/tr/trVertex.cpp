@@ -1,11 +1,11 @@
 #include "trVertex.hpp"
 
-tr::Vertex::Vertex() :
+tr::TransformedVertex::TransformedVertex() :
 	inverseW(0.0f)
 {
 }
 
-tr::Vertex::Vertex(const Vector4& worldPosition, const Vector3& normal, const Vector2& textureCoord) :
+tr::TransformedVertex::TransformedVertex(const Vector4& worldPosition, const Vector3& normal, const Vector2& textureCoord) :
 	worldPosition(worldPosition),
 	normal(normal),
 	textureCoord(textureCoord),
@@ -13,7 +13,7 @@ tr::Vertex::Vertex(const Vector4& worldPosition, const Vector3& normal, const Ve
 {
 }
 
-tr::Vertex::Vertex(const Vector4& worldPosition, const Vector4& position, const Vector3& normal, const Vector2& textureCoord) :
+tr::TransformedVertex::TransformedVertex(const Vector4& worldPosition, const Vector4& position, const Vector3& normal, const Vector2& textureCoord) :
 	worldPosition(worldPosition),
 	position(position),
 	normal(normal),
@@ -22,7 +22,7 @@ tr::Vertex::Vertex(const Vector4& worldPosition, const Vector4& position, const 
 {
 }
 
-tr::Vertex::Vertex(const Vector4& worldPosition, const Vector4& position, const Vector3& normal, const Vector2& textureCoord, const float inverseW) :
+tr::TransformedVertex::TransformedVertex(const Vector4& worldPosition, const Vector4& position, const Vector3& normal, const Vector2& textureCoord, const float inverseW) :
 	worldPosition(worldPosition),
 	position(position),
 	normal(normal),
@@ -31,7 +31,7 @@ tr::Vertex::Vertex(const Vector4& worldPosition, const Vector4& position, const 
 {
 }
 
-tr::Vertex& tr::Vertex::operator+=(const Vertex& rhs)
+tr::TransformedVertex& tr::TransformedVertex::operator+=(const TransformedVertex& rhs)
 {
 	worldPosition += rhs.worldPosition;
 	position      += rhs.position;
@@ -42,7 +42,7 @@ tr::Vertex& tr::Vertex::operator+=(const Vertex& rhs)
 	return *this;
 }
 
-tr::Vertex& tr::Vertex::operator-=(const Vertex& rhs)
+tr::TransformedVertex& tr::TransformedVertex::operator-=(const TransformedVertex& rhs)
 {
 	worldPosition -= rhs.worldPosition;
 	position      -= rhs.position;
@@ -53,9 +53,9 @@ tr::Vertex& tr::Vertex::operator-=(const Vertex& rhs)
 	return *this;
 }
 
-tr::Vertex tr::Vertex::operator+(const Vertex& rhs) const
+tr::TransformedVertex tr::TransformedVertex::operator+(const TransformedVertex& rhs) const
 {
-	return Vertex(
+	return TransformedVertex(
 		worldPosition + rhs.worldPosition,
 		position      + rhs.position,
 		normal        + rhs.normal,
@@ -64,9 +64,9 @@ tr::Vertex tr::Vertex::operator+(const Vertex& rhs) const
 	);
 }
 
-tr::Vertex tr::Vertex::operator-(const Vertex& rhs) const
+tr::TransformedVertex tr::TransformedVertex::operator-(const TransformedVertex& rhs) const
 {
-	return Vertex(
+	return TransformedVertex(
 		worldPosition - rhs.worldPosition,
 		position      - rhs.position,
 		normal        - rhs.normal,
@@ -75,9 +75,9 @@ tr::Vertex tr::Vertex::operator-(const Vertex& rhs) const
 	);
 }
 
-tr::Vertex tr::Vertex::operator*(const float& rhs) const
+tr::TransformedVertex tr::TransformedVertex::operator*(const float& rhs) const
 {
-	return Vertex(
+	return TransformedVertex(
 		worldPosition * rhs,
 		position      * rhs,
 		normal        * rhs,
@@ -86,9 +86,9 @@ tr::Vertex tr::Vertex::operator*(const float& rhs) const
 	);
 }
 
-tr::Vertex tr::Vertex::operator/(const float& rhs) const
+tr::TransformedVertex tr::TransformedVertex::operator/(const float& rhs) const
 {
-	return Vertex(
+	return TransformedVertex(
 		worldPosition / rhs,
 		position      / rhs,
 		normal        / rhs,
@@ -97,7 +97,7 @@ tr::Vertex tr::Vertex::operator/(const float& rhs) const
 	);
 }
 
-tr::Vertex& tr::Vertex::normalize()
+tr::TransformedVertex& tr::TransformedVertex::normalize()
 {
 	const float length = std::sqrt(position.x * position.x + position.y * position.y + position.z * position.z);
 
