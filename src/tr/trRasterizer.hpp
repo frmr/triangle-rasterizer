@@ -10,7 +10,7 @@
 #include "trPrimitive.hpp"
 #include "trTextureMode.hpp"
 #include "trTextureWrappingMode.hpp"
-#include "trVertex.hpp"
+#include "trTransformedVertex.hpp"
 #include "trVertexClipBitMasks.hpp"
 #include "../matrix/Matrices.h"
 

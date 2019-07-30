@@ -1,4 +1,4 @@
-#include "trVertex.hpp"
+#include "trTransformedVertex.hpp"
 
 tr::TransformedVertex::TransformedVertex() :
 	inverseW(0.0f)
