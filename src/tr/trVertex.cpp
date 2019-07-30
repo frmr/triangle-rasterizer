@@ -1,13 +1,15 @@
 #include "trVertex.hpp"
 
-tr::Vertex::Vertex()
+tr::Vertex::Vertex() :
+	inverseW(0.0f)
 {
 }
 
 tr::Vertex::Vertex(const Vector4& worldPosition, const Vector3& normal, const Vector2& textureCoord) :
 	worldPosition(worldPosition),
 	normal(normal),
-	textureCoord(textureCoord)
+	textureCoord(textureCoord),
+	inverseW(0.0f)
 {
 }
 
@@ -15,7 +17,8 @@ tr::Vertex::Vertex(const Vector4& worldPosition, const Vector4& position, const 
 	worldPosition(worldPosition),
 	position(position),
 	normal(normal),
-	textureCoord(textureCoord)
+	textureCoord(textureCoord),
+	inverseW(0.0f)
 {
 }
 
