@@ -255,7 +255,7 @@ const char* lodepng_error_text(unsigned code);
 typedef struct LodePNGDecompressSettings LodePNGDecompressSettings;
 struct LodePNGDecompressSettings
 {
-  unsigned ignore_adler32; /*if 1, continue and don't give an error message if the Adler32 checksum is corrupted*/
+  unsigned ignore_adler32 = 0; /*if 1, continue and don't give an error message if the Adler32 checksum is corrupted*/
 
   /*use custom zlib decoder instead of built in one (default: null)*/
   unsigned (*custom_zlib)(unsigned char**, size_t*,
@@ -268,7 +268,7 @@ struct LodePNGDecompressSettings
                              const unsigned char*, size_t,
                              const LodePNGDecompressSettings*);
 
-  const void* custom_context; /*optional custom settings for custom functions*/
+  const void* custom_context = nullptr; /*optional custom settings for custom functions*/
 };
 
 extern const LodePNGDecompressSettings lodepng_default_decompress_settings;
@@ -520,14 +520,14 @@ typedef struct LodePNGDecoderSettings
 {
   LodePNGDecompressSettings zlibsettings; /*in here is the setting to ignore Adler32 checksums*/
 
-  unsigned ignore_crc; /*ignore CRC checksums*/
+  unsigned ignore_crc = 0; /*ignore CRC checksums*/
 
-  unsigned color_convert; /*whether to convert the PNG to the color type you want. Default: yes*/
+  unsigned color_convert = 0; /*whether to convert the PNG to the color type you want. Default: yes*/
 
 #ifdef LODEPNG_COMPILE_ANCILLARY_CHUNKS
-  unsigned read_text_chunks; /*if false but remember_unknown_chunks is true, they're stored in the unknown chunks*/
+  unsigned read_text_chunks = 0; /*if false but remember_unknown_chunks is true, they're stored in the unknown chunks*/
   /*store all bytes from unknown chunks in the LodePNGInfo (off by default, useful for a png editor)*/
-  unsigned remember_unknown_chunks;
+  unsigned remember_unknown_chunks = 0;
 #endif /*LODEPNG_COMPILE_ANCILLARY_CHUNKS*/
 } LodePNGDecoderSettings;
 
@@ -629,7 +629,7 @@ typedef struct LodePNGState
 #endif /*LODEPNG_COMPILE_ENCODER*/
   LodePNGColorMode info_raw; /*specifies the format in which you would like to get the raw pixel buffer*/
   LodePNGInfo info_png; /*info of the PNG image obtained after decoding*/
-  unsigned error;
+  unsigned error = 0;
 #ifdef LODEPNG_COMPILE_CPP
   /* For the lodepng::State subclass. */
   virtual ~LodePNGState(){}
