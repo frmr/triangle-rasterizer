@@ -10,6 +10,7 @@
 #include "trPrimitive.hpp"
 #include "trTextureMode.hpp"
 #include "trTextureWrappingMode.hpp"
+#include "trVertex.hpp"
 #include "trTransformedVertex.hpp"
 #include "trVertexClipBitMasks.hpp"
 #include "../matrix/Matrices.h"
@@ -37,8 +38,12 @@ namespace tr
 		{
 		}
 
-		Error draw(std::vector<TransformedVertex> vertices, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		Error draw(const std::vector<Vertex>& vertices, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
+			std::vector<TransformedVertex> transformedVertices;
+
+			transformedVertices.reserve(vertices.size());
+
 			if (colorBuffer.getWidth() == 0 || colorBuffer.getHeight() == 0)
 			{
 				return Error::InvalidBufferSize;
@@ -52,15 +57,19 @@ namespace tr
 			const float halfWidth  = float(colorBuffer.getWidth())  / 2.0f;
 			const float halfHeight = float(colorBuffer.getHeight()) / 2.0f;
 
-			for (auto& vertex : vertices)
+			for (const Vertex& vertex : vertices)
 			{
-				vertex.position = m_projectionViewMatrix * m_modelMatrix * vertex.worldPosition;
-				vertex.normal   = (m_modelNormalRotationMatrix * vertex.normal).normalize();
+				transformedVertices.emplace_back(
+					m_modelMatrix * vertex.position,
+					m_projectionViewMatrix * m_modelMatrix * vertex.position,
+					(m_modelNormalRotationMatrix * vertex.normal).normalize(),
+					vertex.textureCoord
+				);
 			}
 
 			if (m_primitive == Primitive::Triangles)
 			{
-				for (std::vector<TransformedVertex>::const_iterator it = vertices.begin(); it < vertices.end() - 2; it += 3)
+				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin(); it < transformedVertices.end() - 2; it += 3)
 				{
 					clipAndDrawTriangle({ *it, *(it + 1), *(it + 2) }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
 				}
@@ -71,9 +80,9 @@ namespace tr
 				size_t lastIndex  = 0;
 				size_t firstIndex = 1;
 
-				for (size_t newIndex = 2; newIndex < vertices.size(); ++newIndex)
+				for (size_t newIndex = 2; newIndex < transformedVertices.size(); ++newIndex)
 				{
-					clipAndDrawTriangle({ vertices[reverse ? newIndex : lastIndex], vertices[firstIndex], vertices[reverse ? lastIndex : newIndex] }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+					clipAndDrawTriangle({ transformedVertices[reverse ? newIndex : lastIndex], transformedVertices[firstIndex], transformedVertices[reverse ? lastIndex : newIndex] }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
 
 					firstIndex = lastIndex;
 					lastIndex  = newIndex;
@@ -82,9 +91,9 @@ namespace tr
 			}
 			else if (m_primitive == Primitive::TriangleFan)
 			{
-				for (std::vector<TransformedVertex>::const_iterator it = vertices.begin() + 1; it < vertices.end() - 1; it += 1)
+				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin() + 1; it < transformedVertices.end() - 1; it += 1)
 				{
-					clipAndDrawTriangle({ vertices.front(), *it, *(it + 1) }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+					clipAndDrawTriangle({ transformedVertices.front(), *it, *(it + 1) }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
 				}
 			}
 

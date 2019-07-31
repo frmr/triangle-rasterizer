@@ -5,14 +5,6 @@ tr::TransformedVertex::TransformedVertex() :
 {
 }
 
-tr::TransformedVertex::TransformedVertex(const Vector4& worldPosition, const Vector3& normal, const Vector2& textureCoord) :
-	worldPosition(worldPosition),
-	normal(normal),
-	textureCoord(textureCoord),
-	inverseW(0.0f)
-{
-}
-
 tr::TransformedVertex::TransformedVertex(const Vector4& worldPosition, const Vector4& position, const Vector3& normal, const Vector2& textureCoord) :
 	worldPosition(worldPosition),
 	position(position),

@@ -7,7 +7,6 @@ namespace tr
 	struct TransformedVertex
 	{
 		                   TransformedVertex();
-		                   TransformedVertex(const Vector4& worldPosition, const Vector3& normal, const Vector2& textureCoord);
 		                   TransformedVertex(const Vector4& worldPosition, const Vector4& position, const Vector3& normal, const Vector2& textureCoord);
 		                   TransformedVertex(const Vector4& worldPosition, const Vector4& position, const Vector3& normal, const Vector2& textureCoord, const float inverseW);
 
