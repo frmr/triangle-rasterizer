@@ -161,22 +161,22 @@ namespace tr
 		static TransformedVertex lineFrustumIntersection(const TransformedVertex& lineStart, const TransformedVertex& lineEnd, const tr::Axis axis, const bool negativeW)
 		{
 			const float   alpha = negativeW ?
-	                             (-lineStart.position.w  - lineStart.position[axis]) / (lineEnd.position[axis] - lineStart.position[axis] + lineEnd.position.w - lineStart.position.w) :
-	                             ( lineStart.position.w  - lineStart.position[axis]) / (lineEnd.position[axis] - lineStart.position[axis] - lineEnd.position.w + lineStart.position.w);
+	                             (-lineStart.projectedPosition.w  - lineStart.projectedPosition[axis]) / (lineEnd.projectedPosition[axis] - lineStart.projectedPosition[axis] + lineEnd.projectedPosition.w - lineStart.projectedPosition.w) :
+	                             ( lineStart.projectedPosition.w  - lineStart.projectedPosition[axis]) / (lineEnd.projectedPosition[axis] - lineStart.projectedPosition[axis] - lineEnd.projectedPosition.w + lineStart.projectedPosition.w);
 
-			const Vector4 worldPosition	= lineStart.worldPosition + (lineEnd.worldPosition - lineStart.worldPosition) * alpha;
-			const Vector4 position      = lineStart.position      + (lineEnd.position      - lineStart.position)      * alpha;
-			const Vector3 normal        = lineStart.normal        + (lineEnd.normal        - lineStart.normal)        * alpha;
-			const Vector2 textureCoord  = lineStart.textureCoord  + (lineEnd.textureCoord  - lineStart.textureCoord)  * alpha;
+			const Vector4 worldPosition	    = lineStart.worldPosition     + (lineEnd.worldPosition     - lineStart.worldPosition)     * alpha;
+			const Vector4 projectedPosition = lineStart.projectedPosition + (lineEnd.projectedPosition - lineStart.projectedPosition) * alpha;
+			const Vector3 normal            = lineStart.normal            + (lineEnd.normal            - lineStart.normal)            * alpha;
+			const Vector2 textureCoord      = lineStart.textureCoord      + (lineEnd.textureCoord      - lineStart.textureCoord)      * alpha;
 	
-			return TransformedVertex(worldPosition, position, normal, textureCoord);
+			return TransformedVertex(worldPosition, projectedPosition, normal, textureCoord);
 		}
 
 		void drawTriangle(std::array<TransformedVertex, 3> vertices, const TShader& shader, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
 			perspectiveDivide(vertices);
 
-			const float pointValue = orientPoint(vertices[0].position, vertices[1].position, vertices[2].position);
+			const float pointValue = orientPoint(vertices[0].projectedPosition, vertices[1].projectedPosition, vertices[2].projectedPosition);
 
 			if (m_cullFaceMode != CullFaceMode::None)
 			{
@@ -202,24 +202,24 @@ namespace tr
 			{
 				const TransformedVertex& vertex           = vertices[vertexIndex];
 				constexpr float          margin           = 0.0001f;
-				const float              wLessMargin      = vertex.position.w - margin;
-				const float              wPlusMargin      = vertex.position.w + margin;
+				const float              wLessMargin      = vertex.projectedPosition.w - margin;
+				const float              wPlusMargin      = vertex.projectedPosition.w + margin;
 				uint8_t&                 clipBitField     = vertexClipBitFields[vertexIndex];
 				uint8_t&                 equalityBitField = vertexEqualityBitFields[vertexIndex];
 
-				if (vertex.position.x <  -wPlusMargin) { clipBitField     |= leftBitMask;                     }
-				if (vertex.position.x >   wPlusMargin) { clipBitField     |= rightBitMask;                    }
-				if (vertex.position.y <  -wPlusMargin) { clipBitField     |= bottomBitMask;                   }
-				if (vertex.position.y >   wPlusMargin) { clipBitField     |= topBitMask;                      }
-				if (vertex.position.z <  -wPlusMargin) { clipBitField     |= nearBitMask;                     }
-				if (vertex.position.z >   wPlusMargin) { clipBitField     |= farBitMask;                      }
+				if (vertex.projectedPosition.x <  -wPlusMargin) { clipBitField     |= leftBitMask;                     }
+				if (vertex.projectedPosition.x >   wPlusMargin) { clipBitField     |= rightBitMask;                    }
+				if (vertex.projectedPosition.y <  -wPlusMargin) { clipBitField     |= bottomBitMask;                   }
+				if (vertex.projectedPosition.y >   wPlusMargin) { clipBitField     |= topBitMask;                      }
+				if (vertex.projectedPosition.z <  -wPlusMargin) { clipBitField     |= nearBitMask;                     }
+				if (vertex.projectedPosition.z >   wPlusMargin) { clipBitField     |= farBitMask;                      }
 
-				if (vertex.position.x <= -wLessMargin) { equalityBitField |= (~clipBitField) & leftBitMask;   }
-				if (vertex.position.x >=  wLessMargin) { equalityBitField |= (~clipBitField) & rightBitMask;  }
-				if (vertex.position.y <= -wLessMargin) { equalityBitField |= (~clipBitField) & bottomBitMask; }
-				if (vertex.position.y >=  wLessMargin) { equalityBitField |= (~clipBitField) & topBitMask;    }
-				if (vertex.position.z <= -wLessMargin) { equalityBitField |= (~clipBitField) & nearBitMask;   }
-				if (vertex.position.z >=  wLessMargin) { equalityBitField |= (~clipBitField) & farBitMask;    }
+				if (vertex.projectedPosition.x <= -wLessMargin) { equalityBitField |= (~clipBitField) & leftBitMask;   }
+				if (vertex.projectedPosition.x >=  wLessMargin) { equalityBitField |= (~clipBitField) & rightBitMask;  }
+				if (vertex.projectedPosition.y <= -wLessMargin) { equalityBitField |= (~clipBitField) & bottomBitMask; }
+				if (vertex.projectedPosition.y >=  wLessMargin) { equalityBitField |= (~clipBitField) & topBitMask;    }
+				if (vertex.projectedPosition.z <= -wLessMargin) { equalityBitField |= (~clipBitField) & nearBitMask;   }
+				if (vertex.projectedPosition.z >=  wLessMargin) { equalityBitField |= (~clipBitField) & farBitMask;    }
 			}
 
 			if (!(vertexClipBitFields[0] | vertexClipBitFields[1] | vertexClipBitFields[2]))
@@ -271,8 +271,8 @@ namespace tr
 		{
 			for (TransformedVertex& vertex : vertices)
 			{
-				vertex.position.x -= 0.5f;
-				vertex.position.y -= 0.5f;
+				vertex.projectedPosition.x -= 0.5f;
+				vertex.projectedPosition.y -= 0.5f;
 			}
 		}
 
@@ -282,13 +282,13 @@ namespace tr
 			{		
 				if (m_textureMode == TextureMode::Perspective)
 				{
-					vertex.textureCoord  /= vertex.position.w;
+					vertex.textureCoord  /= vertex.projectedPosition.w;
 				}
 
-				vertex.inverseW       = 1.0f / vertex.position.w;
-				vertex.worldPosition /= vertex.position.w;
-				vertex.normal        /= vertex.position.w;
-				vertex.position      /= vertex.position.w;
+				vertex.inverseW           = 1.0f / vertex.projectedPosition.w;
+				vertex.worldPosition     /= vertex.projectedPosition.w;
+				vertex.normal            /= vertex.projectedPosition.w;
+				vertex.projectedPosition /= vertex.projectedPosition.w;
 			}
 		}
 
@@ -296,8 +296,8 @@ namespace tr
 		{
 			for (TransformedVertex& vertex : vertices)
 			{
-				vertex.position.x = vertex.position.x * halfWidth + halfWidth;
-				vertex.position.y = halfHeight - vertex.position.y * halfHeight;
+				vertex.projectedPosition.x = vertex.projectedPosition.x * halfWidth + halfWidth;
+				vertex.projectedPosition.y = halfHeight - vertex.projectedPosition.y * halfHeight;
 			}
 		}
 
@@ -307,7 +307,7 @@ namespace tr
 			{
 				for (size_t vertexIndex = 0; vertexIndex < 2; ++vertexIndex)
 				{
-					if (vertices[vertexIndex].position.y > vertices[vertexIndex+1].position.y)
+					if (vertices[vertexIndex].projectedPosition.y > vertices[vertexIndex+1].projectedPosition.y)
 					{
 						const TransformedVertex temp = vertices[vertexIndex];
 
@@ -323,7 +323,7 @@ namespace tr
 			const TransformedVertex topToMiddleVector    = (vertices[1] - vertices[0]).normalize();
 			const TransformedVertex topToBottomVector    = (vertices[2] - vertices[0]).normalize();
 			const TransformedVertex middleToBottomVector = (vertices[2] - vertices[1]).normalize();
-			const bool              middleVertexLeft     =  topToMiddleVector.position.x <= topToBottomVector.position.x;
+			const bool              middleVertexLeft     =  topToMiddleVector.projectedPosition.x <= topToBottomVector.projectedPosition.x;
 
 			fillBottomHeavyTriangle(vertices, shader, topToMiddleVector, topToBottomVector, middleVertexLeft, colorBuffer, depthBuffer);
 			fillTopHeavyTriangle(   vertices, shader, topToBottomVector, middleToBottomVector, middleVertexLeft, colorBuffer, depthBuffer);
@@ -331,22 +331,22 @@ namespace tr
 
 		void fillBottomHeavyTriangle(const std::array<TransformedVertex,3>& vertices, const TShader& shader, const TransformedVertex& topToMiddleVector, const TransformedVertex& topToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			if (vertices[1].position.y != vertices[0].position.y)
+			if (vertices[1].projectedPosition.y != vertices[0].projectedPosition.y)
 			{
-				const size_t             firstY          = size_t(std::ceilf(vertices[0].position.y));
+				const size_t             firstY          = size_t(std::ceilf(vertices[0].projectedPosition.y));
 
-				const float              topToFirstYDiff = float(firstY) - vertices[0].position.y;
+				const float              topToFirstYDiff = float(firstY) - vertices[0].projectedPosition.y;
 
 				const TransformedVertex& leftVector      = middleVertexLeft ? topToMiddleVector : topToBottomVector;
 				const TransformedVertex& rightVector     = middleVertexLeft ? topToBottomVector : topToMiddleVector;
 
-				const float              leftRatio       = topToFirstYDiff / leftVector.position.y;
-				const float              rightRatio      = topToFirstYDiff / rightVector.position.y;
+				const float              leftRatio       = topToFirstYDiff / leftVector.projectedPosition.y;
+				const float              rightRatio      = topToFirstYDiff / rightVector.projectedPosition.y;
 
 				const TransformedVertex  startLeft       = vertices[0] + leftVector  * leftRatio;
 				const TransformedVertex  startRight      = vertices[0] + rightVector * rightRatio;
 
-				const size_t             targetY         = size_t(std::ceilf(vertices[1].position.y));
+				const size_t             targetY         = size_t(std::ceilf(vertices[1].projectedPosition.y));
 
 				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
 			}
@@ -354,23 +354,23 @@ namespace tr
 
 		void fillTopHeavyTriangle(const std::array<TransformedVertex,3>& vertices, const TShader& shader, const TransformedVertex& topToBottomVector, const TransformedVertex& middleToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			if (vertices[2].position.y != vertices[1].position.y)
+			if (vertices[2].projectedPosition.y != vertices[1].projectedPosition.y)
 			{
-				const size_t             firstY         = size_t(std::ceilf(vertices[1].position.y));
+				const size_t             firstY         = size_t(std::ceilf(vertices[1].projectedPosition.y));
 
-				const float              middleToFirstY = float(firstY) - vertices[1].position.y;
-				const float              topToFirstY    = float(firstY) - vertices[0].position.y;
+				const float              middleToFirstY = float(firstY) - vertices[1].projectedPosition.y;
+				const float              topToFirstY    = float(firstY) - vertices[0].projectedPosition.y;
 
 				const TransformedVertex& leftVector     = middleVertexLeft ? middleToBottomVector : topToBottomVector;
 				const TransformedVertex& rightVector    = middleVertexLeft ? topToBottomVector    : middleToBottomVector;
 
-				const float              ratioLeft      = (middleVertexLeft ? middleToFirstY : topToFirstY   ) / leftVector.position.y;
-				const float              ratioRight     = (middleVertexLeft ? topToFirstY    : middleToFirstY) / rightVector.position.y;
+				const float              ratioLeft      = (middleVertexLeft ? middleToFirstY : topToFirstY   ) / leftVector.projectedPosition.y;
+				const float              ratioRight     = (middleVertexLeft ? topToFirstY    : middleToFirstY) / rightVector.projectedPosition.y;
 
 				const TransformedVertex  startLeft      = (middleVertexLeft ? vertices[1] : vertices[0]) + leftVector  * ratioLeft;
 				const TransformedVertex  startRight     = (middleVertexLeft ? vertices[0] : vertices[1]) + rightVector * ratioRight;
 
-				const size_t  targetY        = size_t(std::ceilf(vertices[2].position.y));
+				const size_t  targetY        = size_t(std::ceilf(vertices[2].projectedPosition.y));
 
 				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
 			}
@@ -378,8 +378,8 @@ namespace tr
 
 		void fillTriangle(const TransformedVertex& leftVector, const TransformedVertex& rightVector, const size_t firstY, const size_t targetY, const TransformedVertex& leftStart, const TransformedVertex& rightStart, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			const TransformedVertex leftChange       = leftVector  / leftVector.position.y;
-			const TransformedVertex rightChange      = rightVector / rightVector.position.y;
+			const TransformedVertex leftChange       = leftVector  / leftVector.projectedPosition.y;
+			const TransformedVertex rightChange      = rightVector / rightVector.projectedPosition.y;
 			const size_t            interlacedFirstY = firstY + ((m_interlaceOffset - (firstY % m_interlaceStep)) + m_interlaceStep) % m_interlaceStep;
 			size_t                  rowCount         = interlacedFirstY - firstY;
 
@@ -387,10 +387,10 @@ namespace tr
 			{
 				const TransformedVertex currentLeft       = leftStart + leftChange * float(rowCount);
 				const TransformedVertex currentRight      = rightStart + rightChange * float(rowCount);
-				const TransformedVertex leftToRightVector = (currentRight - currentLeft) / (currentRight.position.x - currentLeft.position.x);
-				const size_t            firstX            = size_t(std::ceilf(currentLeft.position.x));
-				const size_t            lastX             = size_t(std::ceilf(currentRight.position.x));
-				const float             leftToFirstX      = float(firstX) - currentLeft.position.x;
+				const TransformedVertex leftToRightVector = (currentRight - currentLeft) / (currentRight.projectedPosition.x - currentLeft.projectedPosition.x);
+				const size_t            firstX            = size_t(std::ceilf(currentLeft.projectedPosition.x));
+				const size_t            lastX             = size_t(std::ceilf(currentRight.projectedPosition.x));
+				const float             leftToFirstX      = float(firstX) - currentLeft.projectedPosition.x;
 				const TransformedVertex firstPixel        = currentLeft + leftToRightVector * leftToFirstX;
 				Color*                  colorPointer      = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
 				float*                  depthPointer      = depthBuffer.getData() + (currentY * depthBuffer.getWidth() + firstX);
@@ -400,14 +400,14 @@ namespace tr
 				{
 					const TransformedVertex pixel = firstPixel + leftToRightVector * float(columnCount);
 
-					if (!m_depthTest || pixel.position.z < *depthPointer)
+					if (!m_depthTest || pixel.projectedPosition.z < *depthPointer)
 					{
 						Vector2 textureCoord = pixel.textureCoord;
 
 						if (m_textureMode == TextureMode::Perspective)
 							textureCoord /= pixel.inverseW;
 
-						shader.draw(pixel.position, pixel.worldPosition / pixel.inverseW, pixel.normal / pixel.inverseW, textureCoord, *colorPointer, *depthPointer);
+						shader.draw(pixel.projectedPosition, pixel.worldPosition / pixel.inverseW, pixel.normal / pixel.inverseW, textureCoord, *colorPointer, *depthPointer);
 					}
 				}
 			}
