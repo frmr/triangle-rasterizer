@@ -5,7 +5,7 @@ tr::TransformedVertex::TransformedVertex() :
 {
 }
 
-tr::TransformedVertex::TransformedVertex(const Vector4& worldPosition, const Vector4& projectedPosition, const Vector3& normal, const Vector2& textureCoord) :
+tr::TransformedVertex::TransformedVertex(const Vector3& worldPosition, const Vector4& projectedPosition, const Vector3& normal, const Vector2& textureCoord) :
 	worldPosition(worldPosition),
 	projectedPosition(projectedPosition),
 	normal(normal),
@@ -14,7 +14,7 @@ tr::TransformedVertex::TransformedVertex(const Vector4& worldPosition, const Vec
 {
 }
 
-tr::TransformedVertex::TransformedVertex(const Vector4& worldPosition, const Vector4& projectedPosition, const Vector3& normal, const Vector2& textureCoord, const float inverseW) :
+tr::TransformedVertex::TransformedVertex(const Vector3& worldPosition, const Vector4& projectedPosition, const Vector3& normal, const Vector2& textureCoord, const float inverseW) :
 	worldPosition(worldPosition),
 	projectedPosition(projectedPosition),
 	normal(normal),

@@ -10,7 +10,7 @@ namespace tr
 	public:
 		                    DefaultShader();
 
-		void                draw(const Vector4& screenPosition, const Vector4& worldPosition, const Vector3& normal, const Vector2& textureCoord, Color& color, float& depth) const;
+		void                draw(const Vector4& screenPosition, const Vector3& worldPosition, const Vector3& normal, const Vector2& textureCoord, Color& color, float& depth) const;
 
 		void                setTexture(const Texture* const texture);
 		void                setTextureWrappingMode(const TextureWrappingMode textureWrappingMode);

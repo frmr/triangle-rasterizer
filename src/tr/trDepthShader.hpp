@@ -8,6 +8,6 @@ namespace tr
 	class DepthShader
 	{
 	public:
-		void draw(const Vector4& screenPosition, const Vector4& worldPosition, const Vector3& normal, const Vector2& textureCoord, tr::Color& color, float& depth) const;
+		void draw(const Vector4& screenPosition, const Vector3& worldPosition, const Vector3& normal, const Vector2& textureCoord, tr::Color& color, float& depth) const;
 	};
 }

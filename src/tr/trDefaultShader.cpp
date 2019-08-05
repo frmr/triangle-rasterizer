@@ -8,7 +8,7 @@ tr::DefaultShader::DefaultShader() :
 {
 }
 
-void tr::DefaultShader::draw(const Vector4& screenPosition, const Vector4& worldPosition, const Vector3& normal, const Vector2& textureCoord, Color& color, float& depth) const
+void tr::DefaultShader::draw(const Vector4& screenPosition, const Vector3& worldPosition, const Vector3& normal, const Vector2& textureCoord, Color& color, float& depth) const
 {
 	//const Color textureColor = m_texture->getAt(textureCoord.x, textureCoord.y, m_textureFiltering, m_textureWrappingMode, 0.105f, 0.105f, true);
 	const Color textureColor = m_texture->getAt(textureCoord.x, textureCoord.y, m_textureFiltering, m_textureWrappingMode);

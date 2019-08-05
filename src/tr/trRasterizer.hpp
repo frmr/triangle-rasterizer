@@ -59,8 +59,10 @@ namespace tr
 
 			for (const Vertex& vertex : vertices)
 			{
+				const Vector4 worldPosition = m_modelMatrix * vertex.position;
+
 				transformedVertices.emplace_back(
-					m_modelMatrix * vertex.position,
+					Vector3(worldPosition.x, worldPosition.y, worldPosition.z),
 					m_projectionViewMatrix * m_modelMatrix * vertex.position,
 					(m_modelNormalRotationMatrix * vertex.normal).normalize(),
 					vertex.textureCoord
@@ -164,7 +166,7 @@ namespace tr
 	                             (-lineStart.projectedPosition.w  - lineStart.projectedPosition[axis]) / (lineEnd.projectedPosition[axis] - lineStart.projectedPosition[axis] + lineEnd.projectedPosition.w - lineStart.projectedPosition.w) :
 	                             ( lineStart.projectedPosition.w  - lineStart.projectedPosition[axis]) / (lineEnd.projectedPosition[axis] - lineStart.projectedPosition[axis] - lineEnd.projectedPosition.w + lineStart.projectedPosition.w);
 
-			const Vector4 worldPosition	    = lineStart.worldPosition     + (lineEnd.worldPosition     - lineStart.worldPosition)     * alpha;
+			const Vector3 worldPosition	    = lineStart.worldPosition     + (lineEnd.worldPosition     - lineStart.worldPosition)     * alpha;
 			const Vector4 projectedPosition = lineStart.projectedPosition + (lineEnd.projectedPosition - lineStart.projectedPosition) * alpha;
 			const Vector3 normal            = lineStart.normal            + (lineEnd.normal            - lineStart.normal)            * alpha;
 			const Vector2 textureCoord      = lineStart.textureCoord      + (lineEnd.textureCoord      - lineStart.textureCoord)      * alpha;
