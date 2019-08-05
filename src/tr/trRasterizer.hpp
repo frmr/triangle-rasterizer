@@ -393,15 +393,12 @@ namespace tr
 				const size_t            firstX            = size_t(std::ceilf(currentLeft.projectedPosition.x));
 				const size_t            lastX             = size_t(std::ceilf(currentRight.projectedPosition.x));
 				const float             leftToFirstX      = float(firstX) - currentLeft.projectedPosition.x;
-				const TransformedVertex firstPixel        = currentLeft + leftToRightVector * leftToFirstX;
+				TransformedVertex       pixel             = currentLeft + leftToRightVector * leftToFirstX;
 				Color*                  colorPointer      = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
 				float*                  depthPointer      = depthBuffer.getData() + (currentY * depthBuffer.getWidth() + firstX);
-				size_t                  columnCount       = 0;
 
-				for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer, ++columnCount)
+				for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer)
 				{
-					const TransformedVertex pixel = firstPixel + leftToRightVector * float(columnCount);
-
 					if (!m_depthTest || pixel.projectedPosition.z < *depthPointer)
 					{
 						Vector2 textureCoord = pixel.textureCoord;
@@ -411,6 +408,8 @@ namespace tr
 
 						shader.draw(pixel.projectedPosition, pixel.worldPosition / pixel.inverseW, pixel.normal / pixel.inverseW, textureCoord, *colorPointer, *depthPointer);
 					}
+
+					pixel += leftToRightVector;
 				}
 			}
 		}
