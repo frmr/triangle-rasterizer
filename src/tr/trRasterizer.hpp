@@ -34,7 +34,8 @@ namespace tr
 			m_textureMode(TextureMode::Perspective),
 			m_cullFaceMode(CullFaceMode::Back),
 			m_interlaceOffset(0),
-			m_interlaceStep(1)
+			m_interlaceStep(1),
+			m_depthBias(0.0f)
 		{
 		}
 
@@ -157,6 +158,11 @@ namespace tr
 			m_interlaceStep   = step;
 
 			return Error::Success;
+		}
+
+		void setDepthBias(const float depthBias)
+		{
+			m_depthBias = depthBias;
 		}
 
 	private:
@@ -399,7 +405,7 @@ namespace tr
 
 				for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer)
 				{
-					if (!m_depthTest || pixel.projectedPosition.z < *depthPointer)
+					if (!m_depthTest || pixel.projectedPosition.z + m_depthBias < *depthPointer)
 					{
 						Vector2 textureCoord = pixel.textureCoord;
 
@@ -429,5 +435,6 @@ namespace tr
 		CullFaceMode m_cullFaceMode;
 		size_t       m_interlaceOffset;
 		size_t       m_interlaceStep;
+		float        m_depthBias;
 	};
 }
