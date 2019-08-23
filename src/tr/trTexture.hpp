@@ -9,7 +9,7 @@ namespace tr
 	{
 	public:
 		                         Texture(const size_t width, const size_t height);
-		                         Texture(const std::string& filename);
+		                         Texture(const size_t width, const size_t height, const std::vector<uint8_t>& rgbaData);
 
 		bool                     isInitialized() const;
 		Error                    generateMipmaps();

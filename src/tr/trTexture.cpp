@@ -1,33 +1,16 @@
 #include "trTexture.hpp"
 
-#include "../lodepng/lodepng.h"
-
 tr::Texture::Texture(const size_t width, const size_t height)
 {
 	init(width, height);
 }
 
-tr::Texture::Texture(const std::string& filename) :
+tr::Texture::Texture(const size_t width, const size_t height, const std::vector<uint8_t>& rgbaData) :
 	m_maxMipLevelIndex(0),
 	m_baseLevel(nullptr)
 {
-	std::vector<uint8_t> encodedData;
-
-	if (!lodepng::load_file(encodedData, filename))
-	{
-		uint32_t             width;
-		uint32_t             height;
-		lodepng::State       state;
-		std::vector<uint8_t> decodedData;
-
-		state.info_raw.colortype = LodePNGColorType::LCT_RGBA;
-
-		if (!lodepng::decode(decodedData, width, height, state, encodedData))
-		{
-			init(width, height);
-			copyImageDataToBaseLevel(decodedData);
-		}
-	}
+	init(width, height);
+	copyImageDataToBaseLevel(rgbaData);
 }
 
 bool tr::Texture::isInitialized() const
