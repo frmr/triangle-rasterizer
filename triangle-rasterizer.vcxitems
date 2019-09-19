@@ -13,4 +13,36 @@
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\matrix\Matrices.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trDefaultShader.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trDepthShader.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTexture.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTransformedVertex.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\matrix\Matrices.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\matrix\Vectors.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\tr.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trAxis.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBlendMode.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBuffer.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trColor.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trColorBuffer.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trCoord.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trCullFaceMode.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trDefaultShader.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trDepthBuffer.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trDepthShader.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trEdgeInfo.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trError.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trPrimitive.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRasterizer.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTexture.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTextureMode.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTextureWrappingMode.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTransformedVertex.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trVertex.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trVertexClipBitMasks.hpp" />
+  </ItemGroup>
 </Project>
