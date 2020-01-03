@@ -132,6 +132,11 @@ namespace tr
 			m_modelNormalRotationMatrix.invert().transpose();
 		}
 
+		Matrix4 getModelMatrix()
+		{
+			return m_modelMatrix;
+		}
+
 		void setDepthTest(const bool depthTest)
 		{
 			m_depthTest = depthTest;
