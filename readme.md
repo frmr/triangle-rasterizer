@@ -11,4 +11,5 @@ This library renders triangles to buffers that are passed into it. It has the fo
 * Triange/strip/fan
 * Scan-line interleave
 * Render to texture
+* Depth bias
 * Customizable fragment shaders
