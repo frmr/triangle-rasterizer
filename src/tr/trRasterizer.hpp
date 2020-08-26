@@ -346,7 +346,7 @@ namespace tr
 		{
 			if (vertices[1].projectedPosition.y != vertices[0].projectedPosition.y)
 			{
-				const size_t             firstY          = size_t(std::ceilf(vertices[0].projectedPosition.y));
+				const size_t             firstY          = size_t(std::ceil(vertices[0].projectedPosition.y));
 
 				const float              topToFirstYDiff = float(firstY) - vertices[0].projectedPosition.y;
 
@@ -359,7 +359,7 @@ namespace tr
 				const TransformedVertex  startLeft       = vertices[0] + leftVector  * leftRatio;
 				const TransformedVertex  startRight      = vertices[0] + rightVector * rightRatio;
 
-				const size_t             targetY         = size_t(std::ceilf(vertices[1].projectedPosition.y));
+				const size_t             targetY         = size_t(std::ceil(vertices[1].projectedPosition.y));
 
 				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
 			}
@@ -369,7 +369,7 @@ namespace tr
 		{
 			if (vertices[2].projectedPosition.y != vertices[1].projectedPosition.y)
 			{
-				const size_t             firstY         = size_t(std::ceilf(vertices[1].projectedPosition.y));
+				const size_t             firstY         = size_t(std::ceil(vertices[1].projectedPosition.y));
 
 				const float              middleToFirstY = float(firstY) - vertices[1].projectedPosition.y;
 				const float              topToFirstY    = float(firstY) - vertices[0].projectedPosition.y;
@@ -383,7 +383,7 @@ namespace tr
 				const TransformedVertex  startLeft      = (middleVertexLeft ? vertices[1] : vertices[0]) + leftVector  * ratioLeft;
 				const TransformedVertex  startRight     = (middleVertexLeft ? vertices[0] : vertices[1]) + rightVector * ratioRight;
 
-				const size_t  targetY        = size_t(std::ceilf(vertices[2].projectedPosition.y));
+				const size_t  targetY        = size_t(std::ceil(vertices[2].projectedPosition.y));
 
 				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
 			}
@@ -401,8 +401,8 @@ namespace tr
 				const TransformedVertex currentLeft       = leftStart + leftChange * float(rowCount);
 				const TransformedVertex currentRight      = rightStart + rightChange * float(rowCount);
 				const TransformedVertex leftToRightVector = (currentRight - currentLeft) / (currentRight.projectedPosition.x - currentLeft.projectedPosition.x);
-				const size_t            firstX            = size_t(std::ceilf(currentLeft.projectedPosition.x));
-				const size_t            lastX             = size_t(std::ceilf(currentRight.projectedPosition.x));
+				const size_t            firstX            = size_t(std::ceil(currentLeft.projectedPosition.x));
+				const size_t            lastX             = size_t(std::ceil(currentRight.projectedPosition.x));
 				const float             leftToFirstX      = float(firstX) - currentLeft.projectedPosition.x;
 				TransformedVertex       pixel             = currentLeft + leftToRightVector * leftToFirstX;
 				Color*                  colorPointer      = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
