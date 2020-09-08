@@ -34,8 +34,6 @@ namespace tr
 			m_depthTest(true),
 			m_textureMode(TextureMode::Perspective),
 			m_cullFaceMode(CullFaceMode::Back),
-			m_interlaceOffset(0),
-			m_interlaceStep(1),
 			m_depthBias(0.0f)
 		{
 		}
@@ -151,19 +149,6 @@ namespace tr
 		void setCullFaceMode(const CullFaceMode cullFaceMode)
 		{
 			m_cullFaceMode = cullFaceMode;
-		}
-
-		Error setInterlace(const size_t offset, const size_t step)
-		{
-			if (step == 0)
-			{
-				return Error::InvalidInterlaceStep;
-			}
-
-			m_interlaceOffset = offset;
-			m_interlaceStep   = step;
-
-			return Error::Success;
 		}
 
 		void setDepthBias(const float depthBias)
@@ -390,8 +375,6 @@ namespace tr
 		bool         m_depthTest;
 		TextureMode  m_textureMode;
 		CullFaceMode m_cullFaceMode;
-		size_t       m_interlaceOffset;
-		size_t       m_interlaceStep;
 		float        m_depthBias;
 	};
 }
