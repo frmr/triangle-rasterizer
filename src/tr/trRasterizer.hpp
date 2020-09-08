@@ -301,26 +301,26 @@ namespace tr
 
 		void fillTriangle(const std::array<TransformedVertex,3>& vertices, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			const float a01 = vertices[0].projectedPosition.y - vertices[1].projectedPosition.y;
-			const float b01 = vertices[1].projectedPosition.x - vertices[0].projectedPosition.x;
-			const float a12 = vertices[1].projectedPosition.y - vertices[2].projectedPosition.y;
-			const float b12 = vertices[2].projectedPosition.x - vertices[1].projectedPosition.x;
-			const float a20 = vertices[2].projectedPosition.y - vertices[0].projectedPosition.y;
-			const float b20 = vertices[0].projectedPosition.x - vertices[2].projectedPosition.x;
+			const float   a01 = vertices[0].projectedPosition.y - vertices[1].projectedPosition.y;
+			const float   b01 = vertices[1].projectedPosition.x - vertices[0].projectedPosition.x;
+			const float   a12 = vertices[1].projectedPosition.y - vertices[2].projectedPosition.y;
+			const float   b12 = vertices[2].projectedPosition.x - vertices[1].projectedPosition.x;
+			const float   a20 = vertices[2].projectedPosition.y - vertices[0].projectedPosition.y;
+			const float   b20 = vertices[0].projectedPosition.x - vertices[2].projectedPosition.x;
 			
-			const size_t minX = size_t(std::min(vertices[0].projectedPosition.x, std::min(vertices[1].projectedPosition.x, vertices[2].projectedPosition.x)) + 0.5f);
-			const size_t minY = size_t(std::min(vertices[0].projectedPosition.y, std::min(vertices[1].projectedPosition.y, vertices[2].projectedPosition.y)) + 0.5f);
-			const size_t maxX = size_t(std::max(vertices[0].projectedPosition.x, std::max(vertices[1].projectedPosition.x, vertices[2].projectedPosition.x)) + 0.5f);
-			const size_t maxY = size_t(std::max(vertices[0].projectedPosition.y, std::max(vertices[1].projectedPosition.y, vertices[2].projectedPosition.y)) + 0.5f);
+			const size_t  minX = size_t(std::min({ vertices[0].projectedPosition.x, vertices[1].projectedPosition.x, vertices[2].projectedPosition.x }));
+			const size_t  minY = size_t(std::min({ vertices[0].projectedPosition.y, vertices[1].projectedPosition.y, vertices[2].projectedPosition.y }));
+			const size_t  maxX = size_t(std::max({ vertices[0].projectedPosition.x, vertices[1].projectedPosition.x, vertices[2].projectedPosition.x }));
+			const size_t  maxY = size_t(std::max({ vertices[0].projectedPosition.y, vertices[1].projectedPosition.y, vertices[2].projectedPosition.y }));
 			
-			Vector4 point(float(minX), float(minY), 0.0f, 0.0f);
+			const Vector4 point(float(minX), float(minY), 0.0f, 0.0f);
 			
-			const float area = orientPoint(vertices[0].projectedPosition, vertices[1].projectedPosition, vertices[2].projectedPosition);
+			float         wRow0 = orientPoint(vertices[1].projectedPosition, vertices[2].projectedPosition, point);
+			float         wRow1 = orientPoint(vertices[2].projectedPosition, vertices[0].projectedPosition, point);
+			float         wRow2 = orientPoint(vertices[0].projectedPosition, vertices[1].projectedPosition, point);
+			
+			const float   area = orientPoint(vertices[0].projectedPosition, vertices[1].projectedPosition, vertices[2].projectedPosition);
 
-			float wRow0 = orientPoint(vertices[1].projectedPosition, vertices[2].projectedPosition, point);
-			float wRow1 = orientPoint(vertices[2].projectedPosition, vertices[0].projectedPosition, point);
-			float wRow2 = orientPoint(vertices[0].projectedPosition, vertices[1].projectedPosition, point);
-			
 			for (size_t y = minY; y <= maxY; ++y)
 			{
 				Color* colorPointer = colorBuffer.getData() + (y * colorBuffer.getWidth() + minX);
@@ -334,9 +334,9 @@ namespace tr
 				{
 					if ((w0 >= 0.0f && w1 >= 0.0f && w2 >= 0.0f) || (w0 <= 0.0f && w1 <= 0.0f && w2 <= 0.0f))
 					{
-						float weight0 = std::abs(w0 / area);
-						float weight1 = std::abs(w1 / area);
-						float weight2 = std::abs(w2 / area);
+						const float weight0 = std::abs(w0 / area);
+						const float weight1 = std::abs(w1 / area);
+						const float weight2 = std::abs(w2 / area);
 
 						const TransformedVertex attributes = vertices[0] * weight0 + vertices[1] * weight1 + vertices[2] * weight2;
 
