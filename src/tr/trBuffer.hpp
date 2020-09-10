@@ -45,6 +45,7 @@ namespace tr
 			return m_data[y * m_width + x];
 		}
 
+		// TODO: Consider moving to color buffer
 		T getAt(float u, float v, const bool filter, const TextureWrappingMode textureWrappingMode) const
 		{
 			if (textureWrappingMode == TextureWrappingMode::Clamp)
@@ -148,7 +149,7 @@ namespace tr
 		}
 
 	protected:
-		static constexpr size_t s_maxSize = std::numeric_limits<size_t>::max();
+		static constexpr size_t s_maxSize = std::numeric_limits<size_t>::max(); // TODO: doesn't need to be a member
 		size_t                  m_width;
 		size_t                  m_height;
 		float                   m_floatWidth;

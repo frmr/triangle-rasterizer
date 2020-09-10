@@ -24,6 +24,33 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTransformedVertex.cpp">
       <Filter>tr</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadFloat.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadInt.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadSizeT.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec2.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadMask.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec3.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trColorBuffer.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadColor.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadTransformedVertex.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\matrix\Matrices.h">
@@ -93,6 +120,33 @@
       <Filter>tr</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trVertexClipBitMasks.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadFloat.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadPointer.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadSizeT.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec2.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadInt.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadMask.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec3.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadTransformedVertex.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadColor.hpp">
       <Filter>tr</Filter>
     </ClInclude>
   </ItemGroup>

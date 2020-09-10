@@ -15,6 +15,8 @@
 #include "trVertexClipBitMasks.hpp"
 #include "../matrix/Matrices.h"
 #include "tfTextFile.hpp"
+#include "trQuadPointer.hpp"
+#include "trQuadTransformedVertex.hpp"
 
 #include <vector>
 #include <array>
@@ -301,70 +303,176 @@ namespace tr
 
 		void fillTriangle(const std::array<TransformedVertex,3>& vertices, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			const float   a01 = vertices[0].projectedPosition.y - vertices[1].projectedPosition.y;
-			const float   b01 = vertices[1].projectedPosition.x - vertices[0].projectedPosition.x;
-			const float   a12 = vertices[1].projectedPosition.y - vertices[2].projectedPosition.y;
-			const float   b12 = vertices[2].projectedPosition.x - vertices[1].projectedPosition.x;
-			const float   a20 = vertices[2].projectedPosition.y - vertices[0].projectedPosition.y;
-			const float   b20 = vertices[0].projectedPosition.x - vertices[2].projectedPosition.x;
-			
-			const size_t  minX = size_t(std::min({ vertices[0].projectedPosition.x, vertices[1].projectedPosition.x, vertices[2].projectedPosition.x }));
+			const QuadFloat quadA01(4.0f * (vertices[0].projectedPosition.y - vertices[1].projectedPosition.y));
+			const QuadFloat quadB01(1.0f * (vertices[1].projectedPosition.x - vertices[0].projectedPosition.x));
+			const QuadFloat quadA12(4.0f * (vertices[1].projectedPosition.y - vertices[2].projectedPosition.y));
+			const QuadFloat quadB12(1.0f * (vertices[2].projectedPosition.x - vertices[1].projectedPosition.x));
+			const QuadFloat quadA20(4.0f * (vertices[2].projectedPosition.y - vertices[0].projectedPosition.y));
+			const QuadFloat quadB20(1.0f * (vertices[0].projectedPosition.x - vertices[2].projectedPosition.x));
+
+			constexpr size_t quadAlignmentMask = std::numeric_limits<size_t>::max() ^ 0x03;
+
+			const size_t  minX = size_t(std::min({ vertices[0].projectedPosition.x, vertices[1].projectedPosition.x, vertices[2].projectedPosition.x })) & quadAlignmentMask;
 			const size_t  minY = size_t(std::min({ vertices[0].projectedPosition.y, vertices[1].projectedPosition.y, vertices[2].projectedPosition.y }));
 			const size_t  maxX = size_t(std::max({ vertices[0].projectedPosition.x, vertices[1].projectedPosition.x, vertices[2].projectedPosition.x }));
 			const size_t  maxY = size_t(std::max({ vertices[0].projectedPosition.y, vertices[1].projectedPosition.y, vertices[2].projectedPosition.y }));
 			
-			const Vector4 point(float(minX), float(minY), 0.0f, 0.0f);
-			
-			float         wRow0 = orientPoint(vertices[1].projectedPosition, vertices[2].projectedPosition, point);
-			float         wRow1 = orientPoint(vertices[2].projectedPosition, vertices[0].projectedPosition, point);
-			float         wRow2 = orientPoint(vertices[0].projectedPosition, vertices[1].projectedPosition, point);
-			
-			const float   area = orientPoint(vertices[0].projectedPosition, vertices[1].projectedPosition, vertices[2].projectedPosition);
+			//const Vector4 point(float(minX), float(minY), 0.0f, 0.0f);
 
-			for (size_t y = minY; y <= maxY; ++y)
+			const QuadVec3 points(
+				QuadFloat(float(minX), float(minX + 1), float(minX + 2),     float(minX + 3)),
+				QuadFloat(float(minY), float(minY),     float(minY),         float(minY)),
+				0.0f
+			);
+			
+			//const QuadVec2 quadVertex0(vertices[0].projectedPosition.x, vertices[0].projectedPosition.y);
+			//const QuadVec2 quadVertex1(vertices[1].projectedPosition.x, vertices[1].projectedPosition.y);
+			//const QuadVec2 quadVertex2(vertices[2].projectedPosition.x, vertices[2].projectedPosition.y);
+
+			QuadTransformedVertex quadVertex0(vertices[0]);
+			QuadTransformedVertex quadVertex1(vertices[1]);
+			QuadTransformedVertex quadVertex2(vertices[2]);
+
+			QuadFloat rowWeights0 = orientPoints(quadVertex1.projectedPosition, quadVertex2.projectedPosition, points);
+			QuadFloat rowWeights1 = orientPoints(quadVertex2.projectedPosition, quadVertex0.projectedPosition, points);
+			QuadFloat rowWeights2 = orientPoints(quadVertex0.projectedPosition, quadVertex1.projectedPosition, points);
+
+			//float         rowWeight0 = orientPoint(vertices[1].projectedPosition, vertices[2].projectedPosition, point);
+			//float         rowWeight1 = orientPoint(vertices[2].projectedPosition, vertices[0].projectedPosition, point);
+			//float         rowWeight2 = orientPoint(vertices[0].projectedPosition, vertices[1].projectedPosition, point);
+			
+			//const float   area = orientPoint(vertices[0].projectedPosition, vertices[1].projectedPosition, vertices[2].projectedPosition);
+
+			const QuadFloat quadArea = orientPoints(quadVertex0.projectedPosition, quadVertex1.projectedPosition, quadVertex2.projectedPosition);
+
+			//const QuadSizeT quadMinX(minX, minX + 1, minX + 2, minX + 3);
+
+			//QuadSizeT quadY(minY, minY, minY + 1, minY + 1);
+
+			assert(depthBuffer.getWidth()  == colorBuffer.getWidth());
+			assert(depthBuffer.getHeight() == colorBuffer.getHeight());
+
+			//QuadSizeT bufferOffsets = (quadY * depthBuffer.getWidth()) + quadMinX;
+
+			//const QuadSizeT bufferStepX(4);
+			//const QuadSizeT bufferStepY(depthBuffer.getWidth() - (maxX - minX));
+
+			const QuadFloat quadZero(0.0f);
+
+			const size_t bufferStepX = 4;
+			const size_t bufferStepY = depthBuffer.getWidth() - (maxX - minX) + (maxX - minX) % bufferStepX - bufferStepX;
+
+			Color* colorPointer = colorBuffer.getData() + minY * colorBuffer.getWidth() + minX;
+			float* depthPointer = depthBuffer.getData() + minY * depthBuffer.getWidth() + minX;
+
+			for (size_t y = minY; y <= maxY; y += 1, /*bufferOffsets += bufferStepY*/ colorPointer += bufferStepY, depthPointer += bufferStepY)
 			{
-				Color* colorPointer = colorBuffer.getData() + (y * colorBuffer.getWidth() + minX);
-				float* depthPointer = depthBuffer.getData() + (y * depthBuffer.getWidth() + minX);
+				//Color* colorPointer2 = colorBuffer.getData() + (y * colorBuffer.getWidth() + minX);
+				//float* depthPointer2 = depthBuffer.getData() + (y * depthBuffer.getWidth() + minX);
 
-				float w0 = wRow0;
-				float w1 = wRow1;
-				float w2 = wRow2;
-			
-				for (size_t x = minX; x <= maxX; ++x, ++colorPointer, ++depthPointer)
+				//float weight0 = rowWeight0;
+				//float weight1 = rowWeight1;
+				//float weight2 = rowWeight2;
+
+				QuadFloat weights0 = rowWeights0;
+				QuadFloat weights1 = rowWeights1;
+				QuadFloat weights2 = rowWeights2;
+
+				for (size_t x = minX; x <= maxX; x += 4, /*colorPointer += 2, depthPointer += 2, bufferOffsets += bufferStepX*/ colorPointer += bufferStepX, depthPointer += bufferStepX)
 				{
-					if ((w0 >= 0.0f && w1 >= 0.0f && w2 >= 0.0f) || (w0 <= 0.0f && w1 <= 0.0f && w2 <= 0.0f))
+					// weights0 >= 0
+					// weights1 >= 0
+					// weights2 >= 0
+
+					QuadMask positiveWeightsMask = weights0.greaterThan(quadZero);
+
+					positiveWeightsMask &= weights1.greaterThan(quadZero);
+					positiveWeightsMask &= weights2.greaterThan(quadZero);
+
+					QuadMask negativeWeightsMask = weights0.lessThan(quadZero);
+
+					negativeWeightsMask &= weights1.lessThan(quadZero);
+					negativeWeightsMask &= weights2.lessThan(quadZero);
+					
+					const QuadMask combinedWeightsMask = positiveWeightsMask | negativeWeightsMask;
+
+					if (combinedWeightsMask.moveMask())
 					{
-						const float weight0 = std::abs(w0 / area);
-						const float weight1 = std::abs(w1 / area);
-						const float weight2 = std::abs(w2 / area);
+						const QuadFloat normalizedWeights0 = (weights0 / quadArea).abs();
+						const QuadFloat normalizedWeights1 = (weights1 / quadArea).abs();
+						const QuadFloat normalizedWeights2 = (weights2 / quadArea).abs();
 
-						const TransformedVertex attributes = vertices[0] * weight0 + vertices[1] * weight1 + vertices[2] * weight2;
+						QuadTransformedVertex attributes = quadVertex0 * normalizedWeights0 + quadVertex1 * normalizedWeights1 + quadVertex2 * normalizedWeights2;
 
-						if (!m_depthTest || attributes.projectedPosition.z + m_depthBias < *depthPointer)
+						QuadMask depthMask = combinedWeightsMask; // just reuse combined mask
+
+						if (m_depthTest)
 						{
-							Vector2 textureCoord = attributes.textureCoord;
-						
-							if (m_textureMode == TextureMode::Perspective)
-								textureCoord /= attributes.inverseW;
-						
-							shader.draw(attributes.projectedPosition, attributes.worldPosition / attributes.inverseW, attributes.normal / attributes.inverseW, textureCoord, *colorPointer, *depthPointer);
+							depthMask &= QuadFloat(depthPointer).greaterThan(attributes.projectedPosition.z + m_depthBias);
 						}
+
+						attributes.textureCoord /= attributes.inverseW;
+
+						shader.draw(depthMask, attributes.projectedPosition, attributes.worldPosition, attributes.normal, attributes.textureCoord, colorPointer, depthPointer);
+
+						//for (size_t i = 0; i < 4; ++i)
+						//{
+						//	if (combinedWeightsMask.get(i))
+						//	{
+						//		*(colorPointer + i) = Color(255, 255, 255, 255);
+						//		*(depthPointer + i) = 1.0f;
+						//	}
+						//}
 					}
+
+					
+
+					//if ((weight0 >= 0.0f && weight1 >= 0.0f && weight2 >= 0.0f) || (weight0 < 0.0f && weight1 < 0.0f && weight2 < 0.0f))
+					//{
+					//	const float normalizedWeight0 = std::abs(weight0 / area);
+					//	const float normalizedWeight1 = std::abs(weight1 / area);
+					//	const float normalizedWeight2 = std::abs(weight2 / area);
+					//	
+					//	const TransformedVertex attributes = vertices[0] * normalizedWeight0 + vertices[1] * normalizedWeight1 + vertices[2] * normalizedWeight2;
+					//	
+					//	if (!m_depthTest || attributes.projectedPosition.z + m_depthBias < *depthPointer)
+					//	{
+					//		Vector2 textureCoord = attributes.textureCoord;
+					//	
+					//		if (m_textureMode == TextureMode::Perspective)
+					//			textureCoord /= attributes.inverseW;
+					//	
+					//		shader.draw(attributes.projectedPosition, attributes.worldPosition / attributes.inverseW, attributes.normal / attributes.inverseW, textureCoord, *colorPointer, *depthPointer);
+					//	}
+					//}
 			
-					w0 += a12;
-					w1 += a20;
-					w2 += a01;
+					//weight0 += a12;
+					//weight1 += a20;
+					//weight2 += a01;
+
+					weights0 += quadA12;
+					weights1 += quadA20;
+					weights2 += quadA01;
 				}
-			
-				wRow0 += b12;
-				wRow1 += b20;
-				wRow2 += b01;
+
+				//rowWeight0 += b12;
+				//rowWeight1 += b20;
+				//rowWeight2 += b01;
+
+				rowWeights0 += quadB12;
+				rowWeights1 += quadB20;
+				rowWeights2 += quadB01;
 			}
 		}
 
 		static float orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const Vector4& point)
 		{
 			return (lineEnd.x - lineStart.x) * (point.y - lineStart.y) - (lineEnd.y - lineStart.y) * (point.x - lineStart.x);
+		}
+
+		static QuadFloat orientPoints(const QuadVec3& lineStarts, const QuadVec3& lineEnds, const QuadVec3& points)
+		{
+			return (lineEnds.x - lineStarts.x) * (points.y - lineStarts.y) - (lineEnds.y - lineStarts.y) * (points.x - lineStarts.x);
 		}
 
 	private:
@@ -375,6 +483,6 @@ namespace tr
 		bool         m_depthTest;
 		TextureMode  m_textureMode;
 		CullFaceMode m_cullFaceMode;
-		float        m_depthBias;
+		QuadFloat    m_depthBias;
 	};
 }

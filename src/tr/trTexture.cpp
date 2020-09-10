@@ -89,7 +89,9 @@ size_t tr::Texture::getNumMipLevels() const
 
 tr::Color tr::Texture::getAt(const float u, const float v, const bool filter, const TextureWrappingMode textureWrappingMode) const
 {
-	return m_baseLevel->getAt(u, v, filter, textureWrappingMode);
+	//return m_baseLevel->getAt(u, v, filter, textureWrappingMode);
+
+	return tr::Color();
 }
 
 tr::Color tr::Texture::getAt(const float u, const float v, const bool filter, const TextureWrappingMode textureWrappingMode, const float du, const float dv, const bool interpolateMipmapLevels) const
@@ -106,15 +108,20 @@ tr::Color tr::Texture::getAt(const float u, const float v, const bool filter, co
 		const float   ceilRatio  = mipLevel - float(floor);
 		const float   floorRatio = 1.0f - ceilRatio;
 
-		const Vector4 floorColor = m_mipLevels[floor].getAt(u, v, filter, textureWrappingMode).toVector();
-		const Vector4 ceilColor  = m_mipLevels[ceil].getAt(u, v, filter, textureWrappingMode).toVector();
+		const Vector4 floorColor = Vector4();// m_mipLevels[floor].getAt(u, v, filter, textureWrappingMode).toVector();
+		const Vector4 ceilColor  = Vector4();// m_mipLevels[ceil].getAt(u, v, filter, textureWrappingMode).toVector();
 
 		return Color(floorColor * floorRatio + ceilColor * ceilRatio);
 	}
 	else
 	{
-		return m_mipLevels[std::min(size_t(std::lroundf(mipLevel)), m_mipLevels.size() - 1)].getAt(u, v, filter, textureWrappingMode);
+		return tr::Color();//m_mipLevels[std::min(size_t(std::lroundf(mipLevel)), m_mipLevels.size() - 1)].getAt(u, v, filter, textureWrappingMode);
 	}
+}
+
+tr::QuadColor tr::Texture::getAt(const QuadFloat& u, const QuadFloat& v) const
+{
+	return m_baseLevel->getAt(u, v);
 }
 
 void tr::Texture::init(const size_t width, const size_t height)
