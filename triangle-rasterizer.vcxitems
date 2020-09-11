@@ -50,7 +50,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadFloat.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadInt.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadMask.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadPointer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadSizeT.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadTransformedVertex.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec2.hpp" />

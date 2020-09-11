@@ -1,6 +1,7 @@
 #include "trQuadColor.hpp"
 #include <cassert>
 
+// TODO: Might be needed elsewhere; consider moving into its own file
 constexpr std::array<float, 256> tr::generateConversionTable()
 {
 	std::array<float, 256> floats{};
@@ -14,7 +15,7 @@ constexpr std::array<float, 256> tr::generateConversionTable()
 }
 
 tr::QuadColor::QuadColor(const QuadSizeT& pointers) :
-	m_r(0.0f),
+	m_r(0.0f), // TODO: Don't initialize
 	m_g(0.0f),
 	m_b(0.0f),
 	m_a(0.0f)
@@ -23,12 +24,19 @@ tr::QuadColor::QuadColor(const QuadSizeT& pointers) :
 
 	assert(sizeof(tr::Color) == sizeof(uint32_t));
 
-	std::array<uint32_t, 4> ints{
-		*(reinterpret_cast<const uint32_t*>(pointers.get(0))),
-		*(reinterpret_cast<const uint32_t*>(pointers.get(1))),
-		*(reinterpret_cast<const uint32_t*>(pointers.get(2))),
-		*(reinterpret_cast<const uint32_t*>(pointers.get(3)))
+	const std::array<size_t, 4> pointerArray = pointers.toArray();
+
+	const std::array<uint32_t, 4> ints{
+		*(reinterpret_cast<const uint32_t*>(pointerArray[0])),
+		*(reinterpret_cast<const uint32_t*>(pointerArray[1])),
+		*(reinterpret_cast<const uint32_t*>(pointerArray[2])),
+		*(reinterpret_cast<const uint32_t*>(pointerArray[3]))
 	};
+
+	// TODO
+	// Loads all reds into one QuadInt
+	// Shift red >> 24
+	// Gather floats by calculating address from floats[] + red byte
 
 	m_r = QuadFloat(floats[ints[0] >> 24       ], floats[ints[1] >> 24       ], floats[ints[2] >> 24       ], floats[ints[3] >> 24       ]);
 	m_g = QuadFloat(floats[ints[0] >> 16 & 0xFF], floats[ints[1] >> 16 & 0xFF], floats[ints[2] >> 16 & 0xFF], floats[ints[3] >> 16 & 0xFF]);
@@ -38,25 +46,21 @@ tr::QuadColor::QuadColor(const QuadSizeT& pointers) :
 
 void tr::QuadColor::write(Color* const pointer, const QuadMask& mask) const
 {
-	std::array<uint32_t, 4> ints;
+	int32_t* const  intPointer = reinterpret_cast<int32_t* const>(pointer);
 
-	for (size_t i = 0; i < ints.size(); ++i)
-	{
-		const float r = m_r.get(i);
-		const float g = m_g.get(i);
-		const float b = m_b.get(i);
-		const float a = m_a.get(i);
+	const QuadFloat roundedR = m_r.round();
+	const QuadFloat roundedG = m_g.round();
+	const QuadFloat roundedB = m_b.round();
+	const QuadFloat roundedA = m_a.round();
 
-		ints[i] = uint32_t(std::lround(r) << 24 | std::lround(g) << 16 | std::lround(b) << 8 | std::lround(a));
-	}
+	QuadInt intR = roundedR.toQuadInt();
+	QuadInt intG = roundedG.toQuadInt();
+	QuadInt intB = roundedB.toQuadInt();
+	QuadInt intA = roundedA.toQuadInt();
 
-	uint32_t* const intPointer = reinterpret_cast<uint32_t* const>(pointer);
+	intR <<= 24;
+	intG <<= 16;
+	intB <<=  8;
 
-	for (size_t i = 0; i < ints.size(); ++i)
-	{
-		if (mask.get(i))
-		{
-			*(intPointer + i) = ints[i];
-		}
-	}
+	(intR | intG | intB | intA).write(intPointer, mask);
 }

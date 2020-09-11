@@ -18,7 +18,7 @@ namespace tr
 		QuadColor getAt(const QuadFloat& u, const QuadFloat& v) const;
 
 	private:
-		QuadSizeT m_quadWidth;
+		QuadInt   m_quadWidth; // Int rather than size_t because no SIMD multiply for vectors of 64-bit ints (see getAt())
 		QuadFloat m_quadFloatWidth;
 		QuadFloat m_quadFloatHeight;
 		QuadSizeT m_quadDataPointer;

@@ -125,9 +125,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadFloat.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadPointer.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadSizeT.hpp">
       <Filter>tr</Filter>
     </ClInclude>

@@ -41,3 +41,27 @@ tr::QuadVec2& tr::QuadVec2::operator/=(const QuadFloat& rhs)
 
 	return *this;
 }
+
+tr::QuadVec2 tr::QuadVec2::operator+(const QuadVec2& rhs) const
+{
+	return QuadVec2(
+		x + rhs.x,
+		y + rhs.y
+	);
+}
+
+tr::QuadVec2 tr::QuadVec2::operator*(const QuadFloat& rhs) const
+{
+	return QuadVec2(
+		x * rhs,
+		y * rhs
+	);
+}
+
+tr::QuadVec2 tr::QuadVec2::operator/(const QuadFloat& rhs) const
+{
+	return QuadVec2(
+		x / rhs,
+		y / rhs
+	);
+}

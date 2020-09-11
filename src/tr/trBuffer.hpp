@@ -66,6 +66,8 @@ namespace tr
 
 			if (filter)
 			{
+				constexpr size_t maxSize = std::numeric_limits<size_t>::max();
+
 				u -= 0.5f;
 				v -= 0.5f;
 
@@ -84,7 +86,7 @@ namespace tr
 				size_t       x1        = x0 + 1;
 				size_t       y1        = y0 + 1;
 
-				if (x0 == s_maxSize)
+				if (x0 == maxSize)
 				{
 					x0 = (textureWrappingMode == TextureWrappingMode::Clamp) ? 0 : m_width - 1;
 				}
@@ -93,7 +95,7 @@ namespace tr
 					x1 = (textureWrappingMode == TextureWrappingMode::Clamp) ? x0 : 0;
 				}
 
-				if (y0 == s_maxSize)
+				if (y0 == maxSize)
 				{
 					y0 = (textureWrappingMode == TextureWrappingMode::Clamp) ? 0 : m_height - 1;
 				}
@@ -149,7 +151,6 @@ namespace tr
 		}
 
 	protected:
-		static constexpr size_t s_maxSize = std::numeric_limits<size_t>::max(); // TODO: doesn't need to be a member
 		size_t                  m_width;
 		size_t                  m_height;
 		float                   m_floatWidth;

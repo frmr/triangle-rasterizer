@@ -9,28 +9,33 @@ tr::QuadTransformedVertex::QuadTransformedVertex(const TransformedVertex& transf
 {
 }
 
+tr::QuadTransformedVertex::QuadTransformedVertex(const QuadVec3& worldPosition, const QuadVec3& projectedPosition, const QuadVec3& normal, const QuadVec2& textureCoord, const QuadFloat& inverseW) :
+	worldPosition(worldPosition),
+	projectedPosition(projectedPosition),
+	normal(normal),
+	textureCoord(textureCoord),
+	inverseW(inverseW)
+{
+}
+
 tr::QuadTransformedVertex tr::QuadTransformedVertex::operator+(const QuadTransformedVertex& rhs) const
 {
-	QuadTransformedVertex result = *this;
-
-	result.worldPosition     += rhs.worldPosition;
-	result.projectedPosition += rhs.projectedPosition;
-	result.normal            += rhs.normal;
-	result.textureCoord      += rhs.textureCoord;
-	result.inverseW          += rhs.inverseW;
-
-	return result;
+	return QuadTransformedVertex(
+		worldPosition     + rhs.worldPosition,
+		projectedPosition + rhs.projectedPosition,
+		normal            + rhs.normal,
+		textureCoord      + rhs.textureCoord,
+		inverseW          + rhs.inverseW
+	);
 }
 
 tr::QuadTransformedVertex tr::QuadTransformedVertex::operator*(const QuadFloat& rhs) const
 {
-	QuadTransformedVertex result = *this;
-
-	result.worldPosition     *= rhs;
-	result.projectedPosition *= rhs;
-	result.normal            *= rhs;
-	result.textureCoord      *= rhs;
-	result.inverseW          *= rhs;
-
-	return result;
+	return QuadTransformedVertex(
+		worldPosition     * rhs,
+		projectedPosition * rhs,
+		normal            * rhs,
+		textureCoord      * rhs,
+		inverseW          * rhs
+	);
 }

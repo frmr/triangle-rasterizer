@@ -1,7 +1,7 @@
 #pragma once
 
 #include "trQuadMask.hpp"
-#include "trQuadSizeT.hpp"
+#include "trQuadInt.hpp"
 #include <array>
 
 namespace tr
@@ -25,16 +25,24 @@ namespace tr
 		QuadMask             greaterThan(const QuadFloat& rhs) const;
 		QuadMask             lessThan(const QuadFloat& rhs) const;
 
-		const QuadFloat&     abs(); // TODO: Return void
+		QuadFloat            abs() const;
 		QuadFloat            floor() const;
+		QuadFloat            round() const;
 
-		QuadSizeT            toQuadSizeT() const;
-
-		float                get(const size_t index) const;
+		QuadInt              toQuadInt() const;
 
 		void                 write(float* const pointer) const;
 
+#ifdef TR_SIMD
 	private:
+		                     QuadFloat(const __m128 data);
+#endif
+
+	private:
+#ifdef TR_SIMD
+		__m128               m_data;
+#else
 		std::array<float, 4> m_data;
+#endif
 	};
 }

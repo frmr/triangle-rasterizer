@@ -2,6 +2,7 @@
 
 #include "trColor.hpp"
 #include "trQuadFloat.hpp"
+#include "trQuadSizeT.hpp"
 #include <array>
 
 namespace tr
@@ -11,12 +12,9 @@ namespace tr
 	class QuadColor
 	{
 	public:
-		QuadColor(const QuadSizeT& pointers);
+		          QuadColor(const QuadSizeT& pointers);
 
-		void write(Color* const pointer, const QuadMask& mask) const;
-
-	private:
-		//static constexpr std::array<float, 256> generateConversionTable();
+		void      write(Color* const pointer, const QuadMask& mask) const;
 
 	private:
 		QuadFloat m_r;

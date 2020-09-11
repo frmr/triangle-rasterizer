@@ -38,3 +38,21 @@ tr::QuadVec3& tr::QuadVec3::operator*=(const QuadFloat& rhs)
 
 	return *this;
 }
+
+tr::QuadVec3 tr::QuadVec3::operator+(const QuadVec3& rhs) const
+{
+	return QuadVec3(
+		x + rhs.x,
+		y + rhs.y,
+		z + rhs.z
+	);
+}
+
+tr::QuadVec3 tr::QuadVec3::operator*(const QuadFloat& rhs) const
+{
+	return QuadVec3(
+		x * rhs,
+		y * rhs,
+		z * rhs
+	);
+}

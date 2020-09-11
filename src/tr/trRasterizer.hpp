@@ -15,7 +15,6 @@
 #include "trVertexClipBitMasks.hpp"
 #include "../matrix/Matrices.h"
 #include "tfTextFile.hpp"
-#include "trQuadPointer.hpp"
 #include "trQuadTransformedVertex.hpp"
 
 #include <vector>
@@ -316,18 +315,12 @@ namespace tr
 			const size_t  minY = size_t(std::min({ vertices[0].projectedPosition.y, vertices[1].projectedPosition.y, vertices[2].projectedPosition.y }));
 			const size_t  maxX = size_t(std::max({ vertices[0].projectedPosition.x, vertices[1].projectedPosition.x, vertices[2].projectedPosition.x }));
 			const size_t  maxY = size_t(std::max({ vertices[0].projectedPosition.y, vertices[1].projectedPosition.y, vertices[2].projectedPosition.y }));
-			
-			//const Vector4 point(float(minX), float(minY), 0.0f, 0.0f);
 
 			const QuadVec3 points(
 				QuadFloat(float(minX), float(minX + 1), float(minX + 2),     float(minX + 3)),
 				QuadFloat(float(minY), float(minY),     float(minY),         float(minY)),
 				0.0f
 			);
-			
-			//const QuadVec2 quadVertex0(vertices[0].projectedPosition.x, vertices[0].projectedPosition.y);
-			//const QuadVec2 quadVertex1(vertices[1].projectedPosition.x, vertices[1].projectedPosition.y);
-			//const QuadVec2 quadVertex2(vertices[2].projectedPosition.x, vertices[2].projectedPosition.y);
 
 			QuadTransformedVertex quadVertex0(vertices[0]);
 			QuadTransformedVertex quadVertex1(vertices[1]);
@@ -337,25 +330,10 @@ namespace tr
 			QuadFloat rowWeights1 = orientPoints(quadVertex2.projectedPosition, quadVertex0.projectedPosition, points);
 			QuadFloat rowWeights2 = orientPoints(quadVertex0.projectedPosition, quadVertex1.projectedPosition, points);
 
-			//float         rowWeight0 = orientPoint(vertices[1].projectedPosition, vertices[2].projectedPosition, point);
-			//float         rowWeight1 = orientPoint(vertices[2].projectedPosition, vertices[0].projectedPosition, point);
-			//float         rowWeight2 = orientPoint(vertices[0].projectedPosition, vertices[1].projectedPosition, point);
-			
-			//const float   area = orientPoint(vertices[0].projectedPosition, vertices[1].projectedPosition, vertices[2].projectedPosition);
-
 			const QuadFloat quadArea = orientPoints(quadVertex0.projectedPosition, quadVertex1.projectedPosition, quadVertex2.projectedPosition);
-
-			//const QuadSizeT quadMinX(minX, minX + 1, minX + 2, minX + 3);
-
-			//QuadSizeT quadY(minY, minY, minY + 1, minY + 1);
 
 			assert(depthBuffer.getWidth()  == colorBuffer.getWidth());
 			assert(depthBuffer.getHeight() == colorBuffer.getHeight());
-
-			//QuadSizeT bufferOffsets = (quadY * depthBuffer.getWidth()) + quadMinX;
-
-			//const QuadSizeT bufferStepX(4);
-			//const QuadSizeT bufferStepY(depthBuffer.getWidth() - (maxX - minX));
 
 			const QuadFloat quadZero(0.0f);
 
@@ -365,38 +343,20 @@ namespace tr
 			Color* colorPointer = colorBuffer.getData() + minY * colorBuffer.getWidth() + minX;
 			float* depthPointer = depthBuffer.getData() + minY * depthBuffer.getWidth() + minX;
 
-			for (size_t y = minY; y <= maxY; y += 1, /*bufferOffsets += bufferStepY*/ colorPointer += bufferStepY, depthPointer += bufferStepY)
+			for (size_t y = minY; y <= maxY; y += 1, colorPointer += bufferStepY, depthPointer += bufferStepY)
 			{
-				//Color* colorPointer2 = colorBuffer.getData() + (y * colorBuffer.getWidth() + minX);
-				//float* depthPointer2 = depthBuffer.getData() + (y * depthBuffer.getWidth() + minX);
-
-				//float weight0 = rowWeight0;
-				//float weight1 = rowWeight1;
-				//float weight2 = rowWeight2;
-
 				QuadFloat weights0 = rowWeights0;
 				QuadFloat weights1 = rowWeights1;
 				QuadFloat weights2 = rowWeights2;
 
-				for (size_t x = minX; x <= maxX; x += 4, /*colorPointer += 2, depthPointer += 2, bufferOffsets += bufferStepX*/ colorPointer += bufferStepX, depthPointer += bufferStepX)
+				for (size_t x = minX; x <= maxX; x += 4, colorPointer += bufferStepX, depthPointer += bufferStepX)
 				{
-					// weights0 >= 0
-					// weights1 >= 0
-					// weights2 >= 0
-
-					QuadMask positiveWeightsMask = weights0.greaterThan(quadZero);
-
-					positiveWeightsMask &= weights1.greaterThan(quadZero);
-					positiveWeightsMask &= weights2.greaterThan(quadZero);
-
-					QuadMask negativeWeightsMask = weights0.lessThan(quadZero);
-
-					negativeWeightsMask &= weights1.lessThan(quadZero);
-					negativeWeightsMask &= weights2.lessThan(quadZero);
+					const QuadMask positiveWeightsMask = weights0.greaterThan(quadZero) & weights1.greaterThan(quadZero) & weights2.greaterThan(quadZero);
+					const QuadMask negativeWeightsMask = weights0.lessThan(quadZero)    & weights1.lessThan(quadZero)    & weights2.lessThan(quadZero);
 					
-					const QuadMask combinedWeightsMask = positiveWeightsMask | negativeWeightsMask;
+					QuadMask       renderMask          = positiveWeightsMask | negativeWeightsMask;
 
-					if (combinedWeightsMask.moveMask())
+					if (renderMask.moveMask())
 					{
 						const QuadFloat normalizedWeights0 = (weights0 / quadArea).abs();
 						const QuadFloat normalizedWeights1 = (weights1 / quadArea).abs();
@@ -404,60 +364,20 @@ namespace tr
 
 						QuadTransformedVertex attributes = quadVertex0 * normalizedWeights0 + quadVertex1 * normalizedWeights1 + quadVertex2 * normalizedWeights2;
 
-						QuadMask depthMask = combinedWeightsMask; // just reuse combined mask
-
 						if (m_depthTest)
 						{
-							depthMask &= QuadFloat(depthPointer).greaterThan(attributes.projectedPosition.z + m_depthBias);
+							renderMask &= QuadFloat(depthPointer).greaterThan(attributes.projectedPosition.z + m_depthBias);
 						}
 
 						attributes.textureCoord /= attributes.inverseW;
 
-						shader.draw(depthMask, attributes.projectedPosition, attributes.worldPosition, attributes.normal, attributes.textureCoord, colorPointer, depthPointer);
-
-						//for (size_t i = 0; i < 4; ++i)
-						//{
-						//	if (combinedWeightsMask.get(i))
-						//	{
-						//		*(colorPointer + i) = Color(255, 255, 255, 255);
-						//		*(depthPointer + i) = 1.0f;
-						//	}
-						//}
+						shader.draw(renderMask, attributes.projectedPosition, attributes.worldPosition, attributes.normal, attributes.textureCoord, colorPointer, depthPointer);
 					}
-
-					
-
-					//if ((weight0 >= 0.0f && weight1 >= 0.0f && weight2 >= 0.0f) || (weight0 < 0.0f && weight1 < 0.0f && weight2 < 0.0f))
-					//{
-					//	const float normalizedWeight0 = std::abs(weight0 / area);
-					//	const float normalizedWeight1 = std::abs(weight1 / area);
-					//	const float normalizedWeight2 = std::abs(weight2 / area);
-					//	
-					//	const TransformedVertex attributes = vertices[0] * normalizedWeight0 + vertices[1] * normalizedWeight1 + vertices[2] * normalizedWeight2;
-					//	
-					//	if (!m_depthTest || attributes.projectedPosition.z + m_depthBias < *depthPointer)
-					//	{
-					//		Vector2 textureCoord = attributes.textureCoord;
-					//	
-					//		if (m_textureMode == TextureMode::Perspective)
-					//			textureCoord /= attributes.inverseW;
-					//	
-					//		shader.draw(attributes.projectedPosition, attributes.worldPosition / attributes.inverseW, attributes.normal / attributes.inverseW, textureCoord, *colorPointer, *depthPointer);
-					//	}
-					//}
-			
-					//weight0 += a12;
-					//weight1 += a20;
-					//weight2 += a01;
 
 					weights0 += quadA12;
 					weights1 += quadA20;
 					weights2 += quadA01;
 				}
-
-				//rowWeight0 += b12;
-				//rowWeight1 += b20;
-				//rowWeight2 += b01;
 
 				rowWeights0 += quadB12;
 				rowWeights1 += quadB20;
