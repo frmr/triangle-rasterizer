@@ -218,7 +218,7 @@ tr::QuadFloat tr::QuadFloat::round() const
 tr::QuadInt tr::QuadFloat::toQuadInt() const
 {
 #if TR_SIMD
-	return QuadInt(_mm_cvtps_epi32(m_data));
+	return QuadInt(_mm_cvttps_epi32(m_data));
 #else
 	return QuadInt(
 		int32_t(m_data[0]),
