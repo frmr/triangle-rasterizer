@@ -354,7 +354,7 @@ namespace tr
 					const QuadMask positiveWeightsMask = weights0.greaterThan(quadZero) & weights1.greaterThan(quadZero) & weights2.greaterThan(quadZero);
 					const QuadMask negativeWeightsMask = weights0.lessThan(quadZero)    & weights1.lessThan(quadZero)    & weights2.lessThan(quadZero);
 					
-					QuadMask       renderMask          = positiveWeightsMask | negativeWeightsMask;
+					QuadMask renderMask = positiveWeightsMask | negativeWeightsMask;
 
 					if (renderMask.moveMask())
 					{

@@ -83,7 +83,7 @@ tr::QuadInt tr::QuadInt::operator+(const QuadInt& rhs) const
 tr::QuadInt tr::QuadInt::operator*(const QuadInt& rhs) const
 {
 #ifdef TR_SIMD
-	return QuadInt(_mm_mul_epi32(m_data, rhs.m_data));
+	return QuadInt(_mm_mullo_epi32(m_data, rhs.m_data));
 #else
 	QuadInt result = *this;
 
@@ -110,7 +110,7 @@ tr::QuadInt tr::QuadInt::operator|(const QuadInt& rhs) const
 tr::QuadSizeT tr::QuadInt::toQuadSizeT() const
 {
 #ifdef TR_SIMD
-	return QuadSizeT(_mm256_cvtepu32_epi64(m_data));
+	return QuadSizeT(_mm256_cvtepi32_epi64(m_data));
 #else
 	return QuadSizeT(
 		size_t(m_data[0]),

@@ -3,7 +3,7 @@
 
 tr::QuadFloat::QuadFloat(const float a) :
 #ifdef TR_SIMD
-	m_data(_mm_setr_ps(a, a, a, a))
+	m_data(_mm_set1_ps(a))
 #else
 	m_data{ a, a, a, a }
 #endif
@@ -202,7 +202,7 @@ tr::QuadFloat tr::QuadFloat::floor() const
 tr::QuadFloat tr::QuadFloat::round() const
 {
 #ifdef TR_SIMD
-	return QuadFloat(_mm_round_ps(m_data, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC));
+	return QuadFloat(_mm_round_ps(m_data, _MM_FROUND_TO_NEAREST_INT));
 #else
 	QuadFloat result = *this;
 
