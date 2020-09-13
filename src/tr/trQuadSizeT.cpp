@@ -51,22 +51,3 @@ tr::QuadSizeT tr::QuadSizeT::operator+(const QuadSizeT& rhs) const
 	return result;
 #endif
 }
-
-// TODO: Remove
-std::array<size_t, 4> tr::QuadSizeT::toArray() const
-{
-#ifdef TR_SIMD
-	std::array<size_t, 4> output;
-
-	_mm256_store_si256(reinterpret_cast<__m256i*>(output.data()), m_data);
-
-	//output[0] = static_cast<size_t>(_mm256_extract_epi64(m_data, 0));
-	//output[1] = static_cast<size_t>(_mm256_extract_epi64(m_data, 1));
-	//output[2] = static_cast<size_t>(_mm256_extract_epi64(m_data, 2));
-	//output[3] = static_cast<size_t>(_mm256_extract_epi64(m_data, 3));
-
-	return output;
-#else
-	return m_data;
-#endif
-}

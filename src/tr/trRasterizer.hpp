@@ -364,7 +364,6 @@ namespace tr
 
 						if (m_depthTest)
 						{
-							// TODO: Mask the read?
 							renderMask &= QuadFloat(depthPointer, renderMask).greaterThan(attributes.projectedPosition.z + m_depthBias);
 						}
 

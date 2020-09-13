@@ -18,8 +18,6 @@ namespace tr
 		QuadSizeT&            operator+=(const QuadSizeT& rhs);
 		QuadSizeT             operator+(const QuadSizeT& rhs) const;
 
-		std::array<size_t, 4> toArray() const;
-
 	private:
 #ifdef TR_SIMD
 		__m256i               m_data;
