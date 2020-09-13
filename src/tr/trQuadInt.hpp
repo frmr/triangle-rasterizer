@@ -26,7 +26,7 @@ namespace tr
 
 		QuadInt                       operator|(const QuadInt& rhs) const;
 
-		QuadSizeT                     toQuadSizeT() const;
+		QuadSizeT                     convertToQuadSizeT() const;
 
 		void                          write(int32_t* const address, const QuadMask& mask) const;
 

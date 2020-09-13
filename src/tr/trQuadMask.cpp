@@ -79,3 +79,19 @@ bool tr::QuadMask::moveMask() const
 	return m_data[0] || m_data[1] || m_data[2] || m_data[3];
 #endif
 }
+
+tr::QuadMask tr::QuadMask::inverse() const
+{
+#ifdef TR_SIMD
+	static const __m128 allOnes = _mm_castsi128_ps(_mm_set1_epi32(-1));
+
+	return _mm_xor_ps(m_data, allOnes);
+#else
+	return QuadMask(
+		!m_data[0],
+		!m_data[1],
+		!m_data[2],
+		!m_data[3]
+	);
+#endif
+}

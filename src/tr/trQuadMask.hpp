@@ -23,6 +23,8 @@ namespace tr
 
 		bool                moveMask() const;
 
+		QuadMask            inverse() const;
+
 #ifdef TR_SIMD
 		__m128              getData() const;
 #else

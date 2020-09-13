@@ -351,9 +351,9 @@ namespace tr
 
 				for (size_t x = minX; x <= maxX; x += 4, colorPointer += bufferStepX, depthPointer += bufferStepX)
 				{
-					const QuadMask positiveWeightsMask = weights0.greaterThan(quadZero) & weights1.greaterThan(quadZero) & weights2.greaterThan(quadZero);
-					const QuadMask negativeWeightsMask = weights0.lessThan(quadZero)    & weights1.lessThan(quadZero)    & weights2.lessThan(quadZero);
-					
+					const QuadMask positiveWeightsMask = (weights0 | weights1 | weights2).castToMask().inverse();
+					const QuadMask negativeWeightsMask = (weights0 & weights1 & weights2).castToMask();
+
 					QuadMask renderMask = positiveWeightsMask | negativeWeightsMask;
 
 					if (renderMask.moveMask())
@@ -366,6 +366,7 @@ namespace tr
 
 						if (m_depthTest)
 						{
+							// TODO: Mask the read?
 							renderMask &= QuadFloat(depthPointer).greaterThan(attributes.projectedPosition.z + m_depthBias);
 						}
 

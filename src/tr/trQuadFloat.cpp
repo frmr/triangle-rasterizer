@@ -136,6 +136,44 @@ tr::QuadFloat tr::QuadFloat::operator/(const QuadFloat& rhs) const
 #endif
 }
 
+tr::QuadFloat tr::QuadFloat::operator&(const QuadFloat& rhs) const
+{
+#ifdef TR_SIMD
+	return QuadFloat(_mm_and_ps(m_data, rhs.m_data));
+#else
+	const uint32_t int0 = *reinterpret_cast<const uint32_t*>(&m_data[0]) & *reinterpret_cast<const uint32_t*>(&rhs.m_data[0]);
+	const uint32_t int1 = *reinterpret_cast<const uint32_t*>(&m_data[1]) & *reinterpret_cast<const uint32_t*>(&rhs.m_data[1]);
+	const uint32_t int2 = *reinterpret_cast<const uint32_t*>(&m_data[2]) & *reinterpret_cast<const uint32_t*>(&rhs.m_data[2]);
+	const uint32_t int3 = *reinterpret_cast<const uint32_t*>(&m_data[3]) & *reinterpret_cast<const uint32_t*>(&rhs.m_data[3]);
+
+	return QuadFloat(
+		*reinterpret_cast<const float*>(&int0),
+		*reinterpret_cast<const float*>(&int1),
+		*reinterpret_cast<const float*>(&int2),
+		*reinterpret_cast<const float*>(&int3)
+	);
+#endif
+}
+
+tr::QuadFloat tr::QuadFloat::operator|(const QuadFloat& rhs) const
+{
+#ifdef TR_SIMD
+	return QuadFloat(_mm_or_ps(m_data, rhs.m_data));
+#else
+	const uint32_t int0 = *reinterpret_cast<const uint32_t*>(&m_data[0]) | *reinterpret_cast<const uint32_t*>(&rhs.m_data[0]);
+	const uint32_t int1 = *reinterpret_cast<const uint32_t*>(&m_data[1]) | *reinterpret_cast<const uint32_t*>(&rhs.m_data[1]);
+	const uint32_t int2 = *reinterpret_cast<const uint32_t*>(&m_data[2]) | *reinterpret_cast<const uint32_t*>(&rhs.m_data[2]);
+	const uint32_t int3 = *reinterpret_cast<const uint32_t*>(&m_data[3]) | *reinterpret_cast<const uint32_t*>(&rhs.m_data[3]);
+
+	return QuadFloat(
+		*reinterpret_cast<const float*>(&int0),
+		*reinterpret_cast<const float*>(&int1),
+		*reinterpret_cast<const float*>(&int2),
+		*reinterpret_cast<const float*>(&int3)
+	);
+#endif
+}
+
 tr::QuadMask tr::QuadFloat::greaterThan(const QuadFloat& rhs) const
 {
 #ifdef TR_SIMD
@@ -160,6 +198,25 @@ tr::QuadMask tr::QuadFloat::lessThan(const QuadFloat& rhs) const
 		m_data[1] < rhs.m_data[1],
 		m_data[2] < rhs.m_data[2],
 		m_data[3] < rhs.m_data[3]
+	);
+#endif
+}
+
+tr::QuadMask tr::QuadFloat::castToMask() const
+{
+#ifdef TR_SIMD
+	return QuadMask(m_data);
+#else
+	const uint32_t int0 = *reinterpret_cast<const uint32_t*>(&m_data[0]);
+	const uint32_t int1 = *reinterpret_cast<const uint32_t*>(&m_data[1]);
+	const uint32_t int2 = *reinterpret_cast<const uint32_t*>(&m_data[2]);
+	const uint32_t int3 = *reinterpret_cast<const uint32_t*>(&m_data[3]);
+
+	return QuadMask(
+		(int0 & 0x80000000) > 0,
+		(int1 & 0x80000000) > 0,
+		(int2 & 0x80000000) > 0,
+		(int3 & 0x80000000) > 0
 	);
 #endif
 }
@@ -215,7 +272,7 @@ tr::QuadFloat tr::QuadFloat::round() const
 #endif
 }
 
-tr::QuadInt tr::QuadFloat::toQuadInt() const
+tr::QuadInt tr::QuadFloat::convertToQuadInt() const
 {
 #if TR_SIMD
 	return QuadInt(_mm_cvttps_epi32(m_data));

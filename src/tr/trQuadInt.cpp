@@ -107,7 +107,7 @@ tr::QuadInt tr::QuadInt::operator|(const QuadInt& rhs) const
 #endif
 }
 
-tr::QuadSizeT tr::QuadInt::toQuadSizeT() const
+tr::QuadSizeT tr::QuadInt::convertToQuadSizeT() const
 {
 #ifdef TR_SIMD
 	return QuadSizeT(_mm256_cvtepi32_epi64(m_data));

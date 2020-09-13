@@ -29,10 +29,10 @@ tr::QuadColor tr::ColorBuffer::getAt(const QuadFloat& u, const QuadFloat& v) con
 	tempU *= m_floatWidth;
 	tempV *= m_floatHeight;
 
-	const QuadInt x = tempU.toQuadInt();
-	const QuadInt y = tempV.toQuadInt();
+	const QuadInt x = tempU.convertToQuadInt();
+	const QuadInt y = tempV.convertToQuadInt();
 
 	static const QuadInt colorSize(4);
 
-	return QuadColor(m_quadDataPointer + ((y * m_quadWidth + x) * colorSize).toQuadSizeT());
+	return QuadColor(m_quadDataPointer + ((y * m_quadWidth + x) * colorSize).convertToQuadSizeT());
 }

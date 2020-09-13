@@ -22,14 +22,19 @@ namespace tr
 		QuadFloat            operator*(const QuadFloat& rhs) const;
 		QuadFloat            operator/(const QuadFloat& rhs) const;
 
+		QuadFloat            operator&(const QuadFloat& rhs) const;
+		QuadFloat            operator|(const QuadFloat& rhs) const;
+
 		QuadMask             greaterThan(const QuadFloat& rhs) const;
 		QuadMask             lessThan(const QuadFloat& rhs) const;
+
+		QuadMask             castToMask() const;
 
 		QuadFloat            abs() const;
 		QuadFloat            floor() const;
 		QuadFloat            round() const;
 
-		QuadInt              toQuadInt() const;
+		QuadInt              convertToQuadInt() const;
 
 		void                 write(float* const pointer) const;
 

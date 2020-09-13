@@ -53,10 +53,10 @@ void tr::QuadColor::write(Color* const pointer, const QuadMask& mask) const
 	const QuadFloat roundedB = m_b.round();
 	const QuadFloat roundedA = m_a.round();
 
-	QuadInt intR = roundedR.toQuadInt();
-	QuadInt intG = roundedG.toQuadInt();
-	QuadInt intB = roundedB.toQuadInt();
-	QuadInt intA = roundedA.toQuadInt();
+	QuadInt intR = roundedR.convertToQuadInt();
+	QuadInt intG = roundedG.convertToQuadInt();
+	QuadInt intB = roundedB.convertToQuadInt();
+	QuadInt intA = roundedA.convertToQuadInt();
 
 	intR <<= 24;
 	intG <<= 16;
