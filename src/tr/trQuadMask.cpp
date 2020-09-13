@@ -1,6 +1,11 @@
 #include "trQuadMask.hpp"
 
 #ifdef TR_SIMD
+// TODO: Find a better place for this
+const __m128 allOnes = _mm_castsi128_ps(_mm_set1_epi32(-1));
+#endif
+
+#ifdef TR_SIMD
 tr::QuadMask::QuadMask(const __m128 data) :
 	m_data(data)
 {
@@ -83,8 +88,6 @@ bool tr::QuadMask::moveMask() const
 tr::QuadMask tr::QuadMask::inverse() const
 {
 #ifdef TR_SIMD
-	static const __m128 allOnes = _mm_castsi128_ps(_mm_set1_epi32(-1));
-
 	return _mm_xor_ps(m_data, allOnes);
 #else
 	return QuadMask(
