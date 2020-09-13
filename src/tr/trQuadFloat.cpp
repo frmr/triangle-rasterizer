@@ -28,6 +28,20 @@ tr::QuadFloat::QuadFloat(const float* const pointer) :
 {
 }
 
+tr::QuadFloat::QuadFloat(const float* const pointer, const QuadMask& mask) :
+#ifdef TR_SIMD
+	m_data(_mm_maskload_ps(pointer, _mm_castps_si128(mask.getData())))
+#else
+	m_data{ 
+		mask.get(0) ? (*pointer + 0) : 0.0f,
+		mask.get(1) ? (*pointer + 1) : 0.0f,
+		mask.get(2) ? (*pointer + 2) : 0.0f,
+		mask.get(3) ? (*pointer + 3) : 0.0f
+	}
+#endif
+{
+}
+
 tr::QuadFloat& tr::QuadFloat::operator+=(const QuadFloat& rhs)
 {
 #ifdef TR_SIMD

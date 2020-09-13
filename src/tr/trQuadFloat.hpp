@@ -1,5 +1,4 @@
 #pragma once
-
 #include "trQuadMask.hpp"
 #include "trQuadInt.hpp"
 #include <array>
@@ -12,6 +11,7 @@ namespace tr
 		                     QuadFloat(const float a);
 		                     QuadFloat(const float a, const float b, const float c, const float d);
 		                     QuadFloat(const float* const pointer);
+		                     QuadFloat(const float* const pointer, const QuadMask& mask);
 
 		QuadFloat&           operator+=(const QuadFloat& rhs);
 		QuadFloat&           operator-=(const QuadFloat& rhs);
