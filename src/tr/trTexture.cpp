@@ -119,9 +119,9 @@ tr::Color tr::Texture::getAt(const float u, const float v, const bool filter, co
 	}
 }
 
-tr::QuadColor tr::Texture::getAt(const QuadFloat& u, const QuadFloat& v) const
+tr::QuadColor tr::Texture::getAt(const QuadFloat& u, const QuadFloat& v, const QuadMask& mask) const
 {
-	return m_baseLevel->getAt(u, v);
+	return m_baseLevel->getAt(u, v, mask);
 }
 
 void tr::Texture::init(const size_t width, const size_t height)

@@ -7,12 +7,10 @@
 
 namespace tr
 {
-	constexpr std::array<float, 256> generateConversionTable();
-
 	class QuadColor
 	{
 	public:
-		          QuadColor(const QuadSizeT& pointers);
+		          QuadColor(const Color* const baseAddress, const QuadInt& offsets, const QuadMask& mask);
 
 		void      write(Color* const pointer, const QuadMask& mask) const;
 

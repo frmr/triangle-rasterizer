@@ -1,10 +1,11 @@
 #pragma once
 #include "trQuadMask.hpp"
-#include "trQuadInt.hpp"
 #include <array>
 
 namespace tr
 {
+	class QuadInt;
+
 	class QuadFloat
 	{
 	public:
@@ -12,6 +13,10 @@ namespace tr
 		                     QuadFloat(const float a, const float b, const float c, const float d);
 		                     QuadFloat(const float* const pointer);
 		                     QuadFloat(const float* const pointer, const QuadMask& mask);
+
+#ifdef TR_SIMD
+		                     QuadFloat(const __m128 data);
+#endif
 
 		QuadFloat&           operator+=(const QuadFloat& rhs);
 		QuadFloat&           operator-=(const QuadFloat& rhs);
@@ -37,11 +42,6 @@ namespace tr
 		QuadInt              convertToQuadInt() const;
 
 		void                 write(float* const pointer) const;
-
-#ifdef TR_SIMD
-	private:
-		                     QuadFloat(const __m128 data);
-#endif
 
 	private:
 #ifdef TR_SIMD

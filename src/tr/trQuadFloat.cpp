@@ -1,4 +1,5 @@
 #include "trQuadFloat.hpp"
+#include "trQuadInt.hpp"
 #include <cmath>
 
 tr::QuadFloat::QuadFloat(const float a) :
@@ -41,6 +42,13 @@ tr::QuadFloat::QuadFloat(const float* const pointer, const QuadMask& mask) :
 #endif
 {
 }
+
+#ifdef TR_SIMD
+tr::QuadFloat::QuadFloat(const __m128 data) :
+	m_data(data)
+{
+}
+#endif
 
 tr::QuadFloat& tr::QuadFloat::operator+=(const QuadFloat& rhs)
 {
@@ -311,10 +319,3 @@ void tr::QuadFloat::write(float* const pointer) const
 	}
 #endif
 }
-
-#ifdef TR_SIMD
-tr::QuadFloat::QuadFloat(const __m128 data) :
-	m_data(data)
-{
-}
-#endif

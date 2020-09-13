@@ -335,8 +335,6 @@ namespace tr
 			assert(depthBuffer.getWidth()  == colorBuffer.getWidth());
 			assert(depthBuffer.getHeight() == colorBuffer.getHeight());
 
-			const QuadFloat quadZero(0.0f);
-
 			const size_t bufferStepX = 4;
 			const size_t bufferStepY = depthBuffer.getWidth() - (maxX - minX) + (maxX - minX) % bufferStepX - bufferStepX;
 

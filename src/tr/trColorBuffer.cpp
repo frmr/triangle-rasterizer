@@ -4,8 +4,7 @@ tr::ColorBuffer::ColorBuffer() :
 	Buffer<Color>(),
 	m_quadWidth(int32_t(m_width)),
 	m_quadFloatWidth(m_floatWidth),
-	m_quadFloatHeight(m_floatHeight),
-	m_quadDataPointer(size_t(m_data.data()))
+	m_quadFloatHeight(m_floatHeight)
 {
 }
 
@@ -13,12 +12,11 @@ tr::ColorBuffer::ColorBuffer(const size_t width, const size_t height) :
 	Buffer<Color>(width, height),
 	m_quadWidth(int32_t(m_width)),
 	m_quadFloatWidth(m_floatWidth),
-	m_quadFloatHeight(m_floatHeight),
-	m_quadDataPointer(size_t(m_data.data()))
+	m_quadFloatHeight(m_floatHeight)
 {
 }
 
-tr::QuadColor tr::ColorBuffer::getAt(const QuadFloat& u, const QuadFloat& v) const
+tr::QuadColor tr::ColorBuffer::getAt(const QuadFloat& u, const QuadFloat& v, const QuadMask& mask) const
 {
 	QuadFloat tempU = u;
 	QuadFloat tempV = v;
@@ -32,7 +30,5 @@ tr::QuadColor tr::ColorBuffer::getAt(const QuadFloat& u, const QuadFloat& v) con
 	const QuadInt x = tempU.convertToQuadInt();
 	const QuadInt y = tempV.convertToQuadInt();
 
-	static const QuadInt colorSize(4);
-
-	return QuadColor(m_quadDataPointer + ((y * m_quadWidth + x) * colorSize).convertToQuadSizeT());
+	return QuadColor(m_data.data(), y * m_quadWidth + x, mask);
 }
