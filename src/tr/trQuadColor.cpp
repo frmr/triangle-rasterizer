@@ -3,22 +3,9 @@
 #include "trQuadFloat.hpp"
 #include <cassert>
 
-// TODO: Might be needed elsewhere; consider moving into its own file
-constexpr std::array<float, 256> generateConversionTable()
-{
-	std::array<float, 256> floats{};
-
-	for (uint16_t i = 0; i < 256; ++i)
-	{
-		floats[uint8_t(i)] = float(i);
-	}
-
-	return floats;
-}
-
 // Tried static in function scope, but it's slower
-const tr::QuadInt                byteMask(0xFF);
-constexpr std::array<float, 256> floats = generateConversionTable();
+// TODO: Find somewhere better to put this
+const tr::QuadInt byteMask(0xFF);
 
 tr::QuadColor::QuadColor(const Color* const baseAddress, const QuadInt& offsets, const QuadMask& mask) :
 	m_r(0.0f), // TODO: Don't initialize?
@@ -35,10 +22,10 @@ tr::QuadColor::QuadColor(const Color* const baseAddress, const QuadInt& offsets,
 	QuadInt bValues = (colorsAsInts >>  8) & byteMask;
 	QuadInt aValues = (colorsAsInts      ) & byteMask;
 
-	m_r = rValues.gatherFloatsAtOffsets(floats.data(), mask);
-	m_g = gValues.gatherFloatsAtOffsets(floats.data(), mask);
-	m_b = bValues.gatherFloatsAtOffsets(floats.data(), mask);
-	m_a = aValues.gatherFloatsAtOffsets(floats.data(), mask);
+	m_r = rValues.convertToQuadFloat();
+	m_g = gValues.convertToQuadFloat();
+	m_b = bValues.convertToQuadFloat();
+	m_a = aValues.convertToQuadFloat();
 }
 
 void tr::QuadColor::write(Color* const pointer, const QuadMask& mask) const

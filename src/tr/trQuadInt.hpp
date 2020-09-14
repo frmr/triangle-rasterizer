@@ -34,11 +34,11 @@ namespace tr
 		QuadInt                       operator|(const QuadInt& rhs) const;
 
 		QuadSizeT                     convertToQuadSizeT() const;
+		QuadFloat                     convertToQuadFloat() const;
 
 		void                          write(int32_t* const address, const QuadMask& mask) const;
 
 		QuadInt                       gatherIntsAtOffsets(const int32_t* const baseAddress, const QuadMask& mask) const;
-		QuadFloat                     gatherFloatsAtOffsets(const float* const baseAddress, const QuadMask& mask) const;
 
 
 	private:
