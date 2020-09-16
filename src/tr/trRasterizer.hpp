@@ -322,9 +322,9 @@ namespace tr
 				0.0f
 			);
 
-			QuadTransformedVertex quadVertex0(vertices[0]);
-			QuadTransformedVertex quadVertex1(vertices[1]);
-			QuadTransformedVertex quadVertex2(vertices[2]);
+			const QuadTransformedVertex quadVertex0(vertices[0]);
+			const QuadTransformedVertex quadVertex1(vertices[1]);
+			const QuadTransformedVertex quadVertex2(vertices[2]);
 
 			QuadFloat rowWeights0 = orientPoints(quadVertex1.projectedPosition, quadVertex2.projectedPosition, points);
 			QuadFloat rowWeights1 = orientPoints(quadVertex2.projectedPosition, quadVertex0.projectedPosition, points);
@@ -349,8 +349,8 @@ namespace tr
 
 				for (size_t x = minX; x <= maxX; x += 4, colorPointer += bufferStepX, depthPointer += bufferStepX)
 				{
-					const QuadMask positiveWeightsMask = (weights0 | weights1 | weights2).castToMask().inverse();
-					const QuadMask negativeWeightsMask = (weights0 & weights1 & weights2).castToMask();
+					const QuadMask positiveWeightsMask = ~(weights0 | weights1 | weights2).castToMask();
+					const QuadMask negativeWeightsMask =  (weights0 & weights1 & weights2).castToMask();
 
 					QuadMask renderMask = positiveWeightsMask | negativeWeightsMask;
 

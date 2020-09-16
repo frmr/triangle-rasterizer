@@ -64,6 +64,20 @@ tr::QuadMask tr::QuadMask::operator|(const QuadMask& rhs) const
 #endif
 }
 
+tr::QuadMask tr::QuadMask::operator~() const
+{
+#ifdef TR_SIMD
+	return _mm_xor_ps(m_data, allOnes);
+#else
+	return QuadMask(
+		!m_data[0],
+		!m_data[1],
+		!m_data[2],
+		!m_data[3]
+	);
+#endif
+}
+
 #ifdef TR_SIMD
 __m128 tr::QuadMask::getData() const
 {
@@ -82,19 +96,5 @@ bool tr::QuadMask::moveMask() const
 	return _mm_movemask_ps(m_data) > 0;
 #else
 	return m_data[0] || m_data[1] || m_data[2] || m_data[3];
-#endif
-}
-
-tr::QuadMask tr::QuadMask::inverse() const
-{
-#ifdef TR_SIMD
-	return _mm_xor_ps(m_data, allOnes);
-#else
-	return QuadMask(
-		!m_data[0],
-		!m_data[1],
-		!m_data[2],
-		!m_data[3]
-	);
 #endif
 }

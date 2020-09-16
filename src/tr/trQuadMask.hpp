@@ -20,10 +20,9 @@ namespace tr
 		QuadMask&           operator&=(const QuadMask& rhs);
 		QuadMask            operator&(const QuadMask& rhs) const;
 		QuadMask            operator|(const QuadMask& rhs) const;
+		QuadMask            operator~() const;
 
 		bool                moveMask() const;
-
-		QuadMask            inverse() const;
 
 #ifdef TR_SIMD
 		__m128              getData() const;
