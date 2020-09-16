@@ -16,6 +16,7 @@
 #include "../matrix/Matrices.h"
 #include "tfTextFile.hpp"
 #include "trQuadTransformedVertex.hpp"
+#include "trBoundingBox.hpp"
 
 #include <vector>
 #include <array>
@@ -309,16 +310,11 @@ namespace tr
 			const QuadFloat quadA20(4.0f * (vertices[2].projectedPosition.y - vertices[0].projectedPosition.y));
 			const QuadFloat quadB20(1.0f * (vertices[0].projectedPosition.x - vertices[2].projectedPosition.x));
 
-			constexpr size_t quadAlignmentMask = std::numeric_limits<size_t>::max() ^ 0x03;
-
-			const size_t  minX = size_t(std::min({ vertices[0].projectedPosition.x, vertices[1].projectedPosition.x, vertices[2].projectedPosition.x })) & quadAlignmentMask;
-			const size_t  minY = size_t(std::min({ vertices[0].projectedPosition.y, vertices[1].projectedPosition.y, vertices[2].projectedPosition.y }));
-			const size_t  maxX = size_t(std::max({ vertices[0].projectedPosition.x, vertices[1].projectedPosition.x, vertices[2].projectedPosition.x }));
-			const size_t  maxY = size_t(std::max({ vertices[0].projectedPosition.y, vertices[1].projectedPosition.y, vertices[2].projectedPosition.y }));
+			const BoundingBox boundingBox(vertices);
 
 			const QuadVec3 points(
-				QuadFloat(float(minX), float(minX + 1), float(minX + 2),     float(minX + 3)),
-				QuadFloat(float(minY), float(minY),     float(minY),         float(minY)),
+				QuadFloat(float(boundingBox.getMinX()), float(boundingBox.getMinX() + 1), float(boundingBox.getMinX() + 2),     float(boundingBox.getMinX() + 3)),
+				QuadFloat(float(boundingBox.getMinY()), float(boundingBox.getMinY()    ), float(boundingBox.getMinY()    ),     float(boundingBox.getMinY()    )),
 				0.0f
 			);
 
@@ -336,18 +332,18 @@ namespace tr
 			assert(depthBuffer.getHeight() == colorBuffer.getHeight());
 
 			const size_t bufferStepX = 4;
-			const size_t bufferStepY = depthBuffer.getWidth() - (maxX - minX) + (maxX - minX) % bufferStepX - bufferStepX;
+			const size_t bufferStepY = depthBuffer.getWidth() - (boundingBox.getMaxX() - boundingBox.getMinX()) + (boundingBox.getMaxX() - boundingBox.getMinX()) % bufferStepX - bufferStepX;
 
-			Color* colorPointer = colorBuffer.getData() + minY * colorBuffer.getWidth() + minX;
-			float* depthPointer = depthBuffer.getData() + minY * depthBuffer.getWidth() + minX;
+			Color* colorPointer = colorBuffer.getData() + boundingBox.getMinY() * colorBuffer.getWidth() + boundingBox.getMinX();
+			float* depthPointer = depthBuffer.getData() + boundingBox.getMinY() * depthBuffer.getWidth() + boundingBox.getMinX();
 
-			for (size_t y = minY; y <= maxY; y += 1, colorPointer += bufferStepY, depthPointer += bufferStepY)
+			for (size_t y = boundingBox.getMinY(); y <= boundingBox.getMaxY(); y += 1, colorPointer += bufferStepY, depthPointer += bufferStepY)
 			{
 				QuadFloat weights0 = rowWeights0;
 				QuadFloat weights1 = rowWeights1;
 				QuadFloat weights2 = rowWeights2;
 
-				for (size_t x = minX; x <= maxX; x += 4, colorPointer += bufferStepX, depthPointer += bufferStepX)
+				for (size_t x = boundingBox.getMinX(); x <= boundingBox.getMaxX(); x += 4, colorPointer += bufferStepX, depthPointer += bufferStepX)
 				{
 					const QuadMask positiveWeightsMask = ~(weights0 | weights1 | weights2).castToMask();
 					const QuadMask negativeWeightsMask =  (weights0 & weights1 & weights2).castToMask();

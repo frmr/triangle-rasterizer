@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\matrix\Matrices.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trBoundingBox.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trColorBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trDefaultShader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trDepthShader.cpp" />
@@ -35,6 +36,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\tr.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trAxis.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBlendMode.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBoundingBox.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBuffer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trColor.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trColorBuffer.hpp" />
