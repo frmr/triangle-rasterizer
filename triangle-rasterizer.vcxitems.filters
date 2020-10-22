@@ -51,7 +51,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadTransformedVertex.cpp">
       <Filter>tr</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trBoundingBox.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trBoundingBox.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\matrix\Matrices.h">
