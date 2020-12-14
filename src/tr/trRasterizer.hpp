@@ -18,11 +18,8 @@
 #include "tfTextFile.hpp"
 #include "trQuadTransformedVertex.hpp"
 #include "trRect.hpp"
-#include "trTriangle.hpp"
 
-#include <vector>
 #include <array>
-#include <cassert>
 
 namespace tr
 {
@@ -40,31 +37,18 @@ namespace tr
 			m_projectionViewMatrix(),
 			m_modelMatrix(),
 			m_modelNormalRotationMatrix(),
-			m_depthTest(true),
-			m_textureMode(TextureMode::Perspective),
 			m_cullFaceMode(CullFaceMode::Back),
-			m_depthBias(0.0f)
+			m_textureMode(TextureMode::Perspective)
 		{
 		}
 
-		Error draw(const std::vector<Vertex>& vertices, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+		void queue(const std::vector<Vertex>& vertices, const TShader& shader)
 		{
 			std::vector<TransformedVertex> transformedVertices;
 
 			transformedVertices.reserve(vertices.size());
 
-			// Maybe throw an exception in the constructor instead
-			if (m_bufferWidth == 0 || m_bufferHeight == 0)
-			{
-				return Error::InvalidBufferSize;
-			}
-
-			if (colorBuffer.getWidth() != m_bufferWidth || depthBuffer.getWidth() != m_bufferWidth || colorBuffer.getHeight() != m_bufferHeight || depthBuffer.getHeight() != m_bufferHeight)
-			{
-				return Error::BufferSizeMismatch;
-			}
-
-			m_shaders.push_back(shader);
+			const size_t shaderIndex = m_tileManager.addShader(shader);
 
 			for (const Vertex& vertex : vertices)
 			{
@@ -82,7 +66,7 @@ namespace tr
 			{
 				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin(); it < transformedVertices.end() - 2; it += 3)
 				{
-					clipAndQueueTriangle({ *it, *(it + 1), *(it + 2) }, m_shaders.size() - 1);
+					clipAndQueueTriangle({ *it, *(it + 1), *(it + 2) }, shaderIndex);
 				}
 			}
 			else if (m_primitive == Primitive::TriangleStrip)
@@ -93,7 +77,7 @@ namespace tr
 
 				for (size_t newIndex = 2; newIndex < transformedVertices.size(); ++newIndex)
 				{
-					clipAndQueueTriangle({ transformedVertices[reverse ? newIndex : lastIndex], transformedVertices[firstIndex], transformedVertices[reverse ? lastIndex : newIndex] }, m_shaders.size() - 1);
+					clipAndQueueTriangle({ transformedVertices[reverse ? newIndex : lastIndex], transformedVertices[firstIndex], transformedVertices[reverse ? lastIndex : newIndex] }, shaderIndex);
 
 					firstIndex = lastIndex;
 					lastIndex  = newIndex;
@@ -104,14 +88,32 @@ namespace tr
 			{
 				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin() + 1; it < transformedVertices.end() - 1; it += 1)
 				{
-					clipAndQueueTriangle({ transformedVertices.front(), *it, *(it + 1) }, m_shaders.size() - 1);
+					clipAndQueueTriangle({ transformedVertices.front(), *it, *(it + 1) }, shaderIndex);
 				}
 			}
+		}
 
-			drawTriangles(colorBuffer, depthBuffer);
-			m_triangles.clear();
+		Error draw(ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		{
+			// Maybe throw an exception in the constructor instead
+			if (m_bufferWidth == 0 || m_bufferHeight == 0)
+			{
+				return Error::InvalidBufferSize;
+			}
+
+			if (colorBuffer.getWidth() != m_bufferWidth || depthBuffer.getWidth() != m_bufferWidth || colorBuffer.getHeight() != m_bufferHeight || depthBuffer.getHeight() != m_bufferHeight)
+			{
+				return Error::BufferSizeMismatch;
+			}
+
+			m_tileManager.draw(colorBuffer, depthBuffer);
 
 			return Error::Success;
+		}
+
+		void clear()
+		{
+			m_tileManager.clear();
 		}
 
 		void setTilerAttributes(const size_t bufferWidth, const size_t bufferHeight, const size_t tileWidth, const size_t tileHeight)
@@ -160,7 +162,7 @@ namespace tr
 
 		void setDepthTest(const bool depthTest)
 		{
-			m_depthTest = depthTest;
+			m_tileManager.setDepthTest(depthTest);
 		}
 
 		void setTextureMode(const TextureMode textureMode)
@@ -175,7 +177,7 @@ namespace tr
 
 		void setDepthBias(const float depthBias)
 		{
-			m_depthBias = depthBias;
+			m_tileManager.setDepthBias(depthBias);
 		}
 
 	private:
@@ -211,7 +213,7 @@ namespace tr
 			viewportTransformation(vertices);
 			pixelShift(vertices);
 
-			m_triangles.emplace_back(vertices, shaderIndex);
+			m_tileManager.queue(Triangle(vertices, shaderIndex));
 		}
 
 		void clipAndQueueTriangle(const std::array<TransformedVertex, 3>& vertices, const size_t shaderIndex)
@@ -322,68 +324,6 @@ namespace tr
 			}
 		}
 
-		void drawTriangles(ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
-		{
-			assert(depthBuffer.getWidth()  == colorBuffer.getWidth());
-			assert(depthBuffer.getHeight() == colorBuffer.getHeight());
-
-			for (const Triangle& triangle : m_triangles)
-			{
-				const TShader& shader = m_shaders[triangle.shaderIndex];
-
-				const size_t bufferStepX = 4;
-				const size_t bufferStepY = depthBuffer.getWidth() - (triangle.boundingBox.getMaxX() - triangle.boundingBox.getMinX()) + (triangle.boundingBox.getMaxX() - triangle.boundingBox.getMinX()) % bufferStepX - bufferStepX;
-
-				Color* colorPointer = colorBuffer.getData() + triangle.boundingBox.getMinY() * colorBuffer.getWidth() + triangle.boundingBox.getMinX();
-				float* depthPointer = depthBuffer.getData() + triangle.boundingBox.getMinY() * depthBuffer.getWidth() + triangle.boundingBox.getMinX();
-
-				QuadFloat rowWeights0 = triangle.rowWeights0;
-				QuadFloat rowWeights1 = triangle.rowWeights1;
-				QuadFloat rowWeights2 = triangle.rowWeights2;
-
-				for (size_t y = triangle.boundingBox.getMinY(); y <= triangle.boundingBox.getMaxY(); y += 1, colorPointer += bufferStepY, depthPointer += bufferStepY)
-				{
-					QuadFloat weights0 = rowWeights0;
-					QuadFloat weights1 = rowWeights1;
-					QuadFloat weights2 = rowWeights2;
-
-					for (size_t x = triangle.boundingBox.getMinX(); x <= triangle.boundingBox.getMaxX(); x += 4, colorPointer += bufferStepX, depthPointer += bufferStepX)
-					{
-						const QuadMask positiveWeightsMask = ~(weights0 | weights1 | weights2).castToMask();
-						const QuadMask negativeWeightsMask =  (weights0 & weights1 & weights2).castToMask();
-
-						QuadMask renderMask = positiveWeightsMask | negativeWeightsMask;
-
-						if (renderMask.moveMask())
-						{
-							const QuadFloat normalizedWeights0 = (weights0 / triangle.quadArea).abs();
-							const QuadFloat normalizedWeights1 = (weights1 / triangle.quadArea).abs();
-							const QuadFloat normalizedWeights2 = (weights2 / triangle.quadArea).abs();
-
-							QuadTransformedVertex attributes = triangle.quadVertex0 * normalizedWeights0 + triangle.quadVertex1 * normalizedWeights1 + triangle.quadVertex2 * normalizedWeights2;
-
-							if (m_depthTest)
-							{
-								renderMask &= QuadFloat(depthPointer, renderMask).greaterThan(attributes.projectedPosition.z + m_depthBias);
-							}
-
-							attributes.textureCoord /= attributes.inverseW;
-
-							shader.draw(renderMask, attributes.projectedPosition, attributes.worldPosition, attributes.normal, attributes.textureCoord, colorPointer, depthPointer);
-						}
-
-						weights0 += triangle.quadA12;
-						weights1 += triangle.quadA20;
-						weights2 += triangle.quadA01;
-					}
-
-					rowWeights0 += triangle.quadB12;
-					rowWeights1 += triangle.quadB20;
-					rowWeights2 += triangle.quadB01;
-				}
-			}
-		}
-
 		static float orientPoint(const Vector4& lineStart, const Vector4& lineEnd, const Vector4& point)
 		{
 			return (lineEnd.x - lineStart.x) * (point.y - lineStart.y) - (lineEnd.y - lineStart.y) * (point.x - lineStart.x);
@@ -394,16 +334,12 @@ namespace tr
 		size_t                m_bufferHeight;
 		float                 m_bufferHalfWidth;
 		float                 m_bufferHalfHeight;
-		TileManager           m_tileManager;
+		TileManager<TShader>  m_tileManager;
 		Primitive             m_primitive;
 		Matrix4               m_projectionViewMatrix;
 		Matrix4               m_modelMatrix;
 		Matrix3               m_modelNormalRotationMatrix;
-		bool                  m_depthTest;
-		TextureMode           m_textureMode;
 		CullFaceMode          m_cullFaceMode;
-		QuadFloat             m_depthBias;
-		std::vector<TShader>  m_shaders;
-		std::vector<Triangle> m_triangles;
+		TextureMode           m_textureMode;
 	};
 }

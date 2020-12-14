@@ -29,7 +29,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec3.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTexture.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTile.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTileManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTransformedVertex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTriangle.cpp" />
   </ItemGroup>

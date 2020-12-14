@@ -12,13 +12,6 @@ tr::Triangle::Triangle(const std::array<TransformedVertex, 3>& vertices, const s
 	quadVertex0(QuadTransformedVertex(vertices[0])),
 	quadVertex1(QuadTransformedVertex(vertices[1])),
 	quadVertex2(QuadTransformedVertex(vertices[2])),
-	points(QuadFloat(float(boundingBox.getMinX()), float(boundingBox.getMinX() + 1), float(boundingBox.getMinX() + 2), float(boundingBox.getMinX() + 3)),
-	       QuadFloat(float(boundingBox.getMinY()), float(boundingBox.getMinY()    ), float(boundingBox.getMinY()    ), float(boundingBox.getMinY()    )),
-	       0.0f
-	),
-	rowWeights0(orientPoints(quadVertex1.projectedPosition, quadVertex2.projectedPosition, points)),
-	rowWeights1(orientPoints(quadVertex2.projectedPosition, quadVertex0.projectedPosition, points)),
-	rowWeights2(orientPoints(quadVertex0.projectedPosition, quadVertex1.projectedPosition, points)),
 	quadArea(orientPoints(quadVertex0.projectedPosition, quadVertex1.projectedPosition, quadVertex2.projectedPosition))
 {
 }

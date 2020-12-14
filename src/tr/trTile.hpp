@@ -7,9 +7,11 @@ namespace tr
 	class Tile
 	{
 	public:
-		           Tile(const Rect boundingBox);
+		            Tile(const Rect boundingBox);
+
+		const Rect& getBounds() const;
 
 	private:
-		const Rect m_bounds;
+		const Rect  m_bounds;
 	};
 }

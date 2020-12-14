@@ -9,13 +9,13 @@ namespace tr
 	class Triangle
 	{
 	public:
-		Triangle(const std::array<TransformedVertex,3>& vertices, const size_t shaderIndex);
+		                      Triangle(const std::array<TransformedVertex,3>& vertices, const size_t shaderIndex);
 
 	private:
-		static QuadFloat orientPoints(const QuadVec3& lineStarts, const QuadVec3& lineEnds, const QuadVec3& points);
+		static QuadFloat      orientPoints(const QuadVec3& lineStarts, const QuadVec3& lineEnds, const QuadVec3& points);
 
 	public:
-		size_t shaderIndex;
+		size_t                shaderIndex;
 
 		Rect                  boundingBox;
 
@@ -29,12 +29,6 @@ namespace tr
 		QuadTransformedVertex quadVertex0;
 		QuadTransformedVertex quadVertex1;
 		QuadTransformedVertex quadVertex2;
-
-		QuadVec3              points;
-
-		QuadFloat             rowWeights0;
-		QuadFloat             rowWeights1;
-		QuadFloat             rowWeights2;
 
 		QuadFloat             quadArea;
 	};

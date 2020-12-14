@@ -16,6 +16,8 @@ namespace tr
 		size_t                  getMinY() const;
 		size_t                  getMaxY() const;
 
+		Rect                    unionWith(const Rect& rhs) const;
+
 	private:
 		static constexpr size_t s_quadAlignmentMask = std::numeric_limits<size_t>::max() ^ 0x03;
 

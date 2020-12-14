@@ -36,3 +36,13 @@ size_t tr::Rect::getMaxY() const
 {
 	return m_maxY;
 }
+
+tr::Rect tr::Rect::unionWith(const Rect& rhs) const
+{
+	return Rect(
+		std::max(rhs.m_minX, m_minX),
+		std::max(rhs.m_minY, m_minY),
+		std::min(rhs.m_maxX, m_maxX),
+		std::min(rhs.m_maxY, m_maxY)
+	);
+}
