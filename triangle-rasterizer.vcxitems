@@ -15,7 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\matrix\Matrices.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trBoundingBox.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trRect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trColorBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trDefaultShader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trDepthShader.cpp" />
@@ -28,7 +28,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec2.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec3.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTexture.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTile.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTileManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTransformedVertex.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTriangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\matrix\Matrices.h" />
@@ -36,7 +39,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\tr.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trAxis.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBlendMode.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBoundingBox.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRect.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBuffer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trColor.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trColorBuffer.hpp" />
@@ -60,7 +63,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTexture.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTextureMode.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTextureWrappingMode.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTile.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTileManager.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTransformedVertex.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTriangle.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trVertex.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trVertexClipBitMasks.hpp" />
   </ItemGroup>

@@ -1,7 +1,15 @@
-#include "trBoundingBox.hpp"
+#include "trRect.hpp"
 #include <algorithm>
 
-tr::BoundingBox::BoundingBox(const std::array<TransformedVertex, 3>& vertices) :
+tr::Rect::Rect(const size_t minX, const size_t minY, const size_t maxX, const size_t maxY) :
+	m_minX(minX),
+	m_minY(minY),
+	m_maxX(maxX),
+	m_maxY(maxY)
+{
+}
+
+tr::Rect::Rect(const std::array<TransformedVertex, 3>& vertices) :
 	m_minX(size_t(std::min({ vertices[0].projectedPosition.x, vertices[1].projectedPosition.x, vertices[2].projectedPosition.x })) & s_quadAlignmentMask),
 	m_minY(size_t(std::min({ vertices[0].projectedPosition.y, vertices[1].projectedPosition.y, vertices[2].projectedPosition.y }))),
 	m_maxX(size_t(std::max({ vertices[0].projectedPosition.x, vertices[1].projectedPosition.x, vertices[2].projectedPosition.x }))),
@@ -9,22 +17,22 @@ tr::BoundingBox::BoundingBox(const std::array<TransformedVertex, 3>& vertices) :
 {
 }
 
-size_t tr::BoundingBox::getMinX() const
+size_t tr::Rect::getMinX() const
 {
 	return m_minX;
 }
 
-size_t tr::BoundingBox::getMaxX() const
+size_t tr::Rect::getMaxX() const
 {
 	return m_maxX;
 }
 
-size_t tr::BoundingBox::getMinY() const
+size_t tr::Rect::getMinY() const
 {
 	return m_minY;
 }
 
-size_t tr::BoundingBox::getMaxY() const
+size_t tr::Rect::getMaxY() const
 {
 	return m_maxY;
 }

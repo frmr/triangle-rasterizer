@@ -5,10 +5,11 @@
 
 namespace tr
 {
-	class BoundingBox
+	class Rect
 	{
 	public:
-		                        BoundingBox(const std::array<TransformedVertex, 3>& vertices);
+		                        Rect(const size_t minX, const size_t minY, const size_t maxX, const size_t maxY);
+		                        Rect(const std::array<TransformedVertex, 3>& vertices);
 
 		size_t                  getMinX() const;
 		size_t                  getMaxX() const;

@@ -8,6 +8,7 @@
 #include "trEdgeInfo.hpp"
 #include "trError.hpp"
 #include "trPrimitive.hpp"
+#include "trTileManager.hpp"
 #include "trTextureMode.hpp"
 #include "trTextureWrappingMode.hpp"
 #include "trVertex.hpp"
@@ -16,7 +17,8 @@
 #include "../matrix/Matrices.h"
 #include "tfTextFile.hpp"
 #include "trQuadTransformedVertex.hpp"
-#include "trBoundingBox.hpp"
+#include "trRect.hpp"
+#include "trTriangle.hpp"
 
 #include <vector>
 #include <array>
@@ -28,7 +30,12 @@ namespace tr
 	class Rasterizer
 	{
 	public:
-		Rasterizer() :
+		Rasterizer(const size_t bufferWidth, const size_t bufferHeight, const size_t tileWidth, const size_t tileHeight) :
+			m_bufferWidth(bufferWidth),
+			m_bufferHeight(bufferHeight),
+			m_bufferHalfWidth(float(bufferWidth) / 2.0f),
+			m_bufferHalfHeight(float(bufferHeight) / 2.0f),
+			m_tileManager(bufferWidth, bufferHeight, tileWidth, tileHeight),
 			m_primitive(Primitive::Triangles),
 			m_projectionViewMatrix(),
 			m_modelMatrix(),
@@ -40,24 +47,24 @@ namespace tr
 		{
 		}
 
-		Error draw(const std::vector<Vertex>& vertices, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		Error draw(const std::vector<Vertex>& vertices, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 		{
 			std::vector<TransformedVertex> transformedVertices;
 
 			transformedVertices.reserve(vertices.size());
 
-			if (colorBuffer.getWidth() == 0 || colorBuffer.getHeight() == 0)
+			// Maybe throw an exception in the constructor instead
+			if (m_bufferWidth == 0 || m_bufferHeight == 0)
 			{
 				return Error::InvalidBufferSize;
 			}
 
-			if (colorBuffer.getWidth() != depthBuffer.getWidth() && colorBuffer.getHeight() != depthBuffer.getHeight())
+			if (colorBuffer.getWidth() != m_bufferWidth || depthBuffer.getWidth() != m_bufferWidth || colorBuffer.getHeight() != m_bufferHeight || depthBuffer.getHeight() != m_bufferHeight)
 			{
 				return Error::BufferSizeMismatch;
 			}
 
-			const float halfWidth  = float(colorBuffer.getWidth())  / 2.0f;
-			const float halfHeight = float(colorBuffer.getHeight()) / 2.0f;
+			m_shaders.push_back(shader);
 
 			for (const Vertex& vertex : vertices)
 			{
@@ -75,7 +82,7 @@ namespace tr
 			{
 				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin(); it < transformedVertices.end() - 2; it += 3)
 				{
-					clipAndDrawTriangle({ *it, *(it + 1), *(it + 2) }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+					clipAndQueueTriangle({ *it, *(it + 1), *(it + 2) }, m_shaders.size() - 1);
 				}
 			}
 			else if (m_primitive == Primitive::TriangleStrip)
@@ -86,7 +93,7 @@ namespace tr
 
 				for (size_t newIndex = 2; newIndex < transformedVertices.size(); ++newIndex)
 				{
-					clipAndDrawTriangle({ transformedVertices[reverse ? newIndex : lastIndex], transformedVertices[firstIndex], transformedVertices[reverse ? lastIndex : newIndex] }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+					clipAndQueueTriangle({ transformedVertices[reverse ? newIndex : lastIndex], transformedVertices[firstIndex], transformedVertices[reverse ? lastIndex : newIndex] }, m_shaders.size() - 1);
 
 					firstIndex = lastIndex;
 					lastIndex  = newIndex;
@@ -97,11 +104,24 @@ namespace tr
 			{
 				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin() + 1; it < transformedVertices.end() - 1; it += 1)
 				{
-					clipAndDrawTriangle({ transformedVertices.front(), *it, *(it + 1) }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+					clipAndQueueTriangle({ transformedVertices.front(), *it, *(it + 1) }, m_shaders.size() - 1);
 				}
 			}
 
+			drawTriangles(colorBuffer, depthBuffer);
+			m_triangles.clear();
+
 			return Error::Success;
+		}
+
+		void setTilerAttributes(const size_t bufferWidth, const size_t bufferHeight, const size_t tileWidth, const size_t tileHeight)
+		{
+			m_tileManager.setAttributes(bufferWidth, bufferHeight, tileWidth, tileHeight);
+
+			m_bufferWidth = bufferWidth;
+			m_bufferHeight = bufferHeight;
+			m_bufferHalfWidth = float(bufferWidth) / 2.0f;
+			m_bufferHalfHeight = float(bufferHeight) / 2.0f;
 		}
 
 		void setPrimitive(const Primitive primitive)
@@ -173,7 +193,7 @@ namespace tr
 			return TransformedVertex(worldPosition, projectedPosition, normal, textureCoord);
 		}
 
-		void drawTriangle(std::array<TransformedVertex, 3> vertices, const TShader& shader, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		void queueTriangle(std::array<TransformedVertex, 3> vertices, const size_t shaderIndex)
 		{
 			perspectiveDivide(vertices);
 
@@ -188,12 +208,13 @@ namespace tr
 				}
 			}
 			
-			viewportTransformation(vertices, halfWidth, halfHeight);
+			viewportTransformation(vertices);
 			pixelShift(vertices);
-			fillTriangle(vertices, shader, colorBuffer, depthBuffer);
+
+			m_triangles.emplace_back(vertices, shaderIndex);
 		}
 
-		void clipAndDrawTriangle(const std::array<TransformedVertex, 3>& vertices, const TShader& shader, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		void clipAndQueueTriangle(const std::array<TransformedVertex, 3>& vertices, const size_t shaderIndex)
 		{
 			std::array<uint8_t, 3> vertexClipBitFields     = { 0, 0, 0 };
 			std::array<uint8_t, 3> vertexEqualityBitFields = { 0, 0, 0 };
@@ -224,7 +245,7 @@ namespace tr
 
 			if (!(vertexClipBitFields[0] | vertexClipBitFields[1] | vertexClipBitFields[2]))
 			{
-				drawTriangle(vertices, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+				queueTriangle(vertices, shaderIndex);
 			}
 			else if ((vertexClipBitFields[0] | vertexEqualityBitFields[0]) &
 					 (vertexClipBitFields[1] | vertexEqualityBitFields[1]) &
@@ -258,8 +279,8 @@ namespace tr
 							assert(false);
 						}
 
-						clipAndDrawTriangle({ firstVertex,  intersection,   oppositeVertex }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
-						clipAndDrawTriangle({ secondVertex, oppositeVertex, intersection   }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+						clipAndQueueTriangle({ firstVertex,  intersection,   oppositeVertex }, shaderIndex);
+						clipAndQueueTriangle({ secondVertex, oppositeVertex, intersection   }, shaderIndex);
 
 						break;
 					}
@@ -292,90 +313,74 @@ namespace tr
 			}
 		}
 
-		static void viewportTransformation(std::array<TransformedVertex,3>& vertices, const float halfWidth, const float halfHeight)
+		void viewportTransformation(std::array<TransformedVertex,3>& vertices) const
 		{
 			for (TransformedVertex& vertex : vertices)
 			{
-				vertex.projectedPosition.x = vertex.projectedPosition.x * halfWidth + halfWidth;
-				vertex.projectedPosition.y = halfHeight - vertex.projectedPosition.y * halfHeight;
+				vertex.projectedPosition.x = vertex.projectedPosition.x * m_bufferHalfWidth + m_bufferHalfWidth;
+				vertex.projectedPosition.y = m_bufferHalfHeight - vertex.projectedPosition.y * m_bufferHalfHeight;
 			}
 		}
 
-		void fillTriangle(const std::array<TransformedVertex,3>& vertices, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		void drawTriangles(ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			const QuadFloat quadA01(4.0f * (vertices[0].projectedPosition.y - vertices[1].projectedPosition.y));
-			const QuadFloat quadB01(1.0f * (vertices[1].projectedPosition.x - vertices[0].projectedPosition.x));
-			const QuadFloat quadA12(4.0f * (vertices[1].projectedPosition.y - vertices[2].projectedPosition.y));
-			const QuadFloat quadB12(1.0f * (vertices[2].projectedPosition.x - vertices[1].projectedPosition.x));
-			const QuadFloat quadA20(4.0f * (vertices[2].projectedPosition.y - vertices[0].projectedPosition.y));
-			const QuadFloat quadB20(1.0f * (vertices[0].projectedPosition.x - vertices[2].projectedPosition.x));
-
-			const BoundingBox boundingBox(vertices);
-
-			const QuadVec3 points(
-				QuadFloat(float(boundingBox.getMinX()), float(boundingBox.getMinX() + 1), float(boundingBox.getMinX() + 2),     float(boundingBox.getMinX() + 3)),
-				QuadFloat(float(boundingBox.getMinY()), float(boundingBox.getMinY()    ), float(boundingBox.getMinY()    ),     float(boundingBox.getMinY()    )),
-				0.0f
-			);
-
-			const QuadTransformedVertex quadVertex0(vertices[0]);
-			const QuadTransformedVertex quadVertex1(vertices[1]);
-			const QuadTransformedVertex quadVertex2(vertices[2]);
-
-			QuadFloat rowWeights0 = orientPoints(quadVertex1.projectedPosition, quadVertex2.projectedPosition, points);
-			QuadFloat rowWeights1 = orientPoints(quadVertex2.projectedPosition, quadVertex0.projectedPosition, points);
-			QuadFloat rowWeights2 = orientPoints(quadVertex0.projectedPosition, quadVertex1.projectedPosition, points);
-
-			const QuadFloat quadArea = orientPoints(quadVertex0.projectedPosition, quadVertex1.projectedPosition, quadVertex2.projectedPosition);
-
 			assert(depthBuffer.getWidth()  == colorBuffer.getWidth());
 			assert(depthBuffer.getHeight() == colorBuffer.getHeight());
 
-			const size_t bufferStepX = 4;
-			const size_t bufferStepY = depthBuffer.getWidth() - (boundingBox.getMaxX() - boundingBox.getMinX()) + (boundingBox.getMaxX() - boundingBox.getMinX()) % bufferStepX - bufferStepX;
-
-			Color* colorPointer = colorBuffer.getData() + boundingBox.getMinY() * colorBuffer.getWidth() + boundingBox.getMinX();
-			float* depthPointer = depthBuffer.getData() + boundingBox.getMinY() * depthBuffer.getWidth() + boundingBox.getMinX();
-
-			for (size_t y = boundingBox.getMinY(); y <= boundingBox.getMaxY(); y += 1, colorPointer += bufferStepY, depthPointer += bufferStepY)
+			for (const Triangle& triangle : m_triangles)
 			{
-				QuadFloat weights0 = rowWeights0;
-				QuadFloat weights1 = rowWeights1;
-				QuadFloat weights2 = rowWeights2;
+				const TShader& shader = m_shaders[triangle.shaderIndex];
 
-				for (size_t x = boundingBox.getMinX(); x <= boundingBox.getMaxX(); x += 4, colorPointer += bufferStepX, depthPointer += bufferStepX)
+				const size_t bufferStepX = 4;
+				const size_t bufferStepY = depthBuffer.getWidth() - (triangle.boundingBox.getMaxX() - triangle.boundingBox.getMinX()) + (triangle.boundingBox.getMaxX() - triangle.boundingBox.getMinX()) % bufferStepX - bufferStepX;
+
+				Color* colorPointer = colorBuffer.getData() + triangle.boundingBox.getMinY() * colorBuffer.getWidth() + triangle.boundingBox.getMinX();
+				float* depthPointer = depthBuffer.getData() + triangle.boundingBox.getMinY() * depthBuffer.getWidth() + triangle.boundingBox.getMinX();
+
+				QuadFloat rowWeights0 = triangle.rowWeights0;
+				QuadFloat rowWeights1 = triangle.rowWeights1;
+				QuadFloat rowWeights2 = triangle.rowWeights2;
+
+				for (size_t y = triangle.boundingBox.getMinY(); y <= triangle.boundingBox.getMaxY(); y += 1, colorPointer += bufferStepY, depthPointer += bufferStepY)
 				{
-					const QuadMask positiveWeightsMask = ~(weights0 | weights1 | weights2).castToMask();
-					const QuadMask negativeWeightsMask =  (weights0 & weights1 & weights2).castToMask();
+					QuadFloat weights0 = rowWeights0;
+					QuadFloat weights1 = rowWeights1;
+					QuadFloat weights2 = rowWeights2;
 
-					QuadMask renderMask = positiveWeightsMask | negativeWeightsMask;
-
-					if (renderMask.moveMask())
+					for (size_t x = triangle.boundingBox.getMinX(); x <= triangle.boundingBox.getMaxX(); x += 4, colorPointer += bufferStepX, depthPointer += bufferStepX)
 					{
-						const QuadFloat normalizedWeights0 = (weights0 / quadArea).abs();
-						const QuadFloat normalizedWeights1 = (weights1 / quadArea).abs();
-						const QuadFloat normalizedWeights2 = (weights2 / quadArea).abs();
+						const QuadMask positiveWeightsMask = ~(weights0 | weights1 | weights2).castToMask();
+						const QuadMask negativeWeightsMask =  (weights0 & weights1 & weights2).castToMask();
 
-						QuadTransformedVertex attributes = quadVertex0 * normalizedWeights0 + quadVertex1 * normalizedWeights1 + quadVertex2 * normalizedWeights2;
+						QuadMask renderMask = positiveWeightsMask | negativeWeightsMask;
 
-						if (m_depthTest)
+						if (renderMask.moveMask())
 						{
-							renderMask &= QuadFloat(depthPointer, renderMask).greaterThan(attributes.projectedPosition.z + m_depthBias);
+							const QuadFloat normalizedWeights0 = (weights0 / triangle.quadArea).abs();
+							const QuadFloat normalizedWeights1 = (weights1 / triangle.quadArea).abs();
+							const QuadFloat normalizedWeights2 = (weights2 / triangle.quadArea).abs();
+
+							QuadTransformedVertex attributes = triangle.quadVertex0 * normalizedWeights0 + triangle.quadVertex1 * normalizedWeights1 + triangle.quadVertex2 * normalizedWeights2;
+
+							if (m_depthTest)
+							{
+								renderMask &= QuadFloat(depthPointer, renderMask).greaterThan(attributes.projectedPosition.z + m_depthBias);
+							}
+
+							attributes.textureCoord /= attributes.inverseW;
+
+							shader.draw(renderMask, attributes.projectedPosition, attributes.worldPosition, attributes.normal, attributes.textureCoord, colorPointer, depthPointer);
 						}
 
-						attributes.textureCoord /= attributes.inverseW;
-
-						shader.draw(renderMask, attributes.projectedPosition, attributes.worldPosition, attributes.normal, attributes.textureCoord, colorPointer, depthPointer);
+						weights0 += triangle.quadA12;
+						weights1 += triangle.quadA20;
+						weights2 += triangle.quadA01;
 					}
 
-					weights0 += quadA12;
-					weights1 += quadA20;
-					weights2 += quadA01;
+					rowWeights0 += triangle.quadB12;
+					rowWeights1 += triangle.quadB20;
+					rowWeights2 += triangle.quadB01;
 				}
-
-				rowWeights0 += quadB12;
-				rowWeights1 += quadB20;
-				rowWeights2 += quadB01;
 			}
 		}
 
@@ -384,19 +389,21 @@ namespace tr
 			return (lineEnd.x - lineStart.x) * (point.y - lineStart.y) - (lineEnd.y - lineStart.y) * (point.x - lineStart.x);
 		}
 
-		static QuadFloat orientPoints(const QuadVec3& lineStarts, const QuadVec3& lineEnds, const QuadVec3& points)
-		{
-			return (lineEnds.x - lineStarts.x) * (points.y - lineStarts.y) - (lineEnds.y - lineStarts.y) * (points.x - lineStarts.x);
-		}
-
 	private:
-		Primitive    m_primitive;
-		Matrix4      m_projectionViewMatrix;
-		Matrix4      m_modelMatrix;
-		Matrix3      m_modelNormalRotationMatrix;
-		bool         m_depthTest;
-		TextureMode  m_textureMode;
-		CullFaceMode m_cullFaceMode;
-		QuadFloat    m_depthBias;
+		size_t                m_bufferWidth;
+		size_t                m_bufferHeight;
+		float                 m_bufferHalfWidth;
+		float                 m_bufferHalfHeight;
+		TileManager           m_tileManager;
+		Primitive             m_primitive;
+		Matrix4               m_projectionViewMatrix;
+		Matrix4               m_modelMatrix;
+		Matrix3               m_modelNormalRotationMatrix;
+		bool                  m_depthTest;
+		TextureMode           m_textureMode;
+		CullFaceMode          m_cullFaceMode;
+		QuadFloat             m_depthBias;
+		std::vector<TShader>  m_shaders;
+		std::vector<Triangle> m_triangles;
 	};
 }
