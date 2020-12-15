@@ -24,7 +24,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadFloat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadInt.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadMask.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadSizeT.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadTransformedVertex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec2.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec3.cpp" />
@@ -57,7 +56,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadFloat.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadInt.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadMask.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadSizeT.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadTransformedVertex.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec2.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec3.hpp" />

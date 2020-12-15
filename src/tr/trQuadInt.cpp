@@ -220,20 +220,6 @@ tr::QuadInt tr::QuadInt::maskedCopy(const QuadInt& rhs, const QuadMask& mask) co
 #endif
 }
 
-tr::QuadSizeT tr::QuadInt::convertToQuadSizeT() const
-{
-#ifdef TR_SIMD
-	return QuadSizeT(_mm256_cvtepi32_epi64(m_data));
-#else
-	return QuadSizeT(
-		size_t(m_data[0]),
-		size_t(m_data[1]),
-		size_t(m_data[2]),
-		size_t(m_data[3])
-	);
-#endif
-}
-
 tr::QuadFloat tr::QuadInt::convertToQuadFloat() const
 {
 #ifdef TR_SIMD

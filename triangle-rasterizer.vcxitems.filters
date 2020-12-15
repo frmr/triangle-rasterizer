@@ -30,9 +30,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadInt.cpp">
       <Filter>tr</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadSizeT.cpp">
-      <Filter>tr</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec2.cpp">
       <Filter>tr</Filter>
     </ClCompile>
@@ -135,9 +132,6 @@
       <Filter>tr</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadFloat.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadSizeT.hpp">
       <Filter>tr</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec2.hpp">

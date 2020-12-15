@@ -2,7 +2,6 @@
 
 #include "trColor.hpp"
 #include "trQuadFloat.hpp"
-#include "trQuadSizeT.hpp"
 #include "trQuadVec4.hpp"
 #include <array>
 

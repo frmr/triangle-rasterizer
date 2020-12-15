@@ -2,7 +2,6 @@
 
 #include <array>
 #include <cstdint>
-#include "trQuadSizeT.hpp"
 #include "trQuadMask.hpp"
 
 namespace tr
@@ -38,7 +37,6 @@ namespace tr
 		QuadMask                      equal(const QuadInt& rhs) const;
 		QuadInt                       maskedCopy(const QuadInt& rhs, const QuadMask& mask) const;
 
-		QuadSizeT                     convertToQuadSizeT() const;
 		QuadFloat                     convertToQuadFloat() const;
 
 		void                          write(int32_t* const address, const QuadMask& mask) const;
