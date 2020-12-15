@@ -7,6 +7,14 @@
 // TODO: Find somewhere better to put this
 const tr::QuadInt byteMask(0xFF);
 
+tr::QuadColor::QuadColor(const QuadFloat& r, const QuadFloat& g, const QuadFloat& b, const QuadFloat& a) :
+	m_r(r),
+	m_g(g),
+	m_b(b),
+	m_a(a)
+{
+}
+
 tr::QuadColor::QuadColor(const Color* const baseAddress, const QuadInt& offsets, const QuadMask& mask) :
 	m_r(0.0f), // TODO: Don't initialize?
 	m_g(0.0f),
@@ -17,10 +25,10 @@ tr::QuadColor::QuadColor(const Color* const baseAddress, const QuadInt& offsets,
 
 	const QuadInt colorsAsInts = offsets.gatherIntsAtOffsets(reinterpret_cast<const int32_t*>(baseAddress), mask);
 
-	QuadInt rValues = (colorsAsInts >> 24);
-	QuadInt gValues = (colorsAsInts >> 16) & byteMask;
-	QuadInt bValues = (colorsAsInts >>  8) & byteMask;
-	QuadInt aValues = (colorsAsInts      ) & byteMask;
+	QuadInt bValues = (colorsAsInts      );
+	QuadInt gValues = (colorsAsInts >>  8) & byteMask;
+	QuadInt rValues = (colorsAsInts >> 16) & byteMask;
+	QuadInt aValues = (colorsAsInts >> 24) & byteMask;
 
 	m_r = rValues.convertToQuadFloat();
 	m_g = gValues.convertToQuadFloat();
@@ -42,9 +50,9 @@ void tr::QuadColor::write(Color* const pointer, const QuadMask& mask) const
 	QuadInt intB = roundedB.convertToQuadInt();
 	QuadInt intA = roundedA.convertToQuadInt();
 
-	intR <<= 24;
-	intG <<= 16;
-	intB <<=  8;
+	intG <<= 8;
+	intR <<= 16;
+	intA <<= 24;
 
 	(intR | intG | intB | intA).write(intPointer, mask);
 }
