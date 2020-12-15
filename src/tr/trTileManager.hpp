@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <cassert>
+#include <thread>
+#include <atomic>
 #include "trTile.hpp"
 #include "trColorBuffer.hpp"
 #include "trDepthBuffer.hpp"
@@ -75,18 +77,24 @@ namespace tr
 			m_shaders.clear();
 		}
 
-		void draw(ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		void tileThread(std::atomic<size_t>& tileIndex, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
-			assert(depthBuffer.getWidth()  == colorBuffer.getWidth());
-			assert(depthBuffer.getHeight() == colorBuffer.getHeight());
+			size_t myTileIndex;
 
-			
-			for (const Tile& tile : m_tiles)
+			while ((myTileIndex  = tileIndex.fetch_add(1, std::memory_order_relaxed)) < m_tiles.size())
 			{
+				const Tile& tile = m_tiles[myTileIndex];
+
 				for (const Triangle& triangle : m_triangles)
 				{
+					const Rect boundingBox = triangle.boundingBox.intersection(tile.getBounds());
+
+					if (!boundingBox.isValid())
+					{
+						continue;
+					}
+
 					const TShader& shader       = m_shaders[triangle.shaderIndex];
-					const Rect     boundingBox  = triangle.boundingBox.unionWith(tile.getBounds());
 
 					const size_t   bufferStepX  = 4;
 					const size_t   bufferStepY  = depthBuffer.getWidth() - (boundingBox.getMaxX() - boundingBox.getMinX()) + (boundingBox.getMaxX() - boundingBox.getMinX()) % bufferStepX - bufferStepX;
@@ -115,15 +123,15 @@ namespace tr
 							const QuadMask positiveWeightsMask = ~(weights0 | weights1 | weights2).castToMask();
 							const QuadMask negativeWeightsMask =  (weights0 & weights1 & weights2).castToMask();
 
-							QuadMask renderMask = positiveWeightsMask | negativeWeightsMask;
+							QuadMask       renderMask          = positiveWeightsMask | negativeWeightsMask;
 
 							if (renderMask.moveMask())
 							{
-								const QuadFloat normalizedWeights0 = (weights0 / triangle.quadArea).abs();
-								const QuadFloat normalizedWeights1 = (weights1 / triangle.quadArea).abs();
-								const QuadFloat normalizedWeights2 = (weights2 / triangle.quadArea).abs();
+								const QuadFloat       normalizedWeights0 = (weights0 / triangle.quadArea).abs();
+								const QuadFloat       normalizedWeights1 = (weights1 / triangle.quadArea).abs();
+								const QuadFloat       normalizedWeights2 = (weights2 / triangle.quadArea).abs();
 
-								QuadTransformedVertex attributes = triangle.quadVertex0 * normalizedWeights0 + triangle.quadVertex1 * normalizedWeights1 + triangle.quadVertex2 * normalizedWeights2;
+								QuadTransformedVertex attributes         = triangle.quadVertex0 * normalizedWeights0 + triangle.quadVertex1 * normalizedWeights1 + triangle.quadVertex2 * normalizedWeights2;
 
 								if (m_depthTest)
 								{
@@ -145,6 +153,26 @@ namespace tr
 						rowWeights2 += triangle.quadB01;
 					}
 				}
+			}
+		}
+
+		void draw(ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		{
+			assert(depthBuffer.getWidth()  == colorBuffer.getWidth());
+			assert(depthBuffer.getHeight() == colorBuffer.getHeight());
+			
+			std::vector<std::thread> threads;
+			std::atomic<size_t>      tileIndex  = 0;
+			constexpr size_t         numThreads = 4;
+			
+			for (size_t i = 0; i < numThreads; ++i)
+			{
+				threads.push_back(std::thread(&TileManager::tileThread, this, std::ref(tileIndex), std::ref(colorBuffer), std::ref(depthBuffer)));
+			}
+
+			for (std::thread& thread : threads)
+			{
+				thread.join();
 			}
 		}
 

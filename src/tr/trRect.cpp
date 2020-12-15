@@ -37,7 +37,7 @@ size_t tr::Rect::getMaxY() const
 	return m_maxY;
 }
 
-tr::Rect tr::Rect::unionWith(const Rect& rhs) const
+tr::Rect tr::Rect::intersection(const Rect& rhs) const
 {
 	return Rect(
 		std::max(rhs.m_minX, m_minX),
@@ -45,4 +45,9 @@ tr::Rect tr::Rect::unionWith(const Rect& rhs) const
 		std::min(rhs.m_maxX, m_maxX),
 		std::min(rhs.m_maxY, m_maxY)
 	);
+}
+
+bool tr::Rect::isValid() const
+{
+	return m_minX < m_maxX && m_minY < m_maxY;
 }
