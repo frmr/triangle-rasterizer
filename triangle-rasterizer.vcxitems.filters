@@ -12,12 +12,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\matrix\Matrices.cpp">
       <Filter>matrix</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trDefaultShader.cpp">
-      <Filter>tr</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trDepthShader.cpp">
-      <Filter>tr</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTexture.cpp">
       <Filter>tr</Filter>
     </ClCompile>
@@ -92,13 +86,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trCullFaceMode.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trDefaultShader.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trDepthBuffer.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trDepthShader.hpp">
       <Filter>tr</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trEdgeInfo.hpp">
