@@ -38,7 +38,9 @@ namespace tr
 			m_modelMatrix(),
 			m_modelNormalRotationMatrix(),
 			m_cullFaceMode(CullFaceMode::Back),
-			m_textureMode(TextureMode::Perspective)
+			m_textureMode(TextureMode::Perspective),
+			m_depthTest(true),
+			m_depthBias(0.0f)
 		{
 		}
 
@@ -48,7 +50,8 @@ namespace tr
 
 			transformedVertices.reserve(vertices.size());
 
-			const size_t shaderIndex = m_tileManager.addShader(shader);
+			const size_t shaderIndex              = m_tileManager.storeShader(shader);
+			const size_t rasterizationParamsIndex = m_tileManager.storeRasterizationParams(m_depthTest, m_depthBias);
 
 			for (const Vertex& vertex : vertices)
 			{
@@ -66,7 +69,7 @@ namespace tr
 			{
 				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin(); it < transformedVertices.end() - 2; it += 3)
 				{
-					clipAndQueueTriangle({ *it, *(it + 1), *(it + 2) }, shaderIndex);
+					clipAndQueueTriangle({ *it, *(it + 1), *(it + 2) }, shaderIndex, rasterizationParamsIndex);
 				}
 			}
 			else if (m_primitive == Primitive::TriangleStrip)
@@ -77,7 +80,7 @@ namespace tr
 
 				for (size_t newIndex = 2; newIndex < transformedVertices.size(); ++newIndex)
 				{
-					clipAndQueueTriangle({ transformedVertices[reverse ? newIndex : lastIndex], transformedVertices[firstIndex], transformedVertices[reverse ? lastIndex : newIndex] }, shaderIndex);
+					clipAndQueueTriangle({ transformedVertices[reverse ? newIndex : lastIndex], transformedVertices[firstIndex], transformedVertices[reverse ? lastIndex : newIndex] }, shaderIndex, rasterizationParamsIndex);
 
 					firstIndex = lastIndex;
 					lastIndex  = newIndex;
@@ -88,7 +91,7 @@ namespace tr
 			{
 				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin() + 1; it < transformedVertices.end() - 1; it += 1)
 				{
-					clipAndQueueTriangle({ transformedVertices.front(), *it, *(it + 1) }, shaderIndex);
+					clipAndQueueTriangle({ transformedVertices.front(), *it, *(it + 1) }, shaderIndex, rasterizationParamsIndex);
 				}
 			}
 		}
@@ -162,7 +165,7 @@ namespace tr
 
 		void setDepthTest(const bool depthTest)
 		{
-			m_tileManager.setDepthTest(depthTest);
+			m_depthTest = depthTest;
 		}
 
 		void setTextureMode(const TextureMode textureMode)
@@ -177,7 +180,7 @@ namespace tr
 
 		void setDepthBias(const float depthBias)
 		{
-			m_tileManager.setDepthBias(depthBias);
+			m_depthBias = depthBias;
 		}
 
 	private:
@@ -195,7 +198,7 @@ namespace tr
 			return TransformedVertex(worldPosition, projectedPosition, normal, textureCoord);
 		}
 
-		void queueTriangle(std::array<TransformedVertex, 3> vertices, const size_t shaderIndex)
+		void queueTriangle(std::array<TransformedVertex, 3> vertices, const size_t shaderIndex, const size_t rasterizationParamsIndex)
 		{
 			perspectiveDivide(vertices);
 
@@ -213,10 +216,10 @@ namespace tr
 			viewportTransformation(vertices);
 			pixelShift(vertices);
 
-			m_tileManager.queue(Triangle(vertices, shaderIndex));
+			m_tileManager.queue(Triangle(vertices, shaderIndex, rasterizationParamsIndex));
 		}
 
-		void clipAndQueueTriangle(const std::array<TransformedVertex, 3>& vertices, const size_t shaderIndex)
+		void clipAndQueueTriangle(const std::array<TransformedVertex, 3>& vertices, const size_t shaderIndex, const size_t rasterizationParamsIndex)
 		{
 			std::array<uint8_t, 3> vertexClipBitFields     = { 0, 0, 0 };
 			std::array<uint8_t, 3> vertexEqualityBitFields = { 0, 0, 0 };
@@ -247,7 +250,7 @@ namespace tr
 
 			if (!(vertexClipBitFields[0] | vertexClipBitFields[1] | vertexClipBitFields[2]))
 			{
-				queueTriangle(vertices, shaderIndex);
+				queueTriangle(vertices, shaderIndex, rasterizationParamsIndex);
 			}
 			else if ((vertexClipBitFields[0] | vertexEqualityBitFields[0]) &
 					 (vertexClipBitFields[1] | vertexEqualityBitFields[1]) &
@@ -281,8 +284,8 @@ namespace tr
 							assert(false);
 						}
 
-						clipAndQueueTriangle({ firstVertex,  intersection,   oppositeVertex }, shaderIndex);
-						clipAndQueueTriangle({ secondVertex, oppositeVertex, intersection   }, shaderIndex);
+						clipAndQueueTriangle({ firstVertex,  intersection,   oppositeVertex }, shaderIndex, rasterizationParamsIndex);
+						clipAndQueueTriangle({ secondVertex, oppositeVertex, intersection   }, shaderIndex, rasterizationParamsIndex);
 
 						break;
 					}
@@ -341,5 +344,7 @@ namespace tr
 		Matrix3               m_modelNormalRotationMatrix;
 		CullFaceMode          m_cullFaceMode;
 		TextureMode           m_textureMode;
+		bool                  m_depthTest;
+		float                 m_depthBias;
 	};
 }

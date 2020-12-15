@@ -308,10 +308,10 @@ tr::QuadInt tr::QuadFloat::convertToQuadInt() const
 #endif
 }
 
-void tr::QuadFloat::write(float* const pointer) const
+void tr::QuadFloat::write(float* const pointer, const QuadMask& mask) const
 {
 #ifdef TR_SIMD
-	_mm_store_ps(pointer, m_data);
+	_mm_maskstore_ps(pointer, _mm_castps_si128(mask.getData()), m_data);
 #else
 	for (size_t i = 0; i < m_data.size(); ++i)
 	{

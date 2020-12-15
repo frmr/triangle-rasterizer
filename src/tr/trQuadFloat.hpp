@@ -41,7 +41,7 @@ namespace tr
 
 		QuadInt              convertToQuadInt() const;
 
-		void                 write(float* const pointer) const;
+		void                 write(float* const pointer, const QuadMask& mask) const;
 
 	private:
 #ifdef TR_SIMD

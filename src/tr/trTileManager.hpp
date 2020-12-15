@@ -7,6 +7,7 @@
 #include "trTile.hpp"
 #include "trColorBuffer.hpp"
 #include "trDepthBuffer.hpp"
+#include "trRasterizationParams.hpp"
 #include "trTriangle.hpp"
 
 namespace tr
@@ -15,9 +16,7 @@ namespace tr
 	class TileManager
 	{
 	public:
-		TileManager(const size_t viewportWidth, const size_t viewportHeight, const size_t tileWidth, const size_t tileHeight) :
-			m_depthTest(true),
-			m_depthBias(0.0f)
+		TileManager(const size_t viewportWidth, const size_t viewportHeight, const size_t tileWidth, const size_t tileHeight)
 		{
 			setAttributes(viewportWidth, viewportHeight, tileWidth, tileHeight);
 		}
@@ -49,26 +48,23 @@ namespace tr
 			}
 		}
 
-		size_t addShader(const TShader& shader)
+		size_t storeShader(const TShader& shader)
 		{
 			m_shaders.push_back(shader);
 
 			return m_shaders.size() - 1;
 		}
 
+		size_t storeRasterizationParams(const bool depthTest, const float depthBias)
+		{
+			m_rasterizationParams.push_back({ depthTest, depthBias });
+
+			return m_rasterizationParams.size() - 1;
+		}
+
 		void queue(const Triangle& triangle)
 		{
 			m_triangles.push_back(triangle);
-		}
-
-		void setDepthTest(const bool depthTest)
-		{
-			m_depthTest = depthTest;
-		}
-
-		void setDepthBias(const float depthBias)
-		{
-			m_depthBias = depthBias;
 		}
 
 		void clear()
@@ -94,7 +90,8 @@ namespace tr
 						continue;
 					}
 
-					const TShader& shader       = m_shaders[triangle.shaderIndex];
+					const TShader&             shader              = m_shaders[triangle.shaderIndex];
+					const RasterizationParams& rasterizationParams = m_rasterizationParams[triangle.rasterizationParamsIndex];
 
 					const size_t   bufferStepX  = 4;
 					const size_t   bufferStepY  = depthBuffer.getWidth() - (boundingBox.getMaxX() - boundingBox.getMinX()) + (boundingBox.getMaxX() - boundingBox.getMinX()) % bufferStepX - bufferStepX;
@@ -133,9 +130,9 @@ namespace tr
 
 								QuadTransformedVertex attributes         = triangle.quadVertex0 * normalizedWeights0 + triangle.quadVertex1 * normalizedWeights1 + triangle.quadVertex2 * normalizedWeights2;
 
-								if (m_depthTest)
+								if (rasterizationParams.depthTest)
 								{
-									renderMask &= QuadFloat(depthPointer, renderMask).greaterThan(attributes.projectedPosition.z + m_depthBias);
+									renderMask &= QuadFloat(depthPointer, renderMask).greaterThan(attributes.projectedPosition.z + rasterizationParams.depthBias);
 								}
 
 								attributes.textureCoord /= attributes.inverseW;
@@ -182,10 +179,9 @@ namespace tr
 		}
 
 	private:
-		std::vector<Tile>     m_tiles;
-		std::vector<TShader>  m_shaders;
-		std::vector<Triangle> m_triangles;
-		bool                  m_depthTest;
-		QuadFloat             m_depthBias;
+		std::vector<Tile>                m_tiles;
+		std::vector<TShader>             m_shaders;
+		std::vector<Triangle>            m_triangles;
+		std::vector<RasterizationParams> m_rasterizationParams;
 	};
 }

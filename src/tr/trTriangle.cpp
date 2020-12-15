@@ -1,7 +1,8 @@
 #include "trTriangle.hpp"
 
-tr::Triangle::Triangle(const std::array<TransformedVertex, 3>& vertices, const size_t shaderIndex) :
+tr::Triangle::Triangle(const std::array<TransformedVertex, 3>& vertices, const size_t shaderIndex, const size_t rasterizationParamsIndex) :
 	shaderIndex(shaderIndex),
+	rasterizationParamsIndex(rasterizationParamsIndex),
 	boundingBox(vertices),
 	quadA01(4.0f * (vertices[0].projectedPosition.y - vertices[1].projectedPosition.y)),
 	quadB01(1.0f * (vertices[1].projectedPosition.x - vertices[0].projectedPosition.x)),

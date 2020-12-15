@@ -38,6 +38,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\tr.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trAxis.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBlendMode.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRasterizationParams.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRect.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBuffer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trColor.hpp" />

@@ -167,5 +167,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRect.hpp">
       <Filter>tr</Filter>
     </ClInclude>
+    <ClInclude Include="X:\produce\triangle-rasterizer-demo\src\triangle-rasterizer\src\tr\trRasterizationParams.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
