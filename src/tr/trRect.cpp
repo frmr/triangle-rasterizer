@@ -49,5 +49,6 @@ tr::Rect tr::Rect::intersection(const Rect& rhs) const
 
 bool tr::Rect::isValid() const
 {
-	return m_minX < m_maxX && m_minY < m_maxY;
+	constexpr float epsilon = 0.0001f;
+	return m_minX < m_maxX + epsilon && m_minY < m_maxY + epsilon;
 }
