@@ -93,7 +93,7 @@ namespace tr
 			}
 		}
 
-		Error draw(ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		Error draw(const size_t numThreads, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
 			// Maybe throw an exception in the constructor instead
 			if (m_bufferWidth == 0 || m_bufferHeight == 0)
@@ -106,7 +106,7 @@ namespace tr
 				return Error::BufferSizeMismatch;
 			}
 
-			m_tileManager.draw(colorBuffer, depthBuffer);
+			m_tileManager.draw(numThreads, colorBuffer, depthBuffer);
 
 			return Error::Success;
 		}

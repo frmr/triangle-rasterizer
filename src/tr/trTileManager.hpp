@@ -156,14 +156,13 @@ namespace tr
 			}
 		}
 
-		void draw(ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		void draw(const size_t numThreads, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
 		{
 			assert(depthBuffer.getWidth()  == colorBuffer.getWidth());
 			assert(depthBuffer.getHeight() == colorBuffer.getHeight());
 			
 			std::vector<std::thread> threads;
 			std::atomic<size_t>      tileIndex  = 0;
-			constexpr size_t         numThreads = 4;
 			
 			for (size_t i = 0; i < numThreads; ++i)
 			{

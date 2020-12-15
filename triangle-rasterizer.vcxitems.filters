@@ -54,10 +54,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTile.cpp">
       <Filter>tr</Filter>
     </ClCompile>
-    <ClCompile Include="X:\produce\triangle-rasterizer-demo\src\triangle-rasterizer\src\tr\trRect.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trRect.cpp">
       <Filter>tr</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTriangle.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTriangle.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\matrix\Matrices.h">
@@ -159,10 +161,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTileManager.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="X:\produce\triangle-rasterizer-demo\src\triangle-rasterizer\src\tr\trRect.hpp">
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTriangle.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTriangle.hpp">
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRect.hpp">
       <Filter>tr</Filter>
     </ClInclude>
   </ItemGroup>
