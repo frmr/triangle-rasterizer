@@ -23,8 +23,8 @@ namespace tr
 		static constexpr size_t s_quadAlignmentMask = std::numeric_limits<size_t>::max() ^ 0x03;
 
 		size_t                  m_minX;
-		size_t                  m_maxX;
 		size_t                  m_minY;
+		size_t                  m_maxX;
 		size_t                  m_maxY;
 	};
 }
