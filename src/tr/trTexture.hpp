@@ -19,8 +19,8 @@ namespace tr
 		ColorBuffer&             getMipLevel(const size_t mipLevel);
 		const ColorBuffer&       getConstMipLevel(const size_t mipLevel) const;
 		size_t                   getNumMipLevels() const;
-		Color                    getAt(const float u, const float v, const bool filter, const TextureWrappingMode textureWrappingMode) const;
-		Color                    getAt(const float u, const float v, const bool filter, const TextureWrappingMode textureWrappingMode, const float du, const float dv, const bool interpolateMipmapLevels) const;
+		QuadColor                getAt(const QuadFloat& u, const QuadFloat& v, const bool filter, const TextureWrappingMode textureWrappingMode, const QuadMask& mask) const;
+		//Color                    getAt(const float u, const float v, const bool filter, const TextureWrappingMode textureWrappingMode, const float du, const float dv, const bool interpolateMipmapLevels) const;
 		QuadColor                getAt(const QuadFloat& u, const QuadFloat& v, const QuadMask& mask) const;
 
 	private:

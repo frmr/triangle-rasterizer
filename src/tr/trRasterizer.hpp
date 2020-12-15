@@ -51,7 +51,7 @@ namespace tr
 			transformedVertices.reserve(vertices.size());
 
 			const size_t shaderIndex              = m_tileManager.storeShader(shader);
-			const size_t rasterizationParamsIndex = m_tileManager.storeRasterizationParams(m_depthTest, m_depthBias);
+			const size_t rasterizationParamsIndex = m_tileManager.storeRasterizationParams(m_depthTest, m_depthBias, m_textureMode);
 
 			for (const Vertex& vertex : vertices)
 			{

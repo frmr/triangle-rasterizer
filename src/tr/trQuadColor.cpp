@@ -36,6 +36,14 @@ tr::QuadColor::QuadColor(const Color* const baseAddress, const QuadInt& offsets,
 	m_a = aValues.convertToQuadFloat();
 }
 
+tr::QuadColor::QuadColor(const QuadVec4& vec) :
+	m_b(vec.x),
+	m_g(vec.y),
+	m_r(vec.z),
+	m_a(vec.w)
+{
+}
+
 void tr::QuadColor::write(Color* const pointer, const QuadMask& mask) const
 {
 	int32_t* const  intPointer = reinterpret_cast<int32_t* const>(pointer);
@@ -55,4 +63,14 @@ void tr::QuadColor::write(Color* const pointer, const QuadMask& mask) const
 	intA <<= 24;
 
 	(intR | intG | intB | intA).write(intPointer, mask);
+}
+
+tr::QuadVec4 tr::QuadColor::toVector() const
+{
+	return QuadVec4(
+		m_b,
+		m_g,
+		m_r,
+		m_a
+	);
 }

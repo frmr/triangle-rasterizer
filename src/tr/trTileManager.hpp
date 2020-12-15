@@ -55,9 +55,9 @@ namespace tr
 			return m_shaders.size() - 1;
 		}
 
-		size_t storeRasterizationParams(const bool depthTest, const float depthBias)
+		size_t storeRasterizationParams(const bool depthTest, const float depthBias, const TextureMode textureMode)
 		{
-			m_rasterizationParams.push_back({ depthTest, depthBias });
+			m_rasterizationParams.push_back({ depthTest, depthBias, textureMode });
 
 			return m_rasterizationParams.size() - 1;
 		}
@@ -135,7 +135,10 @@ namespace tr
 									renderMask &= QuadFloat(depthPointer, renderMask).greaterThan(attributes.projectedPosition.z + rasterizationParams.depthBias);
 								}
 
-								attributes.textureCoord /= attributes.inverseW;
+								if (rasterizationParams.textureMode == TextureMode::Perspective)
+								{
+									attributes.textureCoord /= attributes.inverseW;
+								}
 
 								shader.draw(renderMask, attributes.projectedPosition, attributes.worldPosition, attributes.normal, attributes.textureCoord, colorPointer, depthPointer);
 							}

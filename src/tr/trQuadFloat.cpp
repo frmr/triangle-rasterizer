@@ -224,6 +224,34 @@ tr::QuadMask tr::QuadFloat::lessThan(const QuadFloat& rhs) const
 #endif
 }
 
+tr::QuadFloat tr::QuadFloat::min(const QuadFloat& rhs) const
+{
+#ifdef TR_SIMD
+	return QuadFloat(_mm_min_ps(m_data, rhs.m_data));
+#else
+	return QuadFloat(
+		std::min(m_data[0], rhs.m_data[0]),
+		std::min(m_data[1], rhs.m_data[1]),
+		std::min(m_data[2], rhs.m_data[2]),
+		std::min(m_data[3], rhs.m_data[3])
+	);
+#endif
+}
+
+tr::QuadFloat tr::QuadFloat::max(const QuadFloat& rhs) const
+{
+#ifdef TR_SIMD
+	return QuadFloat(_mm_max_ps(m_data, rhs.m_data));
+#else
+	return QuadFloat(
+		std::max(m_data[0], rhs.m_data[0]),
+		std::max(m_data[1], rhs.m_data[1]),
+		std::max(m_data[2], rhs.m_data[2]),
+		std::max(m_data[3], rhs.m_data[3])
+	);
+#endif
+}
+
 tr::QuadMask tr::QuadFloat::castToMask() const
 {
 #ifdef TR_SIMD

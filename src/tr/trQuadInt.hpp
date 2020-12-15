@@ -20,6 +20,7 @@ namespace tr
 #endif
 
 		QuadInt&                      operator+=(const QuadInt& rhs);
+		QuadInt&                      operator-=(const QuadInt& rhs);
 		QuadInt&                      operator*=(const QuadInt& rhs);
 		QuadInt&                      operator<<=(const int count);
 		QuadInt&                      operator>>=(const int count);
@@ -28,10 +29,14 @@ namespace tr
 		QuadInt                       operator>>(const int count) const;
 
 		QuadInt                       operator+(const QuadInt& rhs) const;
+		QuadInt                       operator-(const QuadInt& rhs) const;
 		QuadInt                       operator*(const QuadInt& rhs) const;
 
 		QuadInt                       operator&(const QuadInt& rhs) const;
 		QuadInt                       operator|(const QuadInt& rhs) const;
+
+		QuadMask                      equal(const QuadInt& rhs) const;
+		QuadInt                       maskedCopy(const QuadInt& rhs, const QuadMask& mask) const;
 
 		QuadSizeT                     convertToQuadSizeT() const;
 		QuadFloat                     convertToQuadFloat() const;

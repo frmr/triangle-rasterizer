@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\matrix\Matrices.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec4.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trRect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trColorBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trDefaultShader.cpp" />
@@ -38,6 +39,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\tr.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trAxis.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBlendMode.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec4.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRasterizationParams.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRect.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBuffer.hpp" />

@@ -33,6 +33,9 @@ namespace tr
 		QuadMask             greaterThan(const QuadFloat& rhs) const;
 		QuadMask             lessThan(const QuadFloat& rhs) const;
 
+		QuadFloat            min(const QuadFloat& rhs) const;
+		QuadFloat            max(const QuadFloat& rhs) const;
+
 		QuadMask             castToMask() const;
 
 		QuadFloat            abs() const;

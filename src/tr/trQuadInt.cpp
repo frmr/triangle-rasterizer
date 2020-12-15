@@ -43,6 +43,20 @@ tr::QuadInt& tr::QuadInt::operator+=(const QuadInt& rhs)
 	return *this;
 }
 
+tr::QuadInt& tr::QuadInt::operator-=(const QuadInt& rhs)
+{
+#ifdef TR_SIMD
+	m_data = _mm_sub_epi32(m_data, rhs.m_data);
+#else
+	for (size_t i = 0; i < m_data.size(); ++i)
+	{
+		m_data[i] -= rhs.m_data[i];
+	}
+#endif
+
+	return *this;
+}
+
 tr::QuadInt& tr::QuadInt::operator*=(const QuadInt& rhs)
 {
 #ifdef TR_SIMD
@@ -124,6 +138,19 @@ tr::QuadInt tr::QuadInt::operator+(const QuadInt& rhs) const
 #endif
 }
 
+tr::QuadInt tr::QuadInt::operator-(const QuadInt& rhs) const
+{
+#ifdef TR_SIMD
+	return QuadInt(_mm_sub_epi32(m_data, rhs.m_data));
+#else
+	QuadInt result = *this;
+
+	result -= rhs;
+
+	return result;
+#endif
+}
+
 tr::QuadInt tr::QuadInt::operator*(const QuadInt& rhs) const
 {
 #ifdef TR_SIMD
@@ -161,6 +188,34 @@ tr::QuadInt tr::QuadInt::operator|(const QuadInt& rhs) const
 		m_data[1] | rhs.m_data[1],
 		m_data[2] | rhs.m_data[2],
 		m_data[3] | rhs.m_data[3]
+	);
+#endif
+}
+
+tr::QuadMask tr::QuadInt::equal(const QuadInt& rhs) const
+{
+#ifdef TR_SIMD
+	return QuadMask(_mm_castsi128_ps(_mm_cmpeq_epi32(m_data, rhs.m_data)));
+#else
+	return QuadMask(
+		m_data[0] == rhs.m_data[0],
+		m_data[1] == rhs.m_data[1],
+		m_data[2] == rhs.m_data[2],
+		m_data[3] == rhs.m_data[3]
+	);
+#endif
+}
+
+tr::QuadInt tr::QuadInt::maskedCopy(const QuadInt& rhs, const QuadMask& mask) const
+{
+#ifdef TR_SIMD
+	return QuadInt(_mm_blendv_epi8(m_data, rhs.m_data, _mm_castps_si128(mask.getData())));
+#else
+	return QuadInt(
+		mask.get(0) ? rhs.m_data[0] : m_data[0],
+		mask.get(1) ? rhs.m_data[1] : m_data[1],
+		mask.get(2) ? rhs.m_data[2] : m_data[2],
+		mask.get(3) ? rhs.m_data[3] : m_data[3]
 	);
 #endif
 }

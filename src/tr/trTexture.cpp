@@ -87,37 +87,35 @@ size_t tr::Texture::getNumMipLevels() const
 	return m_mipLevels.size();
 }
 
-tr::Color tr::Texture::getAt(const float u, const float v, const bool filter, const TextureWrappingMode textureWrappingMode) const
+tr::QuadColor tr::Texture::getAt(const QuadFloat& u, const QuadFloat& v, const bool filter, const TextureWrappingMode textureWrappingMode, const QuadMask& mask) const
 {
-	//return m_baseLevel->getAt(u, v, filter, textureWrappingMode);
-
-	return tr::Color();
+	return m_baseLevel->getAt(u, v, filter, textureWrappingMode, mask);
 }
 
-tr::Color tr::Texture::getAt(const float u, const float v, const bool filter, const TextureWrappingMode textureWrappingMode, const float du, const float dv, const bool interpolateMipmapLevels) const
-{
-	const float dx       = du * m_baseLevel->getFloatWidth();
-	const float dy       = dv * m_baseLevel->getFloatHeight();
-	const float mipLevel = fastLog2(std::max(dx, dy));
-
-	if (interpolateMipmapLevels)
-	{
-		const size_t  floor      = std::min(size_t(mipLevel), m_maxMipLevelIndex);
-		const size_t  ceil       = std::min(floor + 1,        m_maxMipLevelIndex);
-
-		const float   ceilRatio  = mipLevel - float(floor);
-		const float   floorRatio = 1.0f - ceilRatio;
-
-		const Vector4 floorColor = Vector4();// m_mipLevels[floor].getAt(u, v, filter, textureWrappingMode).toVector();
-		const Vector4 ceilColor  = Vector4();// m_mipLevels[ceil].getAt(u, v, filter, textureWrappingMode).toVector();
-
-		return Color(floorColor * floorRatio + ceilColor * ceilRatio);
-	}
-	else
-	{
-		return tr::Color();//m_mipLevels[std::min(size_t(std::lroundf(mipLevel)), m_mipLevels.size() - 1)].getAt(u, v, filter, textureWrappingMode);
-	}
-}
+//tr::Color tr::Texture::getAt(const float u, const float v, const bool filter, const TextureWrappingMode textureWrappingMode, const float du, const float dv, const bool interpolateMipmapLevels) const
+//{
+//	const float dx       = du * m_baseLevel->getFloatWidth();
+//	const float dy       = dv * m_baseLevel->getFloatHeight();
+//	const float mipLevel = fastLog2(std::max(dx, dy));
+//
+//	if (interpolateMipmapLevels)
+//	{
+//		const size_t  floor      = std::min(size_t(mipLevel), m_maxMipLevelIndex);
+//		const size_t  ceil       = std::min(floor + 1,        m_maxMipLevelIndex);
+//
+//		const float   ceilRatio  = mipLevel - float(floor);
+//		const float   floorRatio = 1.0f - ceilRatio;
+//
+//		const Vector4 floorColor = Vector4();// m_mipLevels[floor].getAt(u, v, filter, textureWrappingMode).toVector();
+//		const Vector4 ceilColor  = Vector4();// m_mipLevels[ceil].getAt(u, v, filter, textureWrappingMode).toVector();
+//
+//		return Color(floorColor * floorRatio + ceilColor * ceilRatio);
+//	}
+//	else
+//	{
+//		return tr::Color();//m_mipLevels[std::min(size_t(std::lroundf(mipLevel)), m_mipLevels.size() - 1)].getAt(u, v, filter, textureWrappingMode);
+//	}
+//}
 
 tr::QuadColor tr::Texture::getAt(const QuadFloat& u, const QuadFloat& v, const QuadMask& mask) const
 {

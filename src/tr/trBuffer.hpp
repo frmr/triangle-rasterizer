@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 
+#include "trQuadFloat.hpp"
 #include "trTextureWrappingMode.hpp"
 #include "..//matrix/Vectors.h"
 
@@ -22,8 +23,8 @@ namespace tr
 		}
 
 		Buffer(const size_t width, const size_t height) :
-			m_width(width),
-			m_height(height),
+			m_width(int(width)),
+			m_height(int(height)),
 			m_floatWidth(float(width)),
 			m_floatHeight(float(height))
 		{
@@ -45,90 +46,17 @@ namespace tr
 			return m_data[y * m_width + x];
 		}
 
-		// TODO: Consider moving to color buffer
-		T getAt(float u, float v, const bool filter, const TextureWrappingMode textureWrappingMode) const
-		{
-			if (textureWrappingMode == TextureWrappingMode::Clamp)
-			{
-				constexpr float upperLimit = 1.0f - std::numeric_limits<float>::epsilon();
-
-				u = std::clamp(u, 0.0f, upperLimit);
-				v = std::clamp(v, 0.0f, upperLimit);
-			}
-			else
-			{
-				u -= fastFloor(u);
-				v -= fastFloor(v);
-			}
-
-			u *= m_floatWidth;
-			v *= m_floatHeight;
-
-			if (filter)
-			{
-				constexpr size_t maxSize = std::numeric_limits<size_t>::max();
-
-				u -= 0.5f;
-				v -= 0.5f;
-
-				const float  uFloor    = std::floor(u);
-				const float  vFloor    = std::floor(v);
-
-				size_t       x0        = size_t(uFloor);
-				size_t       y0        = size_t(vFloor);
-
-				const float  uDiff     = u - uFloor;
-				const float  vDiff     = v - vFloor;
-
-				const float  uOpposite = 1.0f - uDiff;
-				const float  vOpposite = 1.0f - vDiff;
-
-				size_t       x1        = x0 + 1;
-				size_t       y1        = y0 + 1;
-
-				if (x0 == maxSize)
-				{
-					x0 = (textureWrappingMode == TextureWrappingMode::Clamp) ? 0 : m_width - 1;
-				}
-				else if (x1 == m_width)
-				{
-					x1 = (textureWrappingMode == TextureWrappingMode::Clamp) ? x0 : 0;
-				}
-
-				if (y0 == maxSize)
-				{
-					y0 = (textureWrappingMode == TextureWrappingMode::Clamp) ? 0 : m_height - 1;
-				}
-				else if (y1 == m_height)
-				{
-					y1 = (textureWrappingMode == TextureWrappingMode::Clamp) ? y0 : 0;
-				}
-
-				const Vector4 topLeft     = (m_data.data() + (y0 * m_width + x0))->toVector();
-				const Vector4 topRight    = (m_data.data() + (y0 * m_width + x1))->toVector();
-				const Vector4 bottomLeft  = (m_data.data() + (y1 * m_width + x0))->toVector();
-				const Vector4 bottomRight = (m_data.data() + (y1 * m_width + x1))->toVector();
-
-				return (topLeft    * uOpposite + topRight    * uDiff) * vOpposite +
-				       (bottomLeft * uOpposite + bottomRight * uDiff) * vDiff;
-			}
-			else
-			{
-				return getAt(size_t(u), size_t(v));
-			}
-		}
-
 		T* getData()
 		{
 			return m_data.data();
 		}
 
-		size_t getWidth() const
+		int getWidth() const
 		{
 			return m_width;
 		}
 
-		size_t getHeight() const
+		int getHeight() const
 		{
 			return m_height;
 		}
@@ -144,17 +72,10 @@ namespace tr
 		}
 
 	protected:
-		static float fastFloor(const float x)
-		{
-			const int32_t xi = int32_t(x);
-			return float(x < xi ? xi - 1 : xi);
-		}
-
-	protected:
-		size_t                  m_width;
-		size_t                  m_height;
-		float                   m_floatWidth;
-		float                   m_floatHeight;
-		std::vector<T>          m_data;
+		int            m_width;
+		int            m_height;
+		float          m_floatWidth;
+		float          m_floatHeight;
+		std::vector<T> m_data;
 	};
 }

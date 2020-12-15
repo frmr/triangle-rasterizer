@@ -60,6 +60,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTriangle.cpp">
       <Filter>tr</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec4.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\matrix\Matrices.h">
@@ -168,6 +171,9 @@
       <Filter>tr</Filter>
     </ClInclude>
     <ClInclude Include="X:\produce\triangle-rasterizer-demo\src\triangle-rasterizer\src\tr\trRasterizationParams.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec4.hpp">
       <Filter>tr</Filter>
     </ClInclude>
   </ItemGroup>
