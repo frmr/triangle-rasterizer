@@ -43,10 +43,7 @@ tr::QuadColor tr::ColorBuffer::getAt(const QuadFloat& u, const QuadFloat& v, con
 	tempU *= m_floatWidth;
 	tempV *= m_floatHeight;
 
-	const QuadInt x = tempU.convertToQuadInt();
-	const QuadInt y = tempV.convertToQuadInt();
-
-	return getAt(x, y, mask);
+	return getAt(tempU.convertToQuadInt(), tempV.convertToQuadInt(), mask);
 }
 
 tr::QuadColor tr::ColorBuffer::getAt(QuadFloat u, QuadFloat v, const bool filter, const TextureWrappingMode textureWrappingMode, const QuadMask& mask) const
@@ -106,9 +103,6 @@ tr::QuadColor tr::ColorBuffer::getAt(QuadFloat u, QuadFloat v, const bool filter
 	}
 	else
 	{
-		const QuadInt x = u.convertToQuadInt();
-		const QuadInt y = v.convertToQuadInt();
-
-		return getAt(x, y, mask);
+		return getAt(u.convertToQuadInt(), v.convertToQuadInt(), mask);
 	}
 }

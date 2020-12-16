@@ -96,7 +96,7 @@ namespace tr
 			}
 		}
 
-		Error draw(const size_t numThreads, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		Error draw(const size_t numThreads, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 		{
 			// Maybe throw an exception in the constructor instead
 			if (m_bufferWidth == 0 || m_bufferHeight == 0)

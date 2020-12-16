@@ -56,6 +56,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec2.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec3.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRasterizer.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRenderThread.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTexture.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTextureMode.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTextureWrappingMode.hpp" />

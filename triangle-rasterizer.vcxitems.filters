@@ -152,10 +152,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRect.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="X:\produce\triangle-rasterizer-demo\src\triangle-rasterizer\src\tr\trRasterizationParams.hpp">
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec4.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec4.hpp">
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRenderThread.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRasterizationParams.hpp">
       <Filter>tr</Filter>
     </ClInclude>
   </ItemGroup>
