@@ -74,7 +74,7 @@ namespace tr
 
 				if (m_draw)
 				{
-					doStuff();
+					render();
 
 					m_draw = false;
 
@@ -84,7 +84,7 @@ namespace tr
 			}
 		}
 
-		void doStuff() const
+		void render() const
 		{
 			size_t myTileIndex;
 
