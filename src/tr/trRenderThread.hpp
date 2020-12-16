@@ -104,6 +104,17 @@ namespace tr
 					const TShader&             shader              = m_shaders[triangle.shaderIndex];
 					const RasterizationParams& rasterizationParams = m_rasterizationParams[triangle.rasterizationParamsIndex];
 
+					const QuadFloat             quadA01(4.0f * (triangle.vertices[0].projectedPosition.y - triangle.vertices[1].projectedPosition.y));
+					const QuadFloat             quadB01(1.0f * (triangle.vertices[1].projectedPosition.x - triangle.vertices[0].projectedPosition.x));
+					const QuadFloat             quadA12(4.0f * (triangle.vertices[1].projectedPosition.y - triangle.vertices[2].projectedPosition.y));
+					const QuadFloat             quadB12(1.0f * (triangle.vertices[2].projectedPosition.x - triangle.vertices[1].projectedPosition.x));
+					const QuadFloat             quadA20(4.0f * (triangle.vertices[2].projectedPosition.y - triangle.vertices[0].projectedPosition.y));
+					const QuadFloat             quadB20(1.0f * (triangle.vertices[0].projectedPosition.x - triangle.vertices[2].projectedPosition.x));
+					const QuadTransformedVertex quadVertex0(triangle.vertices[0]);
+					const QuadTransformedVertex quadVertex1(triangle.vertices[1]);
+					const QuadTransformedVertex quadVertex2(triangle.vertices[2]);
+					const QuadFloat             quadArea(orientPoints(quadVertex0.projectedPosition, quadVertex1.projectedPosition, quadVertex2.projectedPosition));
+
 					const size_t   bufferStepX  = 4;
 					const size_t   bufferStepY  = m_depthBuffer->getWidth() - (boundingBox.getMaxX() - boundingBox.getMinX()) + (boundingBox.getMaxX() - boundingBox.getMinX()) % bufferStepX - bufferStepX;
 
@@ -116,9 +127,9 @@ namespace tr
 						0.0f
 					);
 					
-					QuadFloat rowWeights0 = orientPoints(triangle.quadVertex1.projectedPosition, triangle.quadVertex2.projectedPosition, points);
-					QuadFloat rowWeights1 = orientPoints(triangle.quadVertex2.projectedPosition, triangle.quadVertex0.projectedPosition, points);
-					QuadFloat rowWeights2 = orientPoints(triangle.quadVertex0.projectedPosition, triangle.quadVertex1.projectedPosition, points);
+					QuadFloat rowWeights0 = orientPoints(quadVertex1.projectedPosition, quadVertex2.projectedPosition, points);
+					QuadFloat rowWeights1 = orientPoints(quadVertex2.projectedPosition, quadVertex0.projectedPosition, points);
+					QuadFloat rowWeights2 = orientPoints(quadVertex0.projectedPosition, quadVertex1.projectedPosition, points);
 
 					for (size_t y = boundingBox.getMinY(); y <= boundingBox.getMaxY(); y += 1, colorPointer += bufferStepY, depthPointer += bufferStepY)
 					{
@@ -135,11 +146,11 @@ namespace tr
 
 							if (renderMask.moveMask())
 							{
-								const QuadFloat       normalizedWeights0 = (weights0 / triangle.quadArea).abs();
-								const QuadFloat       normalizedWeights1 = (weights1 / triangle.quadArea).abs();
-								const QuadFloat       normalizedWeights2 = (weights2 / triangle.quadArea).abs();
+								const QuadFloat       normalizedWeights0 = (weights0 / quadArea).abs();
+								const QuadFloat       normalizedWeights1 = (weights1 / quadArea).abs();
+								const QuadFloat       normalizedWeights2 = (weights2 / quadArea).abs();
 
-								QuadTransformedVertex attributes         = triangle.quadVertex0 * normalizedWeights0 + triangle.quadVertex1 * normalizedWeights1 + triangle.quadVertex2 * normalizedWeights2;
+								QuadTransformedVertex attributes         = quadVertex0 * normalizedWeights0 + quadVertex1 * normalizedWeights1 + quadVertex2 * normalizedWeights2;
 
 								if (rasterizationParams.depthTest)
 								{
@@ -154,14 +165,14 @@ namespace tr
 								shader.draw(renderMask, attributes.projectedPosition, attributes.worldPosition, attributes.normal, attributes.textureCoord, colorPointer, depthPointer);
 							}
 
-							weights0 += triangle.quadA12;
-							weights1 += triangle.quadA20;
-							weights2 += triangle.quadA01;
+							weights0 += quadA12;
+							weights1 += quadA20;
+							weights2 += quadA01;
 						}
 
-						rowWeights0 += triangle.quadB12;
-						rowWeights1 += triangle.quadB20;
-						rowWeights2 += triangle.quadB01;
+						rowWeights0 += quadB12;
+						rowWeights1 += quadB20;
+						rowWeights2 += quadB01;
 					}
 				}
 			}

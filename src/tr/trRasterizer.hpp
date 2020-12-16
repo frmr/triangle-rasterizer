@@ -198,7 +198,7 @@ namespace tr
 			return TransformedVertex(worldPosition, projectedPosition, normal, textureCoord);
 		}
 
-		void queueTriangle(std::array<TransformedVertex, 3> vertices, const size_t shaderIndex, const size_t rasterizationParamsIndex)
+		void queueTriangle(std::array<TransformedVertex, 3>&& vertices, const size_t shaderIndex, const size_t rasterizationParamsIndex)
 		{
 			perspectiveDivide(vertices);
 
@@ -216,10 +216,10 @@ namespace tr
 			viewportTransformation(vertices);
 			pixelShift(vertices);
 
-			m_tileManager.queue(Triangle(vertices, shaderIndex, rasterizationParamsIndex));
+			m_tileManager.queue(Triangle(std::move(vertices), shaderIndex, rasterizationParamsIndex));
 		}
 
-		void clipAndQueueTriangle(const std::array<TransformedVertex, 3>& vertices, const size_t shaderIndex, const size_t rasterizationParamsIndex)
+		void clipAndQueueTriangle(std::array<TransformedVertex, 3>&& vertices, const size_t shaderIndex, const size_t rasterizationParamsIndex)
 		{
 			std::array<uint8_t, 3> vertexClipBitFields     = { 0, 0, 0 };
 			std::array<uint8_t, 3> vertexEqualityBitFields = { 0, 0, 0 };
@@ -250,7 +250,7 @@ namespace tr
 
 			if (!(vertexClipBitFields[0] | vertexClipBitFields[1] | vertexClipBitFields[2]))
 			{
-				queueTriangle(vertices, shaderIndex, rasterizationParamsIndex);
+				queueTriangle(std::move(vertices), shaderIndex, rasterizationParamsIndex);
 			}
 			else if ((vertexClipBitFields[0] | vertexEqualityBitFields[0]) &
 					 (vertexClipBitFields[1] | vertexEqualityBitFields[1]) &
