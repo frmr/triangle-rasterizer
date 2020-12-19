@@ -25,7 +25,7 @@ tr::QuadColor::QuadColor(const Color* const baseAddress, const QuadInt& offsets,
 
 	const QuadInt colorsAsInts = offsets.gatherIntsAtOffsets(reinterpret_cast<const int32_t*>(baseAddress), mask);
 
-	QuadInt bValues = (colorsAsInts      );
+	QuadInt bValues = (colorsAsInts      ) & byteMask;
 	QuadInt gValues = (colorsAsInts >>  8) & byteMask;
 	QuadInt rValues = (colorsAsInts >> 16) & byteMask;
 	QuadInt aValues = (colorsAsInts >> 24) & byteMask;
@@ -34,14 +34,6 @@ tr::QuadColor::QuadColor(const Color* const baseAddress, const QuadInt& offsets,
 	m_g = gValues.convertToQuadFloat();
 	m_b = bValues.convertToQuadFloat();
 	m_a = aValues.convertToQuadFloat();
-}
-
-tr::QuadColor::QuadColor(const QuadVec4& vec) :
-	m_b(vec.x),
-	m_g(vec.y),
-	m_r(vec.z),
-	m_a(vec.w)
-{
 }
 
 void tr::QuadColor::write(Color* const pointer, const QuadMask& mask) const
@@ -65,12 +57,42 @@ void tr::QuadColor::write(Color* const pointer, const QuadMask& mask) const
 	(intR | intG | intB | intA).write(intPointer, mask);
 }
 
-tr::QuadVec4 tr::QuadColor::toVector() const
+tr::QuadColor& tr::QuadColor::operator+=(const QuadColor& rhs)
 {
-	return QuadVec4(
-		m_b,
-		m_g,
-		m_r,
-		m_a
+	m_r += rhs.m_r;
+	m_g += rhs.m_g;
+	m_b += rhs.m_b;
+	m_a += rhs.m_a;
+
+	return *this;
+}
+
+tr::QuadColor& tr::QuadColor::operator*=(const QuadFloat& rhs)
+{
+	m_r *= rhs;
+	m_g *= rhs;
+	m_b *= rhs;
+	m_a *= rhs;
+
+	return *this;
+}
+
+tr::QuadColor tr::QuadColor::operator+(const QuadColor& rhs) const
+{
+	return QuadColor(
+		m_r + rhs.m_r,
+		m_g + rhs.m_g,
+		m_b + rhs.m_b,
+		m_a + rhs.m_a
+	);
+}
+
+tr::QuadColor tr::QuadColor::operator*(const QuadFloat& rhs) const
+{
+	return QuadColor(
+		m_r * rhs,
+		m_g * rhs,
+		m_b * rhs,
+		m_a * rhs
 	);
 }

@@ -1,5 +1,4 @@
 #include "trColorBuffer.hpp"
-#include "trQuadVec4.hpp"
 
 const tr::QuadFloat upperLimit(1.0f - std::numeric_limits<float>::epsilon());
 const tr::QuadFloat allZeroesFloat(0.0f);
@@ -89,14 +88,14 @@ tr::QuadColor tr::ColorBuffer::getAt(QuadFloat u, QuadFloat v, const bool filter
 
 		x0 = x0.maskedCopy(textureWrappingMode == TextureWrappingMode::Clamp ? allZeroesInt : m_quadWidth - allOnesInt,  negativeOnesMaskX0);
 		x1 = x1.maskedCopy(textureWrappingMode == TextureWrappingMode::Clamp ? x0           : allZeroesInt,              widthMaskX1       );
-
+		
 		y0 = y0.maskedCopy(textureWrappingMode == TextureWrappingMode::Clamp ? allZeroesInt : m_quadHeight - allOnesInt, negativeOnesMaskY0);
 		y1 = y1.maskedCopy(textureWrappingMode == TextureWrappingMode::Clamp ? y0           : allZeroesInt,              heightMaskY1);
 
-		const QuadVec4 topLeft     = QuadColor(m_data.data(), y0 * m_width + x0, mask).toVector();
-		const QuadVec4 topRight    = QuadColor(m_data.data(), y0 * m_width + x1, mask).toVector();
-		const QuadVec4 bottomLeft  = QuadColor(m_data.data(), y1 * m_width + x0, mask).toVector();
-		const QuadVec4 bottomRight = QuadColor(m_data.data(), y1 * m_width + x1, mask).toVector();
+		const QuadColor topLeft(    m_data.data(), y0 * m_width + x0, mask);
+		const QuadColor topRight(   m_data.data(), y0 * m_width + x1, mask);
+		const QuadColor bottomLeft( m_data.data(), y1 * m_width + x0, mask);
+		const QuadColor bottomRight(m_data.data(), y1 * m_width + x1, mask);
 
 		return QuadColor((topLeft    * uOpposite + topRight    * uDiff) * vOpposite +
 		                 (bottomLeft * uOpposite + bottomRight * uDiff) * vDiff);
