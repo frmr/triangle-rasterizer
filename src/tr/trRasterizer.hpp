@@ -60,7 +60,7 @@ namespace tr
 				transformedVertices.emplace_back(
 					Vector3(worldPosition.x, worldPosition.y, worldPosition.z),
 					m_projectionViewMatrix * m_modelMatrix * vertex.position,
-					(m_modelNormalRotationMatrix * vertex.normal).normalize(),
+					m_modelNormalRotationMatrix * vertex.normal,
 					vertex.textureCoord
 				);
 			}
@@ -315,6 +315,8 @@ namespace tr
 				vertex.worldPosition     /= vertex.projectedPosition.w;
 				vertex.normal            /= vertex.projectedPosition.w;
 				vertex.projectedPosition /= vertex.projectedPosition.w;
+
+				vertex.normal.normalize();
 			}
 		}
 
