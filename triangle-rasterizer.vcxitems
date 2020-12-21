@@ -35,6 +35,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\tr.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trAxis.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBlendMode.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trInvalidSettingException.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRasterizationParams.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRect.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trBuffer.hpp" />
@@ -44,7 +45,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trCullFaceMode.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trDepthBuffer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trEdgeInfo.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trError.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trPrimitive.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadColor.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadFloat.hpp" />

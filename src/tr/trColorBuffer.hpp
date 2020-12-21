@@ -1,6 +1,5 @@
 #pragma once
 
-#include "trError.hpp"
 #include "trBuffer.hpp"
 #include "trColor.hpp"
 #include "trQuadColor.hpp"

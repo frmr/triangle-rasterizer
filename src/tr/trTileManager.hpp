@@ -9,6 +9,7 @@
 #include "trTile.hpp"
 #include "trColorBuffer.hpp"
 #include "trDepthBuffer.hpp"
+#include "trInvalidSettingException.hpp"
 #include "trRasterizationParams.hpp"
 #include "trTriangle.hpp"
 #include "trRenderThread.hpp"
@@ -19,13 +20,28 @@ namespace tr
 	class TileManager
 	{
 	public:
-		TileManager(const size_t viewportWidth, const size_t viewportHeight, const size_t tileWidth, const size_t tileHeight)
+		TileManager(const size_t viewportWidth, const size_t viewportHeight, const size_t tileWidth, const size_t tileHeight) :
+			m_viewportWidth(0),
+			m_viewportHeight(0)
 		{
 			setAttributes(viewportWidth, viewportHeight, tileWidth, tileHeight);
 		}
 
 		void setAttributes(const size_t viewportWidth, const size_t viewportHeight, const size_t tileWidth, const size_t tileHeight)
 		{
+			if (viewportWidth == 0 || viewportHeight == 0)
+			{
+				throw InvalidSettingException("Viewport dimensions must be non-zero");
+			}
+			
+			if (tileWidth % 4 != 0)
+			{
+				throw InvalidSettingException("Tile width must be divisible by 4");
+			}
+
+			m_viewportWidth  = viewportWidth;
+			m_viewportHeight = viewportHeight;
+
 			m_tiles.clear();
 
 			for (size_t y = 0; y < viewportHeight; y += tileHeight)
@@ -78,9 +94,26 @@ namespace tr
 
 		void draw(const size_t numThreads, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 		{
-			assert(depthBuffer.getWidth()  == colorBuffer.getWidth());
-			assert(depthBuffer.getHeight() == colorBuffer.getHeight());
-			
+			if (colorBuffer.getWidth() != m_viewportWidth || colorBuffer.getHeight() != m_viewportHeight)
+			{
+				throw InvalidSettingException(tf::String("Color buffer dimensions ({}, {}) do not match TileManager settings ({}, {})", {
+					std::to_string(colorBuffer.getWidth()),
+					std::to_string(colorBuffer.getHeight()),
+					std::to_string(m_viewportWidth),
+					std::to_string(m_viewportHeight)
+				}));
+			}
+
+			if (depthBuffer.getWidth() != m_viewportWidth || depthBuffer.getHeight() != m_viewportHeight)
+			{
+				throw InvalidSettingException(tf::String("Depth buffer dimensions ({}, {}) do not match TileManager settings ({}, {})", {
+					std::to_string(depthBuffer.getWidth()),
+					std::to_string(depthBuffer.getHeight()),
+					std::to_string(m_viewportWidth),
+					std::to_string(m_viewportHeight)
+				}));
+			}
+
 			if (numThreads != m_threads.size())
 			{
 				initThreads(numThreads);
@@ -111,6 +144,8 @@ namespace tr
 		}
 
 	private:
+		size_t                                              m_viewportWidth;
+		size_t                                              m_viewportHeight;
 		std::vector<std::unique_ptr<RenderThread<TShader>>> m_threads;
 		std::vector<Tile>                                   m_tiles;
 		std::vector<TShader>                                m_shaders;

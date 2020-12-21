@@ -1,7 +1,6 @@
 #pragma once
 
 #include "trColorBuffer.hpp"
-#include "trError.hpp"
 #include "trQuadColor.hpp"
 
 namespace tr
@@ -13,7 +12,7 @@ namespace tr
 		                         Texture(const size_t width, const size_t height, const std::vector<uint8_t>& rgbaData);
 
 		bool                     isInitialized() const;
-		Error                    generateMipmaps();
+		void                     generateMipmaps();
 		size_t                   getWidth() const;
 		size_t                   getHeight() const;
 		ColorBuffer&             getMipLevel(const size_t mipLevel);

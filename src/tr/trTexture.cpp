@@ -1,4 +1,5 @@
 #include "trTexture.hpp"
+#include "trInvalidSettingException.hpp"
 
 tr::Texture::Texture(const size_t width, const size_t height)
 {
@@ -18,13 +19,13 @@ bool tr::Texture::isInitialized() const
 	return !m_mipLevels.empty();
 }
 
-tr::Error tr::Texture::generateMipmaps()
+void tr::Texture::generateMipmaps()
 {
 	if (m_mipLevels.size() == 1)
 	{
 		if (!isPowerOfTwo(m_baseLevel->getWidth()) || !isPowerOfTwo(m_baseLevel->getHeight()))
 		{
-			return Error::InvalidBufferSize;
+			throw InvalidSettingException("Texture dimensions must be power of 2");
 		}
 
 		m_mipLevels.reserve(std::max(size_t(std::log2(m_baseLevel->getWidth())), size_t(std::log2(m_baseLevel->getHeight()))) + 1);
@@ -58,8 +59,6 @@ tr::Error tr::Texture::generateMipmaps()
 	while (source->getWidth() > 1 && source->getHeight() > 1);
 
 	m_maxMipLevelIndex = m_mipLevels.size() - 1;
-
-	return Error::Success;
 }
 
 size_t tr::Texture::getWidth() const

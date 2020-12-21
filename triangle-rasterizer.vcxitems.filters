@@ -89,9 +89,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trEdgeInfo.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trError.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trPrimitive.hpp">
       <Filter>tr</Filter>
     </ClInclude>
@@ -153,6 +150,9 @@
       <Filter>tr</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRasterizationParams.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trInvalidSettingException.hpp">
       <Filter>tr</Filter>
     </ClInclude>
   </ItemGroup>

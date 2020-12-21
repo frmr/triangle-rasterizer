@@ -6,7 +6,6 @@
 #include "trCullFaceMode.hpp"
 #include "trDepthBuffer.hpp"
 #include "trEdgeInfo.hpp"
-#include "trError.hpp"
 #include "trPrimitive.hpp"
 #include "trTileManager.hpp"
 #include "trTextureMode.hpp"
@@ -28,8 +27,6 @@ namespace tr
 	{
 	public:
 		Rasterizer(const size_t bufferWidth, const size_t bufferHeight, const size_t tileWidth, const size_t tileHeight) :
-			m_bufferWidth(bufferWidth),
-			m_bufferHeight(bufferHeight),
 			m_bufferHalfWidth(float(bufferWidth) / 2.0f),
 			m_bufferHalfHeight(float(bufferHeight) / 2.0f),
 			m_tileManager(bufferWidth, bufferHeight, tileWidth, tileHeight),
@@ -96,22 +93,9 @@ namespace tr
 			}
 		}
 
-		Error draw(const size_t numThreads, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+		void draw(const size_t numThreads, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 		{
-			// Maybe throw an exception in the constructor instead
-			if (m_bufferWidth == 0 || m_bufferHeight == 0)
-			{
-				return Error::InvalidBufferSize;
-			}
-
-			if (colorBuffer.getWidth() != m_bufferWidth || depthBuffer.getWidth() != m_bufferWidth || colorBuffer.getHeight() != m_bufferHeight || depthBuffer.getHeight() != m_bufferHeight)
-			{
-				return Error::BufferSizeMismatch;
-			}
-
 			m_tileManager.draw(numThreads, colorBuffer, depthBuffer);
-
-			return Error::Success;
 		}
 
 		void clear()
@@ -123,9 +107,7 @@ namespace tr
 		{
 			m_tileManager.setAttributes(bufferWidth, bufferHeight, tileWidth, tileHeight);
 
-			m_bufferWidth = bufferWidth;
-			m_bufferHeight = bufferHeight;
-			m_bufferHalfWidth = float(bufferWidth) / 2.0f;
+			m_bufferHalfWidth  = float(bufferWidth)  / 2.0f;
 			m_bufferHalfHeight = float(bufferHeight) / 2.0f;
 		}
 
@@ -335,8 +317,6 @@ namespace tr
 		}
 
 	private:
-		size_t                m_bufferWidth;
-		size_t                m_bufferHeight;
 		float                 m_bufferHalfWidth;
 		float                 m_bufferHalfHeight;
 		TileManager<TShader>  m_tileManager;
