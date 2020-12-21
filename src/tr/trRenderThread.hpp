@@ -38,11 +38,15 @@ namespace tr
 
 		void draw(std::atomic<size_t>& nextTileIndex, tr::ColorBuffer& colorBuffer, tr::DepthBuffer& depthBuffer)
 		{
+			std::unique_lock<std::mutex> lock(m_mutex);
+
 			m_nextTileIndex = &nextTileIndex;
 			m_colorBuffer   = &colorBuffer;
 			m_depthBuffer   = &depthBuffer;
 
 			m_draw = true;
+
+			lock.unlock();
 
 			m_continueConditionVariable.notify_one();
 		}
@@ -55,7 +59,9 @@ namespace tr
 
 		void kill()
 		{
+			std::unique_lock<std::mutex> lock(m_mutex);
 			m_quit = true;
+			lock.unlock();
 			m_continueConditionVariable.notify_one();
 
 			if (m_thread.joinable())
