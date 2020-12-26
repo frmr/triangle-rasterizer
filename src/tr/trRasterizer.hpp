@@ -6,18 +6,19 @@
 #include "trCullFaceMode.hpp"
 #include "trDepthBuffer.hpp"
 #include "trEdgeInfo.hpp"
-#include "trError.hpp"
 #include "trPrimitive.hpp"
+#include "trTileManager.hpp"
 #include "trTextureMode.hpp"
 #include "trTextureWrappingMode.hpp"
 #include "trVertex.hpp"
 #include "trTransformedVertex.hpp"
 #include "trVertexClipBitMasks.hpp"
 #include "../matrix/Matrices.h"
+#include "tfTextFile.hpp"
+#include "trQuadTransformedVertex.hpp"
+#include "trRect.hpp"
 
-#include <vector>
 #include <array>
-#include <cassert>
 
 namespace tr
 {
@@ -25,38 +26,29 @@ namespace tr
 	class Rasterizer
 	{
 	public:
-		Rasterizer() :
+		Rasterizer(const size_t bufferWidth, const size_t bufferHeight, const size_t tileWidth, const size_t tileHeight) :
+			m_bufferHalfWidth(float(bufferWidth) / 2.0f),
+			m_bufferHalfHeight(float(bufferHeight) / 2.0f),
+			m_tileManager(bufferWidth, bufferHeight, tileWidth, tileHeight),
 			m_primitive(Primitive::Triangles),
 			m_projectionViewMatrix(),
 			m_modelMatrix(),
 			m_modelNormalRotationMatrix(),
-			m_depthTest(true),
-			m_textureMode(TextureMode::Perspective),
 			m_cullFaceMode(CullFaceMode::Back),
-			m_interlaceOffset(0),
-			m_interlaceStep(1),
+			m_textureMode(TextureMode::Perspective),
+			m_depthTest(true),
 			m_depthBias(0.0f)
 		{
 		}
 
-		Error draw(const std::vector<Vertex>& vertices, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		void queue(const std::vector<Vertex>& vertices, const TShader& shader)
 		{
 			std::vector<TransformedVertex> transformedVertices;
 
 			transformedVertices.reserve(vertices.size());
 
-			if (colorBuffer.getWidth() == 0 || colorBuffer.getHeight() == 0)
-			{
-				return Error::InvalidBufferSize;
-			}
-
-			if (colorBuffer.getWidth() != depthBuffer.getWidth() && colorBuffer.getHeight() != depthBuffer.getHeight())
-			{
-				return Error::BufferSizeMismatch;
-			}
-
-			const float halfWidth  = float(colorBuffer.getWidth())  / 2.0f;
-			const float halfHeight = float(colorBuffer.getHeight()) / 2.0f;
+			const size_t shaderIndex              = m_tileManager.storeShader(shader);
+			const size_t rasterizationParamsIndex = m_tileManager.storeRasterizationParams(m_depthTest, m_depthBias, m_textureMode);
 
 			for (const Vertex& vertex : vertices)
 			{
@@ -65,7 +57,7 @@ namespace tr
 				transformedVertices.emplace_back(
 					Vector3(worldPosition.x, worldPosition.y, worldPosition.z),
 					m_projectionViewMatrix * m_modelMatrix * vertex.position,
-					(m_modelNormalRotationMatrix * vertex.normal).normalize(),
+					m_modelNormalRotationMatrix * vertex.normal,
 					vertex.textureCoord
 				);
 			}
@@ -74,7 +66,7 @@ namespace tr
 			{
 				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin(); it < transformedVertices.end() - 2; it += 3)
 				{
-					clipAndDrawTriangle({ *it, *(it + 1), *(it + 2) }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+					clipAndQueueTriangle({ *it, *(it + 1), *(it + 2) }, shaderIndex, rasterizationParamsIndex);
 				}
 			}
 			else if (m_primitive == Primitive::TriangleStrip)
@@ -85,7 +77,7 @@ namespace tr
 
 				for (size_t newIndex = 2; newIndex < transformedVertices.size(); ++newIndex)
 				{
-					clipAndDrawTriangle({ transformedVertices[reverse ? newIndex : lastIndex], transformedVertices[firstIndex], transformedVertices[reverse ? lastIndex : newIndex] }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+					clipAndQueueTriangle({ transformedVertices[reverse ? newIndex : lastIndex], transformedVertices[firstIndex], transformedVertices[reverse ? lastIndex : newIndex] }, shaderIndex, rasterizationParamsIndex);
 
 					firstIndex = lastIndex;
 					lastIndex  = newIndex;
@@ -96,11 +88,27 @@ namespace tr
 			{
 				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin() + 1; it < transformedVertices.end() - 1; it += 1)
 				{
-					clipAndDrawTriangle({ transformedVertices.front(), *it, *(it + 1) }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+					clipAndQueueTriangle({ transformedVertices.front(), *it, *(it + 1) }, shaderIndex, rasterizationParamsIndex);
 				}
 			}
+		}
 
-			return Error::Success;
+		void draw(const size_t numThreads, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+		{
+			m_tileManager.draw(numThreads, colorBuffer, depthBuffer);
+		}
+
+		void clear()
+		{
+			m_tileManager.clear();
+		}
+
+		void setTilerAttributes(const size_t bufferWidth, const size_t bufferHeight, const size_t tileWidth, const size_t tileHeight)
+		{
+			m_tileManager.setAttributes(bufferWidth, bufferHeight, tileWidth, tileHeight);
+
+			m_bufferHalfWidth  = float(bufferWidth)  / 2.0f;
+			m_bufferHalfHeight = float(bufferHeight) / 2.0f;
 		}
 
 		void setPrimitive(const Primitive primitive)
@@ -152,19 +160,6 @@ namespace tr
 			m_cullFaceMode = cullFaceMode;
 		}
 
-		Error setInterlace(const size_t offset, const size_t step)
-		{
-			if (step == 0)
-			{
-				return Error::InvalidInterlaceStep;
-			}
-
-			m_interlaceOffset = offset;
-			m_interlaceStep   = step;
-
-			return Error::Success;
-		}
-
 		void setDepthBias(const float depthBias)
 		{
 			m_depthBias = depthBias;
@@ -173,26 +168,26 @@ namespace tr
 	private:
 		static TransformedVertex lineFrustumIntersection(const TransformedVertex& lineStart, const TransformedVertex& lineEnd, const tr::Axis axis, const bool negativeW)
 		{
-			const float   alpha = negativeW ?
-	                             (-lineStart.projectedPosition.w  - lineStart.projectedPosition[axis]) / (lineEnd.projectedPosition[axis] - lineStart.projectedPosition[axis] + lineEnd.projectedPosition.w - lineStart.projectedPosition.w) :
-	                             ( lineStart.projectedPosition.w  - lineStart.projectedPosition[axis]) / (lineEnd.projectedPosition[axis] - lineStart.projectedPosition[axis] - lineEnd.projectedPosition.w + lineStart.projectedPosition.w);
+			const float   scalar = negativeW ?
+	                               (-lineStart.projectedPosition.w  - lineStart.projectedPosition[axis]) / (lineEnd.projectedPosition[axis] - lineStart.projectedPosition[axis] + lineEnd.projectedPosition.w - lineStart.projectedPosition.w) :
+	                               ( lineStart.projectedPosition.w  - lineStart.projectedPosition[axis]) / (lineEnd.projectedPosition[axis] - lineStart.projectedPosition[axis] - lineEnd.projectedPosition.w + lineStart.projectedPosition.w);
 
-			const Vector3 worldPosition	    = lineStart.worldPosition     + (lineEnd.worldPosition     - lineStart.worldPosition)     * alpha;
-			const Vector4 projectedPosition = lineStart.projectedPosition + (lineEnd.projectedPosition - lineStart.projectedPosition) * alpha;
-			const Vector3 normal            = lineStart.normal            + (lineEnd.normal            - lineStart.normal)            * alpha;
-			const Vector2 textureCoord      = lineStart.textureCoord      + (lineEnd.textureCoord      - lineStart.textureCoord)      * alpha;
+			const Vector3 worldPosition	    = lineStart.worldPosition     + (lineEnd.worldPosition     - lineStart.worldPosition)     * scalar;
+			const Vector4 projectedPosition = lineStart.projectedPosition + (lineEnd.projectedPosition - lineStart.projectedPosition) * scalar;
+			const Vector3 normal            = lineStart.normal            + (lineEnd.normal            - lineStart.normal)            * scalar;
+			const Vector2 textureCoord      = lineStart.textureCoord      + (lineEnd.textureCoord      - lineStart.textureCoord)      * scalar;
 	
 			return TransformedVertex(worldPosition, projectedPosition, normal, textureCoord);
 		}
 
-		void drawTriangle(std::array<TransformedVertex, 3> vertices, const TShader& shader, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		void queueTriangle(std::array<TransformedVertex, 3>&& vertices, const size_t shaderIndex, const size_t rasterizationParamsIndex)
 		{
 			perspectiveDivide(vertices);
 
-			const float pointValue = orientPoint(vertices[0].projectedPosition, vertices[1].projectedPosition, vertices[2].projectedPosition);
-
 			if (m_cullFaceMode != CullFaceMode::None)
 			{
+				const float pointValue = orientPoint(vertices[0].projectedPosition, vertices[1].projectedPosition, vertices[2].projectedPosition);
+
 				if ((m_cullFaceMode == CullFaceMode::Back  && pointValue >= 0.0f) ||
 					(m_cullFaceMode == CullFaceMode::Front && pointValue <  0.0f))
 				{
@@ -200,13 +195,13 @@ namespace tr
 				}
 			}
 			
-			viewportTransformation(vertices, halfWidth, halfHeight);
+			viewportTransformation(vertices);
 			pixelShift(vertices);
-			sortVertices(vertices);
-			fillTriangle(vertices, shader, colorBuffer, depthBuffer);
+
+			m_tileManager.queue(Triangle(std::move(vertices), shaderIndex, rasterizationParamsIndex));
 		}
 
-		void clipAndDrawTriangle(const std::array<TransformedVertex, 3>& vertices, const TShader& shader, const float halfWidth, const float halfHeight, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
+		void clipAndQueueTriangle(std::array<TransformedVertex, 3>&& vertices, const size_t shaderIndex, const size_t rasterizationParamsIndex)
 		{
 			std::array<uint8_t, 3> vertexClipBitFields     = { 0, 0, 0 };
 			std::array<uint8_t, 3> vertexEqualityBitFields = { 0, 0, 0 };
@@ -237,7 +232,7 @@ namespace tr
 
 			if (!(vertexClipBitFields[0] | vertexClipBitFields[1] | vertexClipBitFields[2]))
 			{
-				drawTriangle(vertices, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+				queueTriangle(std::move(vertices), shaderIndex, rasterizationParamsIndex);
 			}
 			else if ((vertexClipBitFields[0] | vertexEqualityBitFields[0]) &
 					 (vertexClipBitFields[1] | vertexEqualityBitFields[1]) &
@@ -271,8 +266,8 @@ namespace tr
 							assert(false);
 						}
 
-						clipAndDrawTriangle({ firstVertex,  intersection,   oppositeVertex }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
-						clipAndDrawTriangle({ secondVertex, oppositeVertex, intersection   }, shader, halfWidth, halfHeight, colorBuffer, depthBuffer);
+						clipAndQueueTriangle({ firstVertex,  intersection,   oppositeVertex }, shaderIndex, rasterizationParamsIndex);
+						clipAndQueueTriangle({ secondVertex, oppositeVertex, intersection   }, shaderIndex, rasterizationParamsIndex);
 
 						break;
 					}
@@ -302,126 +297,17 @@ namespace tr
 				vertex.worldPosition     /= vertex.projectedPosition.w;
 				vertex.normal            /= vertex.projectedPosition.w;
 				vertex.projectedPosition /= vertex.projectedPosition.w;
+
+				vertex.normal.normalize();
 			}
 		}
 
-		static void viewportTransformation(std::array<TransformedVertex,3>& vertices, const float halfWidth, const float halfHeight)
+		void viewportTransformation(std::array<TransformedVertex,3>& vertices) const
 		{
 			for (TransformedVertex& vertex : vertices)
 			{
-				vertex.projectedPosition.x = vertex.projectedPosition.x * halfWidth + halfWidth;
-				vertex.projectedPosition.y = halfHeight - vertex.projectedPosition.y * halfHeight;
-			}
-		}
-
-		static void sortVertices(std::array<TransformedVertex,3>& vertices)
-		{
-			for (uint8_t iteration = 0; iteration < 2; ++iteration)
-			{
-				for (size_t vertexIndex = 0; vertexIndex < 2; ++vertexIndex)
-				{
-					if (vertices[vertexIndex].projectedPosition.y > vertices[vertexIndex+1].projectedPosition.y)
-					{
-						const TransformedVertex temp = vertices[vertexIndex];
-
-						vertices[vertexIndex]   = vertices[vertexIndex+1];
-						vertices[vertexIndex+1] = temp;
-					}
-				}
-			}
-		}
-
-		void fillTriangle(const std::array<TransformedVertex,3>& vertices, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
-		{
-			const TransformedVertex topToMiddleVector    = (vertices[1] - vertices[0]).normalize();
-			const TransformedVertex topToBottomVector    = (vertices[2] - vertices[0]).normalize();
-			const TransformedVertex middleToBottomVector = (vertices[2] - vertices[1]).normalize();
-			const bool              middleVertexLeft     =  topToMiddleVector.projectedPosition.x <= topToBottomVector.projectedPosition.x;
-
-			fillBottomHeavyTriangle(vertices, shader, topToMiddleVector, topToBottomVector, middleVertexLeft, colorBuffer, depthBuffer);
-			fillTopHeavyTriangle(   vertices, shader, topToBottomVector, middleToBottomVector, middleVertexLeft, colorBuffer, depthBuffer);
-		}
-
-		void fillBottomHeavyTriangle(const std::array<TransformedVertex,3>& vertices, const TShader& shader, const TransformedVertex& topToMiddleVector, const TransformedVertex& topToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
-		{
-			if (vertices[1].projectedPosition.y != vertices[0].projectedPosition.y)
-			{
-				const size_t             firstY          = size_t(std::ceil(vertices[0].projectedPosition.y));
-
-				const float              topToFirstYDiff = float(firstY) - vertices[0].projectedPosition.y;
-
-				const TransformedVertex& leftVector      = middleVertexLeft ? topToMiddleVector : topToBottomVector;
-				const TransformedVertex& rightVector     = middleVertexLeft ? topToBottomVector : topToMiddleVector;
-
-				const float              leftRatio       = topToFirstYDiff / leftVector.projectedPosition.y;
-				const float              rightRatio      = topToFirstYDiff / rightVector.projectedPosition.y;
-
-				const TransformedVertex  startLeft       = vertices[0] + leftVector  * leftRatio;
-				const TransformedVertex  startRight      = vertices[0] + rightVector * rightRatio;
-
-				const size_t             targetY         = size_t(std::ceil(vertices[1].projectedPosition.y));
-
-				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
-			}
-		}
-
-		void fillTopHeavyTriangle(const std::array<TransformedVertex,3>& vertices, const TShader& shader, const TransformedVertex& topToBottomVector, const TransformedVertex& middleToBottomVector, const bool middleVertexLeft, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
-		{
-			if (vertices[2].projectedPosition.y != vertices[1].projectedPosition.y)
-			{
-				const size_t             firstY         = size_t(std::ceil(vertices[1].projectedPosition.y));
-
-				const float              middleToFirstY = float(firstY) - vertices[1].projectedPosition.y;
-				const float              topToFirstY    = float(firstY) - vertices[0].projectedPosition.y;
-
-				const TransformedVertex& leftVector     = middleVertexLeft ? middleToBottomVector : topToBottomVector;
-				const TransformedVertex& rightVector    = middleVertexLeft ? topToBottomVector    : middleToBottomVector;
-
-				const float              ratioLeft      = (middleVertexLeft ? middleToFirstY : topToFirstY   ) / leftVector.projectedPosition.y;
-				const float              ratioRight     = (middleVertexLeft ? topToFirstY    : middleToFirstY) / rightVector.projectedPosition.y;
-
-				const TransformedVertex  startLeft      = (middleVertexLeft ? vertices[1] : vertices[0]) + leftVector  * ratioLeft;
-				const TransformedVertex  startRight     = (middleVertexLeft ? vertices[0] : vertices[1]) + rightVector * ratioRight;
-
-				const size_t  targetY        = size_t(std::ceil(vertices[2].projectedPosition.y));
-
-				fillTriangle(leftVector, rightVector, firstY, targetY, startLeft, startRight, shader, colorBuffer, depthBuffer);
-			}
-		}
-
-		void fillTriangle(const TransformedVertex& leftVector, const TransformedVertex& rightVector, const size_t firstY, const size_t targetY, const TransformedVertex& leftStart, const TransformedVertex& rightStart, const TShader& shader, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer) const
-		{
-			const TransformedVertex leftChange       = leftVector  / leftVector.projectedPosition.y;
-			const TransformedVertex rightChange      = rightVector / rightVector.projectedPosition.y;
-			const size_t            interlacedFirstY = firstY + ((m_interlaceOffset - (firstY % m_interlaceStep)) + m_interlaceStep) % m_interlaceStep;
-			size_t                  rowCount         = interlacedFirstY - firstY;
-
-			for (size_t currentY = interlacedFirstY; currentY < targetY; rowCount += m_interlaceStep, currentY += m_interlaceStep)
-			{
-				const TransformedVertex currentLeft       = leftStart + leftChange * float(rowCount);
-				const TransformedVertex currentRight      = rightStart + rightChange * float(rowCount);
-				const TransformedVertex leftToRightVector = (currentRight - currentLeft) / (currentRight.projectedPosition.x - currentLeft.projectedPosition.x);
-				const size_t            firstX            = size_t(std::ceil(currentLeft.projectedPosition.x));
-				const size_t            lastX             = size_t(std::ceil(currentRight.projectedPosition.x));
-				const float             leftToFirstX      = float(firstX) - currentLeft.projectedPosition.x;
-				TransformedVertex       pixel             = currentLeft + leftToRightVector * leftToFirstX;
-				Color*                  colorPointer      = colorBuffer.getData() + (currentY * colorBuffer.getWidth() + firstX);
-				float*                  depthPointer      = depthBuffer.getData() + (currentY * depthBuffer.getWidth() + firstX);
-
-				for (size_t x = firstX; x < lastX; ++x, ++colorPointer, ++depthPointer)
-				{
-					if (!m_depthTest || pixel.projectedPosition.z + m_depthBias < *depthPointer)
-					{
-						Vector2 textureCoord = pixel.textureCoord;
-
-						if (m_textureMode == TextureMode::Perspective)
-							textureCoord /= pixel.inverseW;
-
-						shader.draw(pixel.projectedPosition, pixel.worldPosition / pixel.inverseW, pixel.normal / pixel.inverseW, textureCoord, *colorPointer, *depthPointer);
-					}
-
-					pixel += leftToRightVector;
-				}
+				vertex.projectedPosition.x = vertex.projectedPosition.x * m_bufferHalfWidth + m_bufferHalfWidth;
+				vertex.projectedPosition.y = m_bufferHalfHeight - vertex.projectedPosition.y * m_bufferHalfHeight;
 			}
 		}
 
@@ -431,15 +317,16 @@ namespace tr
 		}
 
 	private:
-		Primitive    m_primitive;
-		Matrix4      m_projectionViewMatrix;
-		Matrix4      m_modelMatrix;
-		Matrix3      m_modelNormalRotationMatrix;
-		bool         m_depthTest;
-		TextureMode  m_textureMode;
-		CullFaceMode m_cullFaceMode;
-		size_t       m_interlaceOffset;
-		size_t       m_interlaceStep;
-		float        m_depthBias;
+		float                 m_bufferHalfWidth;
+		float                 m_bufferHalfHeight;
+		TileManager<TShader>  m_tileManager;
+		Primitive             m_primitive;
+		Matrix4               m_projectionViewMatrix;
+		Matrix4               m_modelMatrix;
+		Matrix3               m_modelNormalRotationMatrix;
+		CullFaceMode          m_cullFaceMode;
+		TextureMode           m_textureMode;
+		bool                  m_depthTest;
+		float                 m_depthBias;
 	};
 }

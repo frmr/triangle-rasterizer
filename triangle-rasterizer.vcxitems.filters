@@ -12,16 +12,43 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)src\matrix\Matrices.cpp">
       <Filter>matrix</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trDefaultShader.cpp">
-      <Filter>tr</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trDepthShader.cpp">
-      <Filter>tr</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTexture.cpp">
       <Filter>tr</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTransformedVertex.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadFloat.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadInt.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec2.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadMask.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec3.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trColorBuffer.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadColor.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trQuadTransformedVertex.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTile.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trRect.cpp">
+      <Filter>tr</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\tr\trTriangle.cpp">
       <Filter>tr</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,19 +83,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trCullFaceMode.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trDefaultShader.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trDepthBuffer.hpp">
       <Filter>tr</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trDepthShader.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trEdgeInfo.hpp">
-      <Filter>tr</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trError.hpp">
       <Filter>tr</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trPrimitive.hpp">
@@ -93,6 +111,48 @@
       <Filter>tr</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trVertexClipBitMasks.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadFloat.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec2.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadInt.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadMask.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadVec3.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadTransformedVertex.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trQuadColor.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTile.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTileManager.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trTriangle.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRect.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRenderThread.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trRasterizationParams.hpp">
+      <Filter>tr</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\tr\trInvalidSettingException.hpp">
       <Filter>tr</Filter>
     </ClInclude>
   </ItemGroup>
