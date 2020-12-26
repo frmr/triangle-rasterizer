@@ -1,7 +1,9 @@
 #pragma once
 
 #include <array>
+#ifdef TR_SIMD
 #include <immintrin.h>
+#endif
 
 namespace tr
 {
