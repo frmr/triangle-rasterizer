@@ -13,6 +13,7 @@ namespace tr
 	public:
 		                              QuadInt(const int32_t a);
 		                              QuadInt(const int32_t a, const int32_t b, const int32_t c, const int32_t d);
+		                              QuadInt(const int32_t* pointer, const QuadMask& mask);
 
 #ifdef TR_SIMD
 		                              QuadInt(const __m128i data);

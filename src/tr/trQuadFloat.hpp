@@ -17,6 +17,7 @@ namespace tr
 #ifdef TR_SIMD
 		                     QuadFloat(const __m128 data);
 #endif
+		QuadFloat            operator-() const;
 
 		QuadFloat&           operator+=(const QuadFloat& rhs);
 		QuadFloat&           operator-=(const QuadFloat& rhs);
@@ -41,8 +42,10 @@ namespace tr
 		QuadFloat            abs() const;
 		QuadFloat            floor() const;
 		QuadFloat            round() const;
+		QuadFloat            sqrt() const;
 
 		QuadInt              convertToQuadInt() const;
+		QuadFloat            maskedCopy(const QuadFloat& rhs, const QuadMask& mask) const;
 
 		void                 write(float* const pointer, const QuadMask& mask) const;
 

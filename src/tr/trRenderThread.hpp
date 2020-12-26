@@ -165,7 +165,8 @@ namespace tr
 
 								if (rasterizationParams.textureMode == TextureMode::Perspective)
 								{
-									attributes.textureCoord /= attributes.inverseW;
+									attributes.worldPosition /= attributes.inverseW;
+									attributes.textureCoord  /= attributes.inverseW;
 								}
 
 								shader.draw(renderMask, attributes.projectedPosition, attributes.worldPosition, attributes.normal, attributes.textureCoord, colorPointer, depthPointer);

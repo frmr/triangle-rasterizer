@@ -1,8 +1,9 @@
 #include "trQuadInt.hpp"
 #include "trQuadFloat.hpp"
 
-// TODO: Find a better place for this
+#ifdef TR_SIMD
 const __m128i allZeroes = _mm_setzero_si128();
+#endif
 
 tr::QuadInt::QuadInt(const int32_t a) :
 #ifdef TR_SIMD
@@ -18,6 +19,20 @@ tr::QuadInt::QuadInt(const int32_t a, const int32_t b, const int32_t c, const in
 	m_data(_mm_setr_epi32(a, b, c, d))
 #else
 	m_data{ a, b, c, d }
+#endif
+{
+}
+
+tr::QuadInt::QuadInt(const int32_t* pointer, const QuadMask& mask) :
+#ifdef TR_SIMD
+	m_data(_mm_maskload_epi32(pointer, _mm_castps_si128(mask.getData())))
+#else
+	m_data{ 
+		mask.get(0) ? *(pointer + 0) : 0,
+		mask.get(1) ? *(pointer + 1) : 0,
+		mask.get(2) ? *(pointer + 2) : 0,
+		mask.get(3) ? *(pointer + 3) : 0
+	}
 #endif
 {
 }

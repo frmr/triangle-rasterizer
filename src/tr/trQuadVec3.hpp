@@ -11,10 +11,16 @@ namespace tr
 		          QuadVec3(const QuadFloat& x, const QuadFloat& y, const QuadFloat& z);
 		          QuadVec3(const Vector3& vector);
 
+		QuadFloat dot(const QuadVec3& rhs) const;
+		QuadFloat length() const;
+
 		QuadVec3& operator+=(const QuadVec3& rhs);
 		QuadVec3& operator*=(const QuadFloat& rhs);
+		QuadVec3& operator/=(const QuadFloat& rhs);
 
 		QuadVec3  operator+(const QuadVec3& rhs) const;
+		QuadVec3  operator-(const QuadVec3& rhs) const;
+		QuadVec3  operator*(const QuadVec3& rhs) const;
 		QuadVec3  operator*(const QuadFloat& rhs) const;
 
 		QuadFloat x;

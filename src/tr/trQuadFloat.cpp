@@ -2,6 +2,8 @@
 #include "trQuadInt.hpp"
 #include <cmath>
 
+const tr::QuadFloat allZeroes(0.0f);
+
 tr::QuadFloat::QuadFloat(const float a) :
 #ifdef TR_SIMD
 	m_data(_mm_set1_ps(a))
@@ -49,6 +51,20 @@ tr::QuadFloat::QuadFloat(const __m128 data) :
 {
 }
 #endif
+
+tr::QuadFloat tr::QuadFloat::operator-() const
+{
+#ifdef TR_SIMD
+	return _mm_sub_ps(allZeroes.m_data, m_data);
+#else
+	return QuadFloat(
+		-m_data[0],
+		-m_data[1],
+		-m_data[2],
+		-m_data[3]
+	);
+#endif
+}
 
 tr::QuadFloat& tr::QuadFloat::operator+=(const QuadFloat& rhs)
 {
@@ -322,6 +338,20 @@ tr::QuadFloat tr::QuadFloat::round() const
 #endif
 }
 
+tr::QuadFloat tr::QuadFloat::sqrt() const
+{
+#ifdef TR_SIMD
+	return QuadFloat(_mm_sqrt_ps(m_data));
+#else
+	return QuadFloat(
+		std::sqrt(m_data[0]),
+		std::sqrt(m_data[1]),
+		std::sqrt(m_data[2]),
+		std::sqrt(m_data[3])
+	);
+#endif
+}
+
 tr::QuadInt tr::QuadFloat::convertToQuadInt() const
 {
 #if TR_SIMD
@@ -332,6 +362,20 @@ tr::QuadInt tr::QuadFloat::convertToQuadInt() const
 		int32_t(m_data[1]),
 		int32_t(m_data[2]),
 		int32_t(m_data[3])
+	);
+#endif
+}
+
+tr::QuadFloat tr::QuadFloat::maskedCopy(const QuadFloat& rhs, const QuadMask& mask) const
+{
+#ifdef TR_SIMD
+	return QuadFloat(_mm_blendv_ps(m_data, rhs.m_data, mask.getData()));
+#else
+	return QuadFloat(
+		mask.get(0) ? rhs.m_data[0] : m_data[0],
+		mask.get(1) ? rhs.m_data[1] : m_data[1],
+		mask.get(2) ? rhs.m_data[2] : m_data[2],
+		mask.get(3) ? rhs.m_data[3] : m_data[3]
 	);
 #endif
 }
