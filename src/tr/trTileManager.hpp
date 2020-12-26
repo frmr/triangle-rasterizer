@@ -90,6 +90,7 @@ namespace tr
 		{
 			m_triangles.clear();
 			m_shaders.clear();
+			m_rasterizationParams.clear();
 		}
 
 		void draw(const size_t numThreads, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
