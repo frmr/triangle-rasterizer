@@ -95,7 +95,7 @@ namespace tr
 
 		void draw(const size_t numThreads, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 		{
-			if (colorBuffer.getWidth() != m_viewportWidth || colorBuffer.getHeight() != m_viewportHeight)
+			if (size_t(colorBuffer.getWidth()) != m_viewportWidth || size_t(colorBuffer.getHeight()) != m_viewportHeight)
 			{
 				throw InvalidSettingException(tf::String("Color buffer dimensions ({}, {}) do not match TileManager settings ({}, {})", {
 					std::to_string(colorBuffer.getWidth()),
@@ -105,7 +105,7 @@ namespace tr
 				}));
 			}
 
-			if (depthBuffer.getWidth() != m_viewportWidth || depthBuffer.getHeight() != m_viewportHeight)
+			if (size_t(depthBuffer.getWidth()) != m_viewportWidth || size_t(depthBuffer.getHeight()) != m_viewportHeight)
 			{
 				throw InvalidSettingException(tf::String("Depth buffer dimensions ({}, {}) do not match TileManager settings ({}, {})", {
 					std::to_string(depthBuffer.getWidth()),

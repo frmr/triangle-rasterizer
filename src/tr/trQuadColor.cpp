@@ -59,7 +59,7 @@ tr::QuadColor::QuadColor(const Color* const address, const QuadMask& mask) :
 
 void tr::QuadColor::write(Color* const pointer, const QuadMask& mask) const
 {
-	int32_t* const  intPointer = reinterpret_cast<int32_t* const>(pointer);
+	int32_t* const  intPointer = reinterpret_cast<int32_t*>(pointer);
 
 	const QuadFloat roundedR = m_r.round();
 	const QuadFloat roundedG = m_g.round();

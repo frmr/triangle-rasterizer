@@ -36,11 +36,11 @@ void tr::Texture::generateMipmaps()
 
 	do
 	{
-		m_mipLevels.emplace_back(source->getWidth() / 2, source->getHeight() / 2);
+		m_mipLevels.emplace_back(size_t(source->getWidth()) / 2, size_t(source->getHeight()) / 2);
 
-		for (size_t sourceY = 0, destY = 0; sourceY < source->getHeight(); sourceY += 2, ++destY)
+		for (size_t sourceY = 0, destY = 0; sourceY < size_t(source->getHeight()); sourceY += 2, ++destY)
 		{
-			for (size_t sourceX = 0, destX = 0; sourceX < source->getWidth(); sourceX += 2, ++destX)
+			for (size_t sourceX = 0, destX = 0; sourceX < size_t(source->getWidth()); sourceX += 2, ++destX)
 			{
 				Color& tl = source->at(sourceX,     sourceY    );
 				Color& tr = source->at(sourceX + 1, sourceY    );
@@ -131,9 +131,9 @@ void tr::Texture::init(const size_t width, const size_t height)
 
 void tr::Texture::copyImageDataToBaseLevel(const std::vector<uint8_t>& decodedData)
 {
-	for (size_t y = 0, i = 0; y < m_baseLevel->getHeight(); ++y)
+	for (size_t y = 0, i = 0; y < size_t(m_baseLevel->getHeight()); ++y)
 	{
-		for (size_t x = 0; x < m_baseLevel->getWidth(); ++x, i += 4)
+		for (size_t x = 0; x < size_t(m_baseLevel->getWidth()); ++x, i += 4)
 		{
 			const uint8_t* const pixelData = &decodedData[i];
 
