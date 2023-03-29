@@ -97,22 +97,28 @@ namespace tr
 		{
 			if (size_t(colorBuffer.getWidth()) != m_viewportWidth || size_t(colorBuffer.getHeight()) != m_viewportHeight)
 			{
-				throw InvalidSettingException(tf::String("Color buffer dimensions ({}, {}) do not match TileManager settings ({}, {})", {
-					std::to_string(colorBuffer.getWidth()),
-					std::to_string(colorBuffer.getHeight()),
-					std::to_string(m_viewportWidth),
-					std::to_string(m_viewportHeight)
-				}));
+				throw InvalidSettingException(std::string("Color buffer dimensions (") +
+				                                          std::to_string(colorBuffer.getWidth()) +
+				                                          "," +
+				                                          std::to_string(colorBuffer.getHeight()) +
+				                                          ") do not match TileManager settings (" +
+				                                          std::to_string(m_viewportWidth) +
+				                                          "," +
+				                                          std::to_string(m_viewportHeight) +
+				                                          ")");
 			}
 
 			if (size_t(depthBuffer.getWidth()) != m_viewportWidth || size_t(depthBuffer.getHeight()) != m_viewportHeight)
 			{
-				throw InvalidSettingException(tf::String("Depth buffer dimensions ({}, {}) do not match TileManager settings ({}, {})", {
-					std::to_string(depthBuffer.getWidth()),
-					std::to_string(depthBuffer.getHeight()),
-					std::to_string(m_viewportWidth),
-					std::to_string(m_viewportHeight)
-				}));
+				throw InvalidSettingException(std::string("Depth buffer dimensions (") +
+				                                          std::to_string(depthBuffer.getWidth()) +
+				                                          "," +
+				                                          std::to_string(depthBuffer.getHeight()) +
+				                                          ") do not match TileManager settings (" +
+				                                          std::to_string(m_viewportWidth) +
+				                                          "," +
+				                                          std::to_string(m_viewportHeight) +
+				                                          ")");
 			}
 
 			if (numThreads != m_threads.size())

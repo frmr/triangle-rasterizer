@@ -14,7 +14,6 @@
 #include "trTransformedVertex.hpp"
 #include "trVertexClipBitMasks.hpp"
 #include "../matrix/Matrices.h"
-#include "tfTextFile.hpp"
 #include "trQuadTransformedVertex.hpp"
 #include "trRect.hpp"
 
