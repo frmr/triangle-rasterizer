@@ -254,7 +254,7 @@ void tr::QuadInt::write(int32_t* const address, const QuadMask& mask) const
 #ifdef TR_SIMD
 	_mm_maskstore_epi32(address, _mm_castps_si128(mask.getData()), m_data);
 #else
-	uint32_t* const intPointer = reinterpret_cast<uint32_t* const>(address);
+	uint32_t* const intPointer = reinterpret_cast<uint32_t*>(address);
 	
 	for (size_t i = 0; i < m_data.size(); ++i)
 	{
