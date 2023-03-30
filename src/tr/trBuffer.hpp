@@ -51,6 +51,11 @@ namespace tr
 			return m_data.data();
 		}
 
+		size_t getDataSize() const
+		{
+			return m_data.size() * sizeof(T);
+		}
+
 		int getWidth() const
 		{
 			return m_width;
