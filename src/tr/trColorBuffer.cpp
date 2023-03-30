@@ -26,6 +26,15 @@ tr::ColorBuffer::ColorBuffer(const size_t width, const size_t height) :
 {
 }
 
+tr::ColorBuffer::ColorBuffer(const size_t width, const size_t height, const Color& initial) :
+	Buffer<Color>(width, height, initial),
+	m_quadWidth(m_width),
+	m_quadHeight(m_height),
+	m_quadFloatWidth(m_floatWidth),
+	m_quadFloatHeight(m_floatHeight)
+{
+}
+
 tr::QuadColor tr::ColorBuffer::getAt(const QuadInt& x, const QuadInt& y, const QuadMask& mask) const
 {
 	return QuadColor(m_data.data(), y * m_quadWidth + x, mask);

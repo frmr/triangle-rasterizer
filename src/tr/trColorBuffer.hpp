@@ -13,6 +13,7 @@ namespace tr
 	public:
 		          ColorBuffer();
 		          ColorBuffer(const size_t width, const size_t height);
+		          ColorBuffer(const size_t width, const size_t height, const Color& initial);
 
 		QuadColor getAt(const QuadInt& x, const QuadInt& y, const QuadMask& mask) const;
 		QuadColor getAt(const QuadFloat& u, const QuadFloat& v, const QuadMask& mask) const;

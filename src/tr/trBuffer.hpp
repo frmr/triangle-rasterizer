@@ -31,6 +31,16 @@ namespace tr
 			m_data.resize(width * height, T());
 		}
 
+		Buffer(const size_t width, const size_t height, const T& initial) :
+			m_width(int(width)),
+			m_height(int(height)),
+			m_floatWidth(float(width)),
+			m_floatHeight(float(height))
+		{
+			m_data.resize(width * height, T());
+			std::fill(m_data.begin(), m_data.end(), initial);
+		}
+
 		T& at(const size_t x, const size_t y)
 		{
 			return m_data.at(y * m_width + x);
