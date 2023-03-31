@@ -30,7 +30,8 @@ namespace tr
 			m_bufferHalfHeight(float(bufferHeight) / 2.0f),
 			m_tileManager(bufferWidth, bufferHeight, tileWidth, tileHeight),
 			m_primitive(Primitive::Triangles),
-			m_projectionViewMatrix(),
+			m_projectionMatrix(),
+			m_viewMatrix(),
 			m_modelMatrix(),
 			m_modelNormalRotationMatrix(),
 			m_cullFaceMode(CullFaceMode::Back),
@@ -55,7 +56,7 @@ namespace tr
 
 				transformedVertices.emplace_back(
 					Vector3(worldPosition.x, worldPosition.y, worldPosition.z),
-					m_projectionViewMatrix * m_modelMatrix * vertex.position,
+					m_projectionMatrix * m_viewMatrix * m_modelMatrix * vertex.position,
 					m_modelNormalRotationMatrix * vertex.normal,
 					vertex.textureCoord
 				);
@@ -115,9 +116,14 @@ namespace tr
 			m_primitive = primitive;
 		}
 
-		void setProjectionViewMatrix(const Matrix4& matrix)
+		void setProjectionMatrix(const Matrix4& matrix)
 		{
-			m_projectionViewMatrix = matrix;
+			m_projectionMatrix = matrix;
+		}
+
+		void setViewMatrix(const Matrix4& matrix)
+		{
+			m_viewMatrix = matrix;
 		}
 
 		void setModelMatrix(const Matrix4& matrix)
@@ -320,7 +326,8 @@ namespace tr
 		float                 m_bufferHalfHeight;
 		TileManager<TShader>  m_tileManager;
 		Primitive             m_primitive;
-		Matrix4               m_projectionViewMatrix;
+		Matrix4               m_projectionMatrix;
+		Matrix4               m_viewMatrix;
 		Matrix4               m_modelMatrix;
 		Matrix3               m_modelNormalRotationMatrix;
 		CullFaceMode          m_cullFaceMode;
