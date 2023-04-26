@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cstddef>
 #ifdef TR_SIMD
 #include <immintrin.h>
 #endif
