@@ -64,7 +64,7 @@ namespace tr
 
 			if (m_primitive == Primitive::Triangles)
 			{
-				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin(); it < transformedVertices.end() - 2; it += 3)
+				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin(); it + 2 < transformedVertices.end(); it += 3)
 				{
 					clipAndQueueTriangle({ *it, *(it + 1), *(it + 2) }, shaderIndex, rasterizationParamsIndex);
 				}
@@ -86,7 +86,7 @@ namespace tr
 			}
 			else if (m_primitive == Primitive::TriangleFan)
 			{
-				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin() + 1; it < transformedVertices.end() - 1; it += 1)
+				for (std::vector<TransformedVertex>::const_iterator it = transformedVertices.begin() + 1; it + 1 < transformedVertices.end(); it += 1)
 				{
 					clipAndQueueTriangle({ transformedVertices.front(), *it, *(it + 1) }, shaderIndex, rasterizationParamsIndex);
 				}
