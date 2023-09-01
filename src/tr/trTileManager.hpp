@@ -6,6 +6,7 @@
 #include <atomic>
 #include <memory>
 #include <condition_variable>
+#include <string>
 #include "trTile.hpp"
 #include "trColorBuffer.hpp"
 #include "trDepthBuffer.hpp"
