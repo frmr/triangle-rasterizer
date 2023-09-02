@@ -208,6 +208,11 @@ namespace tr
 
 		void clipAndQueueTriangle(std::array<TransformedVertex, 3>&& vertices, const size_t shaderIndex, const size_t rasterizationParamsIndex)
 		{
+			if (vertices[0].worldPosition == vertices[1].worldPosition || vertices[1].worldPosition == vertices[2].worldPosition || vertices[2].worldPosition == vertices[0].worldPosition)
+			{
+				return;
+			}
+
 			std::array<uint8_t, 3> vertexClipBitFields     = { 0, 0, 0 };
 			std::array<uint8_t, 3> vertexEqualityBitFields = { 0, 0, 0 };
 
