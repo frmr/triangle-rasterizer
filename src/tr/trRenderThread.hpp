@@ -137,13 +137,13 @@ namespace tr
 					QuadFloat rowWeights1 = orientPoints(quadVertex2.projectedPosition, quadVertex0.projectedPosition, points);
 					QuadFloat rowWeights2 = orientPoints(quadVertex0.projectedPosition, quadVertex1.projectedPosition, points);
 
-					for (size_t y = boundingBox.getMinY(); y <= boundingBox.getMaxY(); y += 1, colorPointer += bufferStepY, depthPointer += bufferStepY)
+					for (int32_t y = boundingBox.getMinY(); y <= boundingBox.getMaxY(); y += 1, colorPointer += bufferStepY, depthPointer += bufferStepY)
 					{
 						QuadFloat weights0 = rowWeights0;
 						QuadFloat weights1 = rowWeights1;
 						QuadFloat weights2 = rowWeights2;
 
-						for (size_t x = boundingBox.getMinX(); x <= boundingBox.getMaxX(); x += 4, colorPointer += bufferStepX, depthPointer += bufferStepX)
+						for (int32_t x = boundingBox.getMinX(); x <= boundingBox.getMaxX(); x += 4, colorPointer += bufferStepX, depthPointer += bufferStepX)
 						{
 							const QuadMask positiveWeightsMask = ~(weights0 | weights1 | weights2).castToMask();
 							const QuadMask negativeWeightsMask =  (weights0 & weights1 & weights2).castToMask();

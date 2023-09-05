@@ -21,14 +21,14 @@ namespace tr
 	class TileManager
 	{
 	public:
-		TileManager(const size_t viewportWidth, const size_t viewportHeight, const size_t tileWidth, const size_t tileHeight) :
+		TileManager(const uint32_t viewportWidth, const uint32_t viewportHeight, const uint32_t tileWidth, const uint32_t tileHeight) :
 			m_viewportWidth(0),
 			m_viewportHeight(0)
 		{
 			setAttributes(viewportWidth, viewportHeight, tileWidth, tileHeight);
 		}
 
-		void setAttributes(const size_t viewportWidth, const size_t viewportHeight, const size_t tileWidth, const size_t tileHeight)
+		void setAttributes(const uint32_t viewportWidth, const uint32_t viewportHeight, const uint32_t tileWidth, const uint32_t tileHeight)
 		{
 			if (viewportWidth == 0 || viewportHeight == 0)
 			{
@@ -45,25 +45,25 @@ namespace tr
 
 			m_tiles.clear();
 
-			for (size_t y = 0; y < viewportHeight; y += tileHeight)
+			for (uint32_t y = 0; y < viewportHeight; y += tileHeight)
 			{
-				size_t tileMaxY = y + tileHeight - 1;
+				uint32_t tileMaxY = y + tileHeight - 1;
 
 				if (tileMaxY >= viewportHeight)
 				{
 					tileMaxY = viewportHeight - 1;
 				}
 
-				for (size_t x = 0; x < viewportWidth; x += tileWidth)
+				for (uint32_t x = 0; x < viewportWidth; x += tileWidth)
 				{
-					size_t tileMaxX = x + tileWidth - 1;
+					uint32_t tileMaxX = x + tileWidth - 1;
 
 					if (tileMaxX >= viewportWidth)
 					{
 						tileMaxX = viewportWidth - 1;
 					}
 
-					m_tiles.emplace_back(Rect(x, y, tileMaxX, tileMaxY));
+					m_tiles.emplace_back(Rect(int32_t(x), int32_t(y), int32_t(tileMaxX), int32_t(tileMaxY)));
 				}
 			}
 		}

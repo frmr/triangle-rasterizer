@@ -2,7 +2,7 @@
 
 namespace tr
 {
-	struct EdgeInfo
+	struct VertexOrder
 	{
 		const size_t firstVertexIndex;
 		const size_t secondVertexIndex;
