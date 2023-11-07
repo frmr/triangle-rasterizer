@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../matrix/Vectors.h"
+#include <cstdint>
 
 namespace tr
 {
